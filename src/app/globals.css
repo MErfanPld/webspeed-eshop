@@ -4,28 +4,52 @@
 
 :root {
   --background: #fafaf9;
-  --foreground: #171717;
-  --muted: #f5f5f4;
-  --muted-foreground: #737373;
-  --border: #e7e5e4;
-  --accent: #171717;
+  --foreground: #141414;
+  --muted: #f4f4f2;
+  --muted-foreground: #6b6b6b;
+  --border: #e8e6e3;
+  --accent: #141414;
   --accent-foreground: #fafaf9;
-  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
-    Arial, "Noto Sans", sans-serif;
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
-
-  body {
-    @apply bg-background text-foreground antialiased;
-    font-family: var(--font-sans);
+  *,
+  *::before,
+  *::after {
+    border-color: var(--border);
   }
 
   html {
     scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-vazirmatn), system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    line-height: 1.6;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--foreground);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }
 
@@ -42,5 +66,56 @@
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
+  }
+
+  .text-hero {
+    font-size: clamp(2.25rem, 6vw, 4.5rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    font-weight: 600;
+  }
+
+  .text-section {
+    font-size: clamp(1.5rem, 3.5vw, 2.5rem);
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+    font-weight: 600;
+  }
+
+  .text-product {
+    font-size: 0.875rem;
+    line-height: 1.4;
+    font-weight: 500;
+  }
+
+  .text-meta {
+    font-size: 0.75rem;
+    line-height: 1.4;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .pt-safe {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .product-card-img-primary {
+      transition: opacity 0.4s ease;
+    }
+    .group:hover .product-card-img-primary {
+      opacity: 0;
+    }
+    .product-card-img-secondary {
+      transition: opacity 0.4s ease;
+      opacity: 0;
+    }
+    .group:hover .product-card-img-secondary {
+      opacity: 1;
+    }
   }
 }
