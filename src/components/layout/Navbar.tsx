@@ -2,18 +2,16 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Menu, X, ShoppingBag, User, Search } from "lucide-react";
+import { Menu, X, ShoppingBag, Search } from "lucide-react";
 import { useCart } from "@/context/CartContext";
-import { cn } from "@/lib/utils";
-import { formatNumber } from "@/lib/utils";
+import { cn, formatNumber } from "@/lib/utils";
 import SearchOverlay from "@/components/navigation/SearchOverlay";
 
 const navLinks = [
   { href: "/products", label: "فروشگاه" },
   { href: "/products?gender=men", label: "مردانه" },
   { href: "/products?gender=women", label: "زنانه" },
-  { href: "/about", label: "درباره ما" },
-  { href: "/contact", label: "تماس" },
+  { href: "/about", label: "درباره" },
 ];
 
 export default function Navbar() {
@@ -23,105 +21,110 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur-sm">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <header className="sticky top-0 z-50 bg-background/90 backdrop-blur-md pt-safe">
+        <div className="mx-auto flex h-14 sm:h-16 max-w-content items-center justify-between px-4 xs:px-5 sm:px-6 lg:px-10">
           <button
-            className="lg:hidden p-2 -mr-2 text-foreground"
+            type="button"
+            className="lg:hidden flex h-11 w-11 items-center justify-center -mr-2"
             onClick={() => setOpen(true)}
             aria-label="باز کردن منو"
           >
-            <Menu className="h-5 w-5" />
+            <Menu className="h-5 w-5" strokeWidth={1.25} />
           </button>
 
           <Link
             href="/"
-            className="text-xl font-semibold tracking-tight text-foreground"
+            className="text-[15px] sm:text-base font-medium tracking-[0.18em] uppercase"
           >
-            WEBSPEED
+            WebSpeed
           </Link>
 
-          <nav className="hidden lg:flex items-center gap-8">
+          <nav className="hidden lg:flex items-center gap-10">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                className="type-caption text-foreground/70 hover:text-foreground transition-colors duration-200"
               >
                 {link.label}
               </Link>
             ))}
           </nav>
 
-          <div className="flex items-center gap-1 sm:gap-2">
+          <div className="flex items-center">
             <button
-              className="p-2 text-muted-foreground hover:text-foreground transition-colors"
+              type="button"
+              className="flex h-11 w-11 items-center justify-center text-foreground/70 hover:text-foreground transition-colors"
               onClick={() => setSearchOpen(true)}
               aria-label="جستجو"
             >
-              <Search className="h-5 w-5" />
+              <Search className="h-5 w-5" strokeWidth={1.25} />
             </button>
             <Link
-              href="/profile"
-              className="p-2 text-muted-foreground hover:text-foreground transition-colors"
-              aria-label="حساب کاربری"
-            >
-              <User className="h-5 w-5" />
-            </Link>
-            <Link
               href="/cart"
-              className="relative p-2 text-muted-foreground hover:text-foreground transition-colors"
+              className="relative flex h-11 w-11 items-center justify-center text-foreground/70 hover:text-foreground transition-colors"
               aria-label="سبد خرید"
             >
-              <ShoppingBag className="h-5 w-5" />
+              <ShoppingBag className="h-5 w-5" strokeWidth={1.25} />
               {totalItems > 0 && (
-                <span className="absolute -top-0.5 -left-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-foreground px-1 text-[10px] font-medium text-background">
+                <span className="absolute top-1.5 left-1.5 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-foreground px-1 text-[10px] font-medium text-background leading-none num">
                   {totalItems > 9 ? "۹+" : formatNumber(totalItems)}
                 </span>
               )}
             </Link>
           </div>
         </div>
+        <hr className="rule" />
 
-        {/* Mobile menu */}
         <div
           className={cn(
-            "fixed inset-0 z-50 lg:hidden transition-opacity duration-300",
-            open
-              ? "opacity-100 pointer-events-auto"
-              : "opacity-0 pointer-events-none"
+            "fixed inset-0 z-50 lg:hidden",
+            open ? "pointer-events-auto" : "pointer-events-none"
           )}
         >
           <div
-            className="absolute inset-0 bg-black/40"
+            className={cn(
+              "absolute inset-0 bg-foreground/20 transition-opacity duration-300",
+              open ? "opacity-100" : "opacity-0"
+            )}
             onClick={() => setOpen(false)}
           />
           <div
             className={cn(
-              "absolute top-0 right-0 h-full w-72 max-w-[85vw] bg-background shadow-xl transition-transform duration-300 ease-out",
+              "absolute top-0 right-0 h-full w-[min(20rem,88vw)] bg-background transition-transform duration-300 ease-out pt-safe",
               open ? "translate-x-0" : "translate-x-full"
             )}
           >
-            <div className="flex items-center justify-between p-4 border-b border-border">
-              <span className="font-semibold text-lg">منو</span>
+            <div className="flex items-center justify-between h-14 px-5">
+              <span className="type-label text-muted-foreground">منو</span>
               <button
+                type="button"
                 onClick={() => setOpen(false)}
-                className="p-2 -ml-2"
+                className="flex h-11 w-11 items-center justify-center -ml-2"
                 aria-label="بستن منو"
               >
-                <X className="h-5 w-5" />
+                <X className="h-5 w-5" strokeWidth={1.25} />
               </button>
             </div>
-            <nav className="flex flex-col p-4 gap-1">
+            <hr className="rule" />
+            <nav className="flex flex-col py-6">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
                   onClick={() => setOpen(false)}
-                  className="px-3 py-3 text-base font-medium text-foreground hover:bg-muted rounded-sm"
+                  className="px-6 py-4 type-title font-normal text-foreground"
                 >
                   {link.label}
                 </Link>
               ))}
+              <Link
+                href="/contact"
+                onClick={() => setOpen(false)}
+                className="px-6 py-4 type-title font-normal text-foreground"
+              >
+                تماس
+              </Link>
             </nav>
           </div>
         </div>

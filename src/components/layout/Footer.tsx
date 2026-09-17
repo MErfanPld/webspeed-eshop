@@ -1,103 +1,71 @@
 import Link from "next/link";
-import { Instagram, Twitter } from "lucide-react";
 import { storeInfo } from "@/data/store";
-import Newsletter from "@/components/home/Newsletter";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-border bg-muted/40">
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="space-y-4">
-            <Link href="/" className="text-lg font-semibold tracking-tight">
-              WEBSPEED
+    <footer className="mt-auto">
+      <hr className="rule" />
+      <div className="mx-auto max-w-content px-4 xs:px-5 sm:px-6 lg:px-10 py-14 sm:py-20">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8">
+          <div className="lg:col-span-5 space-y-4">
+            <Link
+              href="/"
+              className="text-sm font-medium tracking-[0.18em] uppercase"
+            >
+              WebSpeed
             </Link>
-            <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
+            <p className="type-body text-muted-foreground max-w-xs leading-relaxed">
               {storeInfo.description}
             </p>
-            <div className="flex gap-3">
-              <a
-                href={storeInfo.social.instagram}
-                className="p-2 text-muted-foreground hover:text-foreground transition-colors"
-                aria-label="اینستاگرام"
-              >
-                <Instagram className="h-5 w-5" />
-              </a>
-              <a
-                href={storeInfo.social.twitter}
-                className="p-2 text-muted-foreground hover:text-foreground transition-colors"
-                aria-label="توییتر"
-              >
-                <Twitter className="h-5 w-5" />
-              </a>
-            </div>
           </div>
 
-          <div>
-            <h3 className="text-sm font-semibold text-foreground mb-4">
-              فروشگاه
-            </h3>
-            <ul className="space-y-2.5 text-sm text-muted-foreground">
+          <div className="lg:col-span-2">
+            <p className="type-label text-muted-foreground mb-4">فروشگاه</p>
+            <ul className="space-y-3 type-caption">
               <li>
-                <Link href="/products" className="hover:text-foreground">
+                <Link href="/products" className="hover:text-foreground transition-colors">
                   همه محصولات
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/products?gender=men"
-                  className="hover:text-foreground"
-                >
+                <Link href="/products?gender=men" className="hover:text-foreground transition-colors">
                   مردانه
                 </Link>
               </li>
               <li>
-                <Link
-                  href="/products?gender=women"
-                  className="hover:text-foreground"
-                >
+                <Link href="/products?gender=women" className="hover:text-foreground transition-colors">
                   زنانه
                 </Link>
               </li>
+            </ul>
+          </div>
+
+          <div className="lg:col-span-2">
+            <p className="type-label text-muted-foreground mb-4">کمک</p>
+            <ul className="space-y-3 type-caption">
               <li>
-                <Link
-                  href="/products?sort=newest"
-                  className="hover:text-foreground"
-                >
-                  جدیدترین‌ها
+                <Link href="/contact" className="hover:text-foreground transition-colors">
+                  تماس
+                </Link>
+              </li>
+              <li>
+                <Link href="/about" className="hover:text-foreground transition-colors">
+                  درباره
+                </Link>
+              </li>
+              <li>
+                <Link href="/profile" className="hover:text-foreground transition-colors">
+                  سفارش‌ها
                 </Link>
               </li>
             </ul>
           </div>
 
-          <div>
-            <h3 className="text-sm font-semibold text-foreground mb-4">
-              پشتیبانی
-            </h3>
-            <ul className="space-y-2.5 text-sm text-muted-foreground">
-              <li>
-                <Link href="/contact" className="hover:text-foreground">
-                  تماس با ما
-                </Link>
-              </li>
-              <li>
-                <Link href="/about" className="hover:text-foreground">
-                  درباره ما
-                </Link>
-              </li>
-              <li>
-                <Link href="/profile" className="hover:text-foreground">
-                  پیگیری سفارش
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="text-sm font-semibold text-foreground mb-4">تماس</h3>
-            <ul className="space-y-2.5 text-sm text-muted-foreground">
+          <div className="lg:col-span-3">
+            <p className="type-label text-muted-foreground mb-4">تماس</p>
+            <ul className="space-y-3 type-caption">
               <li>{storeInfo.address}</li>
-              <li dir="ltr" className="text-right">
+              <li className="num" dir="ltr">
                 {storeInfo.phone}
               </li>
               <li>{storeInfo.email}</li>
@@ -105,13 +73,11 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-border">
-          <Newsletter compact />
-        </div>
+        <hr className="rule my-10" />
 
-        <div className="mt-8 text-center text-sm text-muted-foreground">
-          © {new Date().getFullYear()} WebSpeed. تمامی حقوق محفوظ است.
-        </div>
+        <p className="type-caption text-center">
+          © {new Date().getFullYear()} WebSpeed
+        </p>
       </div>
     </footer>
   );
