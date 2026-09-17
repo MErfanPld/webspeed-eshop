@@ -7,6 +7,14 @@ const config: Config = {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
+    screens: {
+      xs: "360px",
+      sm: "480px",
+      md: "768px",
+      lg: "1024px",
+      xl: "1280px",
+      "2xl": "1440px",
+    },
     extend: {
       colors: {
         background: "var(--background)",
@@ -16,9 +24,19 @@ const config: Config = {
         border: "var(--border)",
         accent: "var(--accent)",
         "accent-foreground": "var(--accent-foreground)",
+        surface: "var(--surface)",
       },
       fontFamily: {
-        sans: ["var(--font-sans)", "system-ui", "sans-serif"],
+        sans: ["var(--font-vazirmatn)", "system-ui", "sans-serif"],
+      },
+      maxWidth: {
+        content: "1320px",
+        prose: "42rem",
+      },
+      spacing: {
+        18: "4.5rem",
+        22: "5.5rem",
+        30: "7.5rem",
       },
     },
   },

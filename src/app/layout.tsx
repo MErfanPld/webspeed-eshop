@@ -2,12 +2,11 @@ import type { Metadata, Viewport } from "next";
 import { Vazirmatn } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
-import AnnouncementBar from "@/components/layout/AnnouncementBar";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 
 const vazirmatn = Vazirmatn({
-  subsets: ["arabic"],
+  subsets: ["arabic", "latin"],
   variable: "--font-vazirmatn",
   display: "swap",
   weight: ["300", "400", "500", "600", "700"],
@@ -15,19 +14,17 @@ const vazirmatn = Vazirmatn({
 
 export const metadata: Metadata = {
   title: {
-    default: "WebSpeed | فروشگاه پوشاک مینیمال",
-    template: "%s | WebSpeed",
+    default: "WebSpeed",
+    template: "%s — WebSpeed",
   },
-  description:
-    "فروشگاه اینترنتی پوشاک مردانه و زنانه با طراحی مینیمال، کیفیت بالا و استایل مدرن.",
-  keywords: ["پوشاک", "لباس", "فروشگاه اینترنتی", "مد", "مینیمال", "WebSpeed"],
+  description: "پوشاک مینیمال. طراحی ماندگار. کیفیت بدون مصالحه.",
+  keywords: ["پوشاک", "مد", "مینیمال", "WebSpeed", "fashion"],
   openGraph: {
     type: "website",
     locale: "fa_IR",
     siteName: "WebSpeed",
-    title: "WebSpeed | فروشگاه پوشاک مینیمال",
-    description:
-      "فروشگاه اینترنتی پوشاک مردانه و زنانه با طراحی مینیمال، کیفیت بالا و استایل مدرن.",
+    title: "WebSpeed",
+    description: "پوشاک مینیمال. طراحی ماندگار. کیفیت بدون مصالحه.",
   },
 };
 
@@ -35,7 +32,8 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
-  themeColor: "#fafaf9",
+  themeColor: "#f7f5f2",
+  viewportFit: "cover",
 };
 
 export default function RootLayout({
@@ -45,11 +43,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fa" dir="rtl" className={vazirmatn.variable}>
-      <body className="min-h-screen flex flex-col overflow-x-hidden">
+      <body className="min-h-screen flex flex-col no-x-scroll font-sans">
         <CartProvider>
-          <AnnouncementBar />
           <Navbar />
-          <main className="flex-1 w-full">{children}</main>
+          <main className="flex-1 w-full min-w-0">{children}</main>
           <Footer />
         </CartProvider>
       </body>

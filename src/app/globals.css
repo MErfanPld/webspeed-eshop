@@ -2,14 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+/* WebSpeed Design System — Apple clarity + High Fashion Editorial */
+
 :root {
-  --background: #fafaf9;
-  --foreground: #141414;
-  --muted: #f4f4f2;
-  --muted-foreground: #6b6b6b;
-  --border: #e8e6e3;
-  --accent: #141414;
-  --accent-foreground: #fafaf9;
+  --background: #f7f5f2;
+  --foreground: #0c0c0c;
+  --muted: #efece7;
+  --muted-foreground: #737373;
+  --border: #e4e0da;
+  --accent: #0c0c0c;
+  --accent-foreground: #f7f5f2;
+  --surface: #ffffff;
+  --leading-tight: 1.15;
+  --leading-snug: 1.35;
+  --leading-normal: 1.65;
 }
 
 @layer base {
@@ -17,10 +23,10 @@
   *::before,
   *::after {
     border-color: var(--border);
+    box-sizing: border-box;
   }
 
   html {
-    scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
   }
@@ -28,21 +34,42 @@
   body {
     background-color: var(--background);
     color: var(--foreground);
-    font-family: var(--font-vazirmatn), system-ui, -apple-system, sans-serif;
+    font-family: var(--font-vazirmatn), "Segoe UI", Tahoma, system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    line-height: 1.6;
+    line-height: var(--leading-normal);
+    font-weight: 400;
+  }
+
+  .num,
+  [data-num] {
+    direction: ltr;
+    unicode-bidi: isolate;
+    font-variant-numeric: tabular-nums;
+  }
+
+  img,
+  video {
+    max-width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  button {
+    font-family: inherit;
   }
 
   :focus-visible {
-    outline: 2px solid var(--foreground);
-    outline-offset: 2px;
+    outline: 1.5px solid var(--foreground);
+    outline-offset: 3px;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    html {
-      scroll-behavior: auto;
-    }
     *,
     *::before,
     *::after {
@@ -50,6 +77,61 @@
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
     }
+  }
+}
+
+@layer components {
+  .type-display {
+    font-size: clamp(2.5rem, 8.5vw, 5.25rem);
+    line-height: var(--leading-tight);
+    font-weight: 500;
+    letter-spacing: -0.03em;
+  }
+
+  .type-headline {
+    font-size: clamp(1.625rem, 4vw, 2.75rem);
+    line-height: var(--leading-tight);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+  }
+
+  .type-title {
+    font-size: clamp(1.125rem, 2.2vw, 1.375rem);
+    line-height: var(--leading-snug);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  .type-body {
+    font-size: 0.9375rem;
+    line-height: var(--leading-normal);
+    font-weight: 400;
+  }
+
+  .type-caption {
+    font-size: 0.8125rem;
+    line-height: var(--leading-snug);
+    font-weight: 400;
+    color: var(--muted-foreground);
+  }
+
+  .type-label {
+    font-size: 0.6875rem;
+    line-height: 1.4;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .rule {
+    height: 1px;
+    background: var(--border);
+    border: none;
+    margin: 0;
+  }
+
+  .surface {
+    background: var(--surface);
   }
 }
 
@@ -68,33 +150,6 @@
     -webkit-line-clamp: 2;
   }
 
-  .text-hero {
-    font-size: clamp(2.25rem, 6vw, 4.5rem);
-    line-height: 1.1;
-    letter-spacing: -0.02em;
-    font-weight: 600;
-  }
-
-  .text-section {
-    font-size: clamp(1.5rem, 3.5vw, 2.5rem);
-    line-height: 1.2;
-    letter-spacing: -0.015em;
-    font-weight: 600;
-  }
-
-  .text-product {
-    font-size: 0.875rem;
-    line-height: 1.4;
-    font-weight: 500;
-  }
-
-  .text-meta {
-    font-size: 0.75rem;
-    line-height: 1.4;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-  }
-
   .pb-safe {
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
@@ -104,18 +159,23 @@
   }
 
   @media (hover: hover) and (pointer: fine) {
-    .product-card-img-primary {
-      transition: opacity 0.4s ease;
+    .img-swap-a {
+      transition: opacity 0.45s ease;
     }
-    .group:hover .product-card-img-primary {
+    .group:hover .img-swap-a {
       opacity: 0;
     }
-    .product-card-img-secondary {
-      transition: opacity 0.4s ease;
+    .img-swap-b {
+      transition: opacity 0.45s ease;
       opacity: 0;
     }
-    .group:hover .product-card-img-secondary {
+    .group:hover .img-swap-b {
       opacity: 1;
     }
+  }
+
+  .no-x-scroll {
+    overflow-x: hidden;
+    max-width: 100vw;
   }
 }
