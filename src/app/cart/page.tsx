@@ -12,7 +12,7 @@ export default function CartPage() {
 
   if (!isReady) {
     return (
-      <Container className="py-20 text-center text-muted-foreground">
+      <Container className="py-24 text-center type-caption">
         در حال بارگذاری...
       </Container>
     );
@@ -20,10 +20,10 @@ export default function CartPage() {
 
   if (items.length === 0) {
     return (
-      <Container className="py-20 text-center">
-        <h1 className="text-2xl font-semibold mb-4">سبد خرید خالی است</h1>
-        <p className="text-muted-foreground mb-8">
-          هنوز محصولی به سبد اضافه نکرده‌اید.
+      <Container className="py-24 text-center">
+        <h1 className="type-headline mb-4">سبد خرید خالی است</h1>
+        <p className="type-body text-muted-foreground mb-10">
+          هنوز محصولی انتخاب نکرده‌اید.
         </p>
         <Link href="/products">
           <Button size="lg">مشاهده محصولات</Button>
@@ -33,26 +33,28 @@ export default function CartPage() {
   }
 
   return (
-    <Container className="py-8 sm:py-12">
-      <nav className="text-sm text-muted-foreground mb-6">
-        <Link href="/" className="hover:text-foreground">
+    <Container className="py-10 sm:py-14">
+      <nav className="type-caption mb-8">
+        <Link href="/" className="hover:text-foreground transition-colors">
           خانه
         </Link>
-        <span className="mx-2">/</span>
+        <span className="mx-2 text-border">/</span>
         <span className="text-foreground">سبد خرید</span>
       </nav>
 
-      <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight mb-8">
-        سبد خرید
-      </h1>
+      <h1 className="type-headline mb-10">سبد خرید</h1>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-        <div className="lg:col-span-2">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+        <div className="lg:col-span-8">
+          <hr className="rule" />
           {items.map((item) => (
-            <CartItem key={item.id} item={item} />
+            <div key={item.id}>
+              <CartItem item={item} />
+              <hr className="rule" />
+            </div>
           ))}
         </div>
-        <div>
+        <div className="lg:col-span-4">
           <CartSummary />
         </div>
       </div>

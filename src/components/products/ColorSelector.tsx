@@ -16,10 +16,10 @@ export default function ColorSelector({
 }: ColorSelectorProps) {
   return (
     <div>
-      <p className="text-sm font-medium mb-3">
-        رنگ {selected && <span className="text-muted-foreground">— {selected}</span>}
+      <p className="type-label text-muted-foreground mb-3">
+        رنگ{selected ? ` — ${selected}` : ""}
       </p>
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2.5">
         {colors.map((color) => (
           <button
             key={color.name}
@@ -27,10 +27,10 @@ export default function ColorSelector({
             onClick={() => onChange(color.name)}
             title={color.name}
             className={cn(
-              "h-9 w-9 rounded-full border-2 transition-all",
+              "h-8 w-8 rounded-full transition-transform duration-200",
               selected === color.name
-                ? "border-foreground scale-110"
-                : "border-transparent hover:scale-105"
+                ? "ring-2 ring-foreground ring-offset-2 ring-offset-background scale-105"
+                : "ring-1 ring-border"
             )}
             style={{ backgroundColor: color.hex }}
             aria-label={color.name}

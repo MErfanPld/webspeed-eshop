@@ -15,8 +15,8 @@ export default function SizeSelector({
 }: SizeSelectorProps) {
   return (
     <div>
-      <p className="text-sm font-medium mb-3">
-        سایز {selected && <span className="text-muted-foreground">— {selected}</span>}
+      <p className="type-label text-muted-foreground mb-3">
+        سایز{selected ? ` — ${selected}` : ""}
       </p>
       <div className="flex flex-wrap gap-2">
         {sizes.map((size) => (
@@ -25,10 +25,10 @@ export default function SizeSelector({
             type="button"
             onClick={() => onChange(size)}
             className={cn(
-              "h-11 min-w-11 px-3 text-sm border rounded-sm transition-colors",
+              "h-11 min-w-[2.75rem] px-3 text-sm transition-colors duration-200",
               selected === size
-                ? "border-foreground bg-foreground text-background"
-                : "border-border hover:border-foreground"
+                ? "bg-foreground text-background"
+                : "bg-transparent text-foreground ring-1 ring-inset ring-border hover:ring-foreground/40"
             )}
           >
             {size}

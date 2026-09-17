@@ -5,29 +5,31 @@ import { useCart } from "@/context/CartContext";
 import { formatPrice } from "@/lib/utils";
 import Button from "@/components/ui/Button";
 
-const SHIPPING = 0; // free for demo
-
 export default function CartSummary() {
   const { subtotal, totalItems } = useCart();
-  const total = subtotal + SHIPPING;
 
   return (
-    <div className="border border-border rounded-sm p-6 space-y-4 sticky top-24">
-      <h2 className="text-lg font-semibold">خلاصه سفارش</h2>
-      <div className="space-y-2 text-sm">
+    <div className="space-y-6">
+      <h2 className="type-title">خلاصه</h2>
+      <div className="space-y-3 type-body">
         <div className="flex justify-between">
           <span className="text-muted-foreground">
             جمع ({totalItems} کالا)
           </span>
-          <span>{formatPrice(subtotal)}</span>
+          <span className="num" data-num>
+            {formatPrice(subtotal)}
+          </span>
         </div>
         <div className="flex justify-between">
-          <span className="text-muted-foreground">هزینه ارسال</span>
-          <span>{SHIPPING === 0 ? "رایگان" : formatPrice(SHIPPING)}</span>
+          <span className="text-muted-foreground">ارسال</span>
+          <span>رایگان</span>
         </div>
-        <div className="flex justify-between pt-3 border-t border-border font-semibold text-base">
+        <hr className="rule" />
+        <div className="flex justify-between font-medium">
           <span>مجموع</span>
-          <span>{formatPrice(total)}</span>
+          <span className="num" data-num>
+            {formatPrice(subtotal)}
+          </span>
         </div>
       </div>
       <Link href="/checkout" className="block">
@@ -37,7 +39,7 @@ export default function CartSummary() {
       </Link>
       <Link
         href="/products"
-        className="block text-center text-sm text-muted-foreground hover:text-foreground"
+        className="block text-center type-caption hover:text-foreground transition-colors"
       >
         ادامه خرید
       </Link>
