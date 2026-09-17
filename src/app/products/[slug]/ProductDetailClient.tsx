@@ -50,30 +50,28 @@ export default function ProductDetailClient({ product }: Props) {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 xl:gap-20">
       <ProductGallery images={product.images} alt={product.name} />
 
-      <div className="space-y-6">
+      <div className="space-y-8 lg:pt-4">
         <div>
-          <p className="text-sm text-muted-foreground uppercase tracking-wide mb-2">
-            {product.category.replace("-", " ")}
+          <p className="type-label text-muted-foreground mb-3">
+            {product.category.replace(/-/g, " ")}
           </p>
-          <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight">
-            {product.name}
-          </h1>
-          <div className="mt-3 flex items-center gap-3">
-            <span className="text-xl font-semibold">
+          <h1 className="type-headline">{product.name}</h1>
+          <div className="mt-4 flex items-baseline gap-3">
+            <span className="type-title num" data-num>
               {formatPrice(product.price)}
             </span>
             {hasDiscount && (
-              <span className="text-muted-foreground line-through">
+              <span className="type-caption line-through num" data-num>
                 {formatPrice(product.compareAtPrice!)}
               </span>
             )}
           </div>
         </div>
 
-        <p className="text-muted-foreground leading-relaxed">
+        <p className="type-body text-muted-foreground leading-relaxed max-w-md">
           {product.description}
         </p>
 
@@ -96,7 +94,7 @@ export default function ProductDetailClient({ product }: Props) {
         />
 
         <div>
-          <p className="text-sm font-medium mb-3">تعداد</p>
+          <p className="type-label text-muted-foreground mb-3">تعداد</p>
           <QuantitySelector value={quantity} onChange={setQuantity} />
         </div>
 
@@ -108,16 +106,21 @@ export default function ProductDetailClient({ product }: Props) {
 
         <Button
           size="lg"
-          className="w-full sm:w-auto min-w-[200px]"
+          className="w-full sm:w-auto min-w-[12rem]"
           onClick={handleAdd}
         >
-          {added ? "به سبد اضافه شد ✓" : "افزودن به سبد"}
+          {added ? "اضافه شد ✓" : "افزودن به سبد"}
         </Button>
 
-        <div className="border-t border-border pt-6 space-y-3 text-sm text-muted-foreground">
-          <p>• ارسال در ۲ تا ۴ روز کاری</p>
-          <p>• امکان مرجوعی تا ۷ روز</p>
-          <p>• موجودی: {product.stock > 0 ? "موجود" : "ناموجود"}</p>
+        <div className="pt-2 space-y-2 type-caption">
+          <p>ارسال در ۲ تا ۴ روز کاری</p>
+          <p>مرجوعی تا ۷ روز</p>
+          <p>
+            موجودی:{" "}
+            <span className="text-foreground">
+              {product.stock > 0 ? "موجود" : "ناموجود"}
+            </span>
+          </p>
         </div>
       </div>
     </div>

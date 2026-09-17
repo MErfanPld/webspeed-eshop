@@ -16,27 +16,27 @@ export default function QuantitySelector({
   max = 10,
 }: QuantitySelectorProps) {
   return (
-    <div className="flex items-center border border-border rounded-sm w-fit">
+    <div className="inline-flex items-center ring-1 ring-inset ring-border">
       <button
         type="button"
         onClick={() => onChange(Math.max(min, value - 1))}
         disabled={value <= min}
-        className="h-11 w-11 flex items-center justify-center hover:bg-muted disabled:opacity-40"
+        className="h-11 w-11 flex items-center justify-center hover:bg-muted disabled:opacity-30 transition-colors"
         aria-label="کاهش تعداد"
       >
-        <Minus className="h-4 w-4" />
+        <Minus className="h-3.5 w-3.5" strokeWidth={1.5} />
       </button>
-      <span className="w-12 text-center text-sm font-medium tabular-nums">
+      <span className="w-10 text-center text-sm font-medium num" data-num>
         {value}
       </span>
       <button
         type="button"
         onClick={() => onChange(Math.min(max, value + 1))}
         disabled={value >= max}
-        className="h-11 w-11 flex items-center justify-center hover:bg-muted disabled:opacity-40"
+        className="h-11 w-11 flex items-center justify-center hover:bg-muted disabled:opacity-30 transition-colors"
         aria-label="افزایش تعداد"
       >
-        <Plus className="h-4 w-4" />
+        <Plus className="h-3.5 w-3.5" strokeWidth={1.5} />
       </button>
     </div>
   );

@@ -16,10 +16,10 @@ export default function CartItem({ item }: Props) {
   const { updateQuantity, removeItem } = useCart();
 
   return (
-    <div className="flex gap-4 py-6 border-b border-border">
+    <div className="flex gap-4 py-6">
       <Link
         href={`/products/${item.slug}`}
-        className="relative h-28 w-24 shrink-0 overflow-hidden bg-muted"
+        className="relative h-28 w-20 sm:h-32 sm:w-24 shrink-0 overflow-hidden bg-muted"
       >
         <Image
           src={item.image}
@@ -33,14 +33,14 @@ export default function CartItem({ item }: Props) {
         <div className="flex-1 min-w-0">
           <Link
             href={`/products/${item.slug}`}
-            className="text-sm font-medium hover:underline line-clamp-1"
+            className="type-body font-medium hover:opacity-70 line-clamp-1"
           >
             {item.name}
           </Link>
-          <p className="text-xs text-muted-foreground mt-1">
-            سایز: {item.size} · رنگ: {item.color}
+          <p className="type-caption mt-1">
+            {item.size} · {item.color}
           </p>
-          <p className="text-sm font-semibold mt-2">
+          <p className="type-body font-medium mt-2 num" data-num>
             {formatPrice(item.price)}
           </p>
         </div>
@@ -52,10 +52,10 @@ export default function CartItem({ item }: Props) {
           <button
             type="button"
             onClick={() => removeItem(item.id)}
-            className="p-2 text-muted-foreground hover:text-foreground"
+            className="p-2.5 text-muted-foreground hover:text-foreground transition-colors"
             aria-label="حذف از سبد"
           >
-            <Trash2 className="h-4 w-4" />
+            <Trash2 className="h-4 w-4" strokeWidth={1.5} />
           </button>
         </div>
       </div>
