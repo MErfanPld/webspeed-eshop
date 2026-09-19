@@ -17,14 +17,10 @@ export default function ProductGrid({ products, className }: ProductGridProps) {
 
   return (
     <div
-      className={`grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-3 gap-y-8 sm:gap-x-5 sm:gap-y-10 ${className || ""}`}
+      className={`grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-3 gap-y-8 sm:gap-x-4 sm:gap-y-10 ${className || ""}`}
     >
       {products.map((product, i) => (
-        <ProductCard
-          key={product.id}
-          product={product}
-          priority={i < 4}
-        />
+        <ProductCard key={product.id} product={product} priority={i < 4} />
       ))}
     </div>
   );

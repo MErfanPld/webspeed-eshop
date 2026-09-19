@@ -20,10 +20,10 @@ export default function CartPage() {
 
   if (items.length === 0) {
     return (
-      <Container className="py-24 text-center">
+      <Container className="py-24 sm:py-32 text-center">
         <h1 className="type-headline mb-4">سبد خرید خالی است</h1>
-        <p className="type-body text-muted-foreground mb-10">
-          هنوز محصولی انتخاب نکرده‌اید.
+        <p className="type-body text-muted-foreground mb-10 max-w-sm mx-auto">
+          هنوز محصولی انتخاب نکرده‌اید. مجموعه را ببینید و شروع کنید.
         </p>
         <Link href="/products">
           <Button size="lg">مشاهده محصولات</Button>
@@ -54,7 +54,7 @@ export default function CartPage() {
             </div>
           ))}
         </div>
-        <div className="lg:col-span-4">
+        <div className="lg:col-span-4 lg:sticky lg:top-24 lg:self-start">
           <CartSummary />
         </div>
       </div>
