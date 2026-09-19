@@ -18,11 +18,11 @@ const navLinks = [
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const { totalItems } = useCart();
+  const { totalItems, isReady } = useCart();
 
   return (
     <>
-      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm pt-safe">
+      <header className="sticky top-0 z-50 bg-background pt-safe">
         <div className="mx-auto flex h-14 sm:h-[3.75rem] max-w-content items-center justify-between px-4 xs:px-5 sm:px-6 lg:px-8">
           <button
             type="button"
@@ -74,7 +74,7 @@ export default function Navbar() {
               aria-label="سبد خرید"
             >
               <ShoppingBag className="h-5 w-5" strokeWidth={1.5} />
-              {totalItems > 0 && (
+              {isReady && totalItems > 0 && (
                 <span className="absolute top-1.5 left-1.5 flex h-[17px] min-w-[17px] items-center justify-center rounded-full bg-accent px-1 text-[10px] font-semibold text-accent-foreground leading-none num">
                   {totalItems > 9 ? "۹+" : formatNumber(totalItems)}
                 </span>

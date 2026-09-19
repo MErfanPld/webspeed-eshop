@@ -43,7 +43,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fa" dir="rtl" className={vazirmatn.variable}>
-      <body className="min-h-screen flex flex-col no-x-scroll font-sans">
+      <body
+        className="min-h-screen flex flex-col no-x-scroll font-sans"
+        suppressHydrationWarning
+      >
         <CartProvider>
           <AnnouncementBar />
           <Navbar />
