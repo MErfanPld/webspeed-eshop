@@ -1,7 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
 import ProductGrid from "@/components/products/ProductGrid";
-import Button from "@/components/ui/Button";
 import Container from "@/components/ui/Container";
 import { getFeaturedProducts, getNewArrivals } from "@/data/products";
 import { categories } from "@/data/categories";
@@ -9,164 +8,90 @@ import { categories } from "@/data/categories";
 export default function HomePage() {
   const featured = getFeaturedProducts().slice(0, 8);
   const newest = getNewArrivals().slice(0, 4);
-  const cats = categories.filter((c) => c.id !== "all").slice(0, 4);
+  const cats = categories.filter((c) => c.id !== "all").slice(0, 6);
 
   return (
     <div className="no-x-scroll">
-      <section className="relative h-[min(92vh,920px)] min-h-[520px] w-full overflow-hidden bg-foreground">
+      <section className="relative h-[min(88vh,860px)] min-h-[480px] w-full overflow-hidden bg-foreground">
         <Image
-          src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=1920&q=80"
+          src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1920&q=80"
           alt=""
           fill
           priority
-          className="object-cover object-center opacity-70"
+          className="object-cover object-[center_30%] opacity-75"
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-foreground/25" />
-        <div className="absolute inset-0 flex flex-col justify-end px-5 sm:px-8 lg:px-12 pb-16 sm:pb-20 lg:pb-24">
-          <p className="type-label text-white/70 mb-5">فصل جدید</p>
-          <h1 className="type-display text-white max-w-[14ch]">
-            کمتر.
-            <br />
-            بهتر.
+        <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 via-foreground/20 to-transparent" />
+        <div className="absolute inset-0 flex flex-col items-center justify-end pb-16 sm:pb-20 lg:pb-24 px-5 text-center">
+          <p className="type-label text-white/80 mb-4">فصل جدید</p>
+          <h1 className="type-display text-white max-w-[16ch]">
+            آماده برای شروع دوباره
           </h1>
-          <p className="mt-5 type-body text-white/75 max-w-sm font-light">
-            پوشاک مینیمال برای کسانی که کیفیت را به تعداد ترجیح می‌دهند.
+          <p className="mt-4 type-body text-white/80 max-w-md">
+            لایه‌های سبک برای روزهای خنک. کیفیت بدون مصالحه.
           </p>
-          <div className="mt-8 sm:mt-10">
-            <Link href="/products">
-              <Button
-                size="lg"
-                className="bg-white text-foreground hover:opacity-90 min-w-[10rem]"
-              >
-                مشاهده مجموعه
-              </Button>
+          <div className="mt-8 flex flex-col xs:flex-row gap-3 w-full xs:w-auto">
+            <Link href="/products?gender=men" className="btn-primary bg-white text-foreground hover:opacity-90 w-full xs:w-auto">
+              مردانه
+            </Link>
+            <Link href="/products?gender=women" className="btn-outline border-white text-white shadow-[inset_0_0_0_1px_#fff] hover:bg-white hover:text-foreground w-full xs:w-auto">
+              زنانه
             </Link>
           </div>
         </div>
       </section>
 
-      <Container className="py-16 sm:py-24 lg:py-30">
-        <div className="max-w-2xl mx-auto text-center">
-          <p className="type-label text-muted-foreground mb-6">فلسفه</p>
-          <h2 className="type-headline text-foreground">
-            طراحی بدون زمان.
-            <br />
-            ساخته‌شده برای ماندن.
-          </h2>
-          <p className="mt-6 type-body text-muted-foreground max-w-md mx-auto">
-            هر قطعه با دقت در پارچه، برش و جزئیات انتخاب می‌شود — برای سال‌ها، نه یک فصل.
-          </p>
-        </div>
-      </Container>
-
-      <section className="pb-16 sm:pb-24">
-        <Container>
-          <div className="flex items-end justify-between mb-8 sm:mb-12">
-            <h2 className="type-headline">کاوش</h2>
-            <Link
-              href="/products"
-              className="type-caption hidden sm:inline hover:text-foreground transition-colors"
-            >
-              همه محصولات
-            </Link>
+      <section className="grid grid-cols-1 md:grid-cols-2">
+        <Link
+          href="/products?gender=men"
+          className="group relative aspect-[4/5] md:aspect-auto md:min-h-[520px] overflow-hidden bg-muted"
+        >
+          <Image
+            src="https://images.unsplash.com/photo-1490576476680-64ee07a35a7f?w=1200&q=80"
+            alt="مردانه"
+            fill
+            className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+            sizes="(max-width: 768px) 100vw, 50vw"
+          />
+          <div className="absolute inset-0 bg-foreground/25 group-hover:bg-foreground/35 transition-colors" />
+          <div className="absolute inset-0 flex flex-col items-center justify-end pb-10 sm:pb-14">
+            <span className="type-headline text-white mb-4">آقایان</span>
+            <span className="btn-outline text-white shadow-[inset_0_0_0_1px_#fff] hover:bg-white hover:text-foreground text-xs">
+              خرید مردانه
+            </span>
           </div>
-
-          <div className="grid grid-cols-2 lg:grid-cols-12 gap-3 sm:gap-4 lg:gap-5">
-            {cats[0] && (
-              <Link
-                href={`/products?category=${cats[0].slug}`}
-                className="lg:col-span-7 group relative aspect-[4/5] sm:aspect-[3/4] lg:aspect-[16/11] overflow-hidden bg-muted"
-              >
-                {cats[0].image && (
-                  <Image
-                    src={cats[0].image}
-                    alt={cats[0].name}
-                    fill
-                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02]"
-                    sizes="(max-width: 1024px) 50vw, 60vw"
-                  />
-                )}
-                <div className="absolute inset-0 bg-foreground/10 group-hover:bg-foreground/20 transition-colors duration-300" />
-                <span className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 type-title text-white">
-                  {cats[0].name}
-                </span>
-              </Link>
-            )}
-            {cats[1] && (
-              <Link
-                href={`/products?category=${cats[1].slug}`}
-                className="lg:col-span-5 group relative aspect-[4/5] sm:aspect-[3/4] lg:aspect-auto lg:min-h-full overflow-hidden bg-muted"
-              >
-                {cats[1].image && (
-                  <Image
-                    src={cats[1].image}
-                    alt={cats[1].name}
-                    fill
-                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02]"
-                    sizes="(max-width: 1024px) 50vw, 40vw"
-                  />
-                )}
-                <div className="absolute inset-0 bg-foreground/10 group-hover:bg-foreground/20 transition-colors duration-300" />
-                <span className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 type-title text-white">
-                  {cats[1].name}
-                </span>
-              </Link>
-            )}
-            {cats[2] && (
-              <Link
-                href={`/products?category=${cats[2].slug}`}
-                className="lg:col-span-5 group relative aspect-[4/5] overflow-hidden bg-muted"
-              >
-                {cats[2].image && (
-                  <Image
-                    src={cats[2].image}
-                    alt={cats[2].name}
-                    fill
-                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02]"
-                    sizes="(max-width: 1024px) 50vw, 40vw"
-                  />
-                )}
-                <div className="absolute inset-0 bg-foreground/10 group-hover:bg-foreground/20 transition-colors duration-300" />
-                <span className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 type-title text-white">
-                  {cats[2].name}
-                </span>
-              </Link>
-            )}
-            {cats[3] && (
-              <Link
-                href={`/products?category=${cats[3].slug}`}
-                className="lg:col-span-7 group relative aspect-[4/5] sm:aspect-[3/4] lg:aspect-[16/11] overflow-hidden bg-muted"
-              >
-                {cats[3].image && (
-                  <Image
-                    src={cats[3].image}
-                    alt={cats[3].name}
-                    fill
-                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.02]"
-                    sizes="(max-width: 1024px) 50vw, 60vw"
-                  />
-                )}
-                <div className="absolute inset-0 bg-foreground/10 group-hover:bg-foreground/20 transition-colors duration-300" />
-                <span className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 type-title text-white">
-                  {cats[3].name}
-                </span>
-              </Link>
-            )}
+        </Link>
+        <Link
+          href="/products?gender=women"
+          className="group relative aspect-[4/5] md:aspect-auto md:min-h-[520px] overflow-hidden bg-muted"
+        >
+          <Image
+            src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=1200&q=80"
+            alt="زنانه"
+            fill
+            className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+            sizes="(max-width: 768px) 100vw, 50vw"
+          />
+          <div className="absolute inset-0 bg-foreground/25 group-hover:bg-foreground/35 transition-colors" />
+          <div className="absolute inset-0 flex flex-col items-center justify-end pb-10 sm:pb-14">
+            <span className="type-headline text-white mb-4">بانوان</span>
+            <span className="btn-outline text-white shadow-[inset_0_0_0_1px_#fff] hover:bg-white hover:text-foreground text-xs">
+              خرید زنانه
+            </span>
           </div>
-        </Container>
+        </Link>
       </section>
 
-      <section className="pb-16 sm:pb-24">
+      <section className="py-14 sm:py-20">
         <Container>
-          <div className="flex items-end justify-between mb-8 sm:mb-12">
+          <div className="flex items-end justify-between mb-8 sm:mb-10">
             <div>
-              <p className="type-label text-muted-foreground mb-2">تازه</p>
+              <p className="type-label text-muted-foreground mb-1.5">تازه رسیده</p>
               <h2 className="type-headline">جدیدترین‌ها</h2>
             </div>
             <Link
               href="/products?sort=newest"
-              className="type-caption hover:text-foreground transition-colors"
+              className="type-caption font-medium text-foreground underline underline-offset-4 hover:opacity-70"
             >
               مشاهده همه
             </Link>
@@ -175,45 +100,71 @@ export default function HomePage() {
         </Container>
       </section>
 
-      <section className="relative py-24 sm:py-32 lg:py-40 overflow-hidden">
-        <div className="absolute inset-0">
-          <Image
-            src="https://images.unsplash.com/photo-1558171813-4c088753af8f?w=1800&q=80"
-            alt=""
-            fill
-            className="object-cover"
-            sizes="100vw"
-          />
-          <div className="absolute inset-0 bg-foreground/50" />
-        </div>
+      <section className="pb-14 sm:pb-20">
+        <Container>
+          <div className="mb-8 sm:mb-10">
+            <p className="type-label text-muted-foreground mb-1.5">کاوش</p>
+            <h2 className="type-headline">خرید بر اساس دسته</h2>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5 sm:gap-3">
+            {cats.map((cat) => (
+              <Link
+                key={cat.id}
+                href={`/products?category=${cat.slug}`}
+                className="group relative aspect-[3/4] overflow-hidden bg-muted"
+              >
+                {cat.image && (
+                  <Image
+                    src={cat.image}
+                    alt={cat.name}
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+                    sizes="(max-width: 768px) 50vw, 33vw"
+                  />
+                )}
+                <div className="absolute inset-0 bg-foreground/20 group-hover:bg-foreground/30 transition-colors" />
+                <span className="absolute bottom-4 right-4 left-4 type-title text-white text-center">
+                  {cat.name}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      <section className="relative py-24 sm:py-32 overflow-hidden">
+        <Image
+          src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=1800&q=80"
+          alt=""
+          fill
+          className="object-cover"
+          sizes="100vw"
+        />
+        <div className="absolute inset-0 bg-foreground/55" />
         <Container className="relative text-center">
-          <p className="type-label text-white/60 mb-6">کیفیت</p>
+          <p className="type-label text-white/70 mb-4">کیفیت</p>
           <h2 className="type-headline text-white max-w-lg mx-auto">
-            پارچه منتخب.
-            <br />
-            دوخت دقیق.
+            ساخته‌شده برای پیشرفت
           </h2>
-          <Link href="/about" className="inline-block mt-10">
-            <Button
-              size="lg"
-              className="bg-white text-foreground hover:opacity-90"
-            >
-              داستان برند
-            </Button>
+          <p className="mt-4 type-body text-white/80 max-w-sm mx-auto">
+            هر قطعه با مواد منتخب و جزئیات دقیق طراحی شده تا سال‌ها همراه شما باشد.
+          </p>
+          <Link href="/about" className="inline-block mt-8 btn-primary bg-white text-foreground">
+            داستان ما
           </Link>
         </Container>
       </section>
 
-      <section className="py-16 sm:py-24">
+      <section className="py-14 sm:py-20">
         <Container>
-          <div className="flex items-end justify-between mb-8 sm:mb-12">
+          <div className="flex items-end justify-between mb-8 sm:mb-10">
             <div>
-              <p className="type-label text-muted-foreground mb-2">انتخاب</p>
-              <h2 className="type-headline">محصولات ویژه</h2>
+              <p className="type-label text-muted-foreground mb-1.5">پرطرفدار</p>
+              <h2 className="type-headline">پرفروش‌ها</h2>
             </div>
             <Link
               href="/products"
-              className="type-caption hover:text-foreground transition-colors"
+              className="type-caption font-medium text-foreground underline underline-offset-4 hover:opacity-70"
             >
               مشاهده همه
             </Link>
@@ -222,18 +173,15 @@ export default function HomePage() {
         </Container>
       </section>
 
-      <section className="pb-20 sm:pb-28">
-        <Container>
-          <hr className="rule mb-16 sm:mb-20" />
-          <div className="text-center max-w-md mx-auto">
-            <h2 className="type-headline">شروع کنید</h2>
-            <p className="mt-4 type-body text-muted-foreground">
-              مجموعه را ببینید و قطعه‌ای را پیدا کنید که سال‌ها با شما بماند.
-            </p>
-            <Link href="/products" className="inline-block mt-8">
-              <Button size="lg">فروشگاه</Button>
-            </Link>
-          </div>
+      <section className="bg-muted">
+        <Container className="py-14 sm:py-18 text-center">
+          <h2 className="type-headline mb-3">شروع کنید</h2>
+          <p className="type-body text-muted-foreground max-w-md mx-auto mb-8">
+            مجموعه کامل را ببینید و قطعه‌ای پیدا کنید که با سبک شما هماهنگ باشد.
+          </p>
+          <Link href="/products" className="btn-primary">
+            ورود به فروشگاه
+          </Link>
         </Container>
       </section>
     </div>
