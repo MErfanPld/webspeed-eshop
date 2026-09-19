@@ -23,15 +23,17 @@ const config: Config = {
         "muted-foreground": "var(--muted-foreground)",
         border: "var(--border)",
         accent: "var(--accent)",
+        "accent-hover": "var(--accent-hover)",
         "accent-foreground": "var(--accent-foreground)",
         surface: "var(--surface)",
+        concrete: "var(--concrete)",
       },
       fontFamily: {
         sans: ["var(--font-vazirmatn)", "system-ui", "sans-serif"],
       },
       maxWidth: {
-        content: "1320px",
-        prose: "42rem",
+        content: "1400px",
+        prose: "40rem",
       },
       spacing: {
         18: "4.5rem",

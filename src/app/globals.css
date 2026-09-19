@@ -2,20 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
-/* WebSpeed Design System — Apple clarity + High Fashion Editorial */
+/* WebSpeed × Rhone-inspired Design System */
 
 :root {
-  --background: #f7f5f2;
-  --foreground: #0c0c0c;
-  --muted: #efece7;
-  --muted-foreground: #737373;
-  --border: #e4e0da;
-  --accent: #0c0c0c;
-  --accent-foreground: #f7f5f2;
+  --background: #fbf9f9;
+  --foreground: #1c1519;
+  --muted: #efecea;
+  --muted-foreground: #6b6560;
+  --border: #e5e1dc;
+  --accent: #867256;
+  --accent-hover: #706049;
+  --accent-foreground: #fbf9f9;
   --surface: #ffffff;
-  --leading-tight: 1.15;
-  --leading-snug: 1.35;
-  --leading-normal: 1.65;
+  --concrete: #f2f2f2;
+  --error: #e22120;
+  --leading-tight: 1.12;
+  --leading-snug: 1.3;
+  --leading-normal: 1.6;
 }
 
 @layer base {
@@ -65,8 +68,8 @@
   }
 
   :focus-visible {
-    outline: 1.5px solid var(--foreground);
-    outline-offset: 3px;
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -82,24 +85,23 @@
 
 @layer components {
   .type-display {
-    font-size: clamp(2.5rem, 8.5vw, 5.25rem);
+    font-size: clamp(2.75rem, 9vw, 5rem);
     line-height: var(--leading-tight);
-    font-weight: 500;
-    letter-spacing: -0.03em;
-  }
-
-  .type-headline {
-    font-size: clamp(1.625rem, 4vw, 2.75rem);
-    line-height: var(--leading-tight);
-    font-weight: 500;
+    font-weight: 700;
     letter-spacing: -0.02em;
   }
 
+  .type-headline {
+    font-size: clamp(1.75rem, 4.5vw, 2.75rem);
+    line-height: var(--leading-tight);
+    font-weight: 700;
+    letter-spacing: -0.015em;
+  }
+
   .type-title {
-    font-size: clamp(1.125rem, 2.2vw, 1.375rem);
+    font-size: clamp(1.125rem, 2vw, 1.375rem);
     line-height: var(--leading-snug);
-    font-weight: 500;
-    letter-spacing: -0.01em;
+    font-weight: 600;
   }
 
   .type-body {
@@ -118,8 +120,8 @@
   .type-label {
     font-size: 0.6875rem;
     line-height: 1.4;
-    font-weight: 500;
-    letter-spacing: 0.14em;
+    font-weight: 600;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
   }
 
@@ -132,6 +134,59 @@
 
   .surface {
     background: var(--surface);
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 0 1.75rem;
+    background: var(--foreground);
+    color: var(--background);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    transition: background 0.2s ease, opacity 0.2s ease;
+  }
+  .btn-primary:hover {
+    opacity: 0.88;
+  }
+
+  .btn-accent {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 0 1.75rem;
+    background: var(--accent);
+    color: var(--accent-foreground);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    transition: background 0.2s ease;
+  }
+  .btn-accent:hover {
+    background: var(--accent-hover);
+  }
+
+  .btn-outline {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 0 1.75rem;
+    background: transparent;
+    color: var(--foreground);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    box-shadow: inset 0 0 0 1px var(--foreground);
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+  .btn-outline:hover {
+    background: var(--foreground);
+    color: var(--background);
   }
 }
 
@@ -160,13 +215,13 @@
 
   @media (hover: hover) and (pointer: fine) {
     .img-swap-a {
-      transition: opacity 0.45s ease;
+      transition: opacity 0.4s ease;
     }
     .group:hover .img-swap-a {
       opacity: 0;
     }
     .img-swap-b {
-      transition: opacity 0.45s ease;
+      transition: opacity 0.4s ease;
       opacity: 0;
     }
     .group:hover .img-swap-b {
