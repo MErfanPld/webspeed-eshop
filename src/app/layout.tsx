@@ -2,9 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Vazirmatn } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
-import AnnouncementBar from "@/components/layout/AnnouncementBar";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
+import ShopChrome from "@/components/layout/ShopChrome";
 
 const vazirmatn = Vazirmatn({
   subsets: ["arabic", "latin"],
@@ -48,10 +46,7 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <CartProvider>
-          <AnnouncementBar />
-          <Navbar />
-          <main className="flex-1 w-full min-w-0">{children}</main>
-          <Footer />
+          <ShopChrome>{children}</ShopChrome>
         </CartProvider>
       </body>
     </html>

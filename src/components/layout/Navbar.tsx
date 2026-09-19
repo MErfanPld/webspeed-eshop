@@ -8,11 +8,10 @@ import { cn, formatNumber } from "@/lib/utils";
 import SearchOverlay from "@/components/navigation/SearchOverlay";
 
 const navLinks = [
-  { href: "/products?sort=newest", label: "جدید" },
+  { href: "/", label: "خانه" },
   { href: "/products?gender=men", label: "مردانه" },
   { href: "/products?gender=women", label: "زنانه" },
-  { href: "/products", label: "همه" },
-  { href: "/about", label: "درباره" },
+  { href: "/about", label: "درباره ما" },
 ];
 
 export default function Navbar() {
