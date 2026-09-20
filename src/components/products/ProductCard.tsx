@@ -61,15 +61,17 @@ export default function ProductCard({ product, priority }: ProductCardProps) {
             {product.name}
           </h3>
 
-          <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
-            <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
-            <span className="num font-medium text-foreground/80" data-num>
-              {product.rating.toFixed(1)}
-            </span>
-            <span className="num" data-num>
-              ({formatNumber(product.reviewCount)})
-            </span>
-          </div>
+          {(product.rating != null || product.reviewCount != null) && (
+            <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
+              <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+              <span className="num font-medium text-foreground/80" data-num>
+                {(product.rating ?? 0).toFixed(1)}
+              </span>
+              <span className="num" data-num>
+                ({formatNumber(product.reviewCount ?? 0)})
+              </span>
+            </div>
+          )}
 
           <div className="flex items-baseline gap-2 flex-wrap pt-0.5">
             {hasDiscount && (

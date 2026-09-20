@@ -27,8 +27,8 @@ export type Product = {
   featured: boolean;
   newArrival: boolean;
   stock: number;
-  rating: number;
-  reviewCount: number;
+  rating?: number;
+  reviewCount?: number;
   freeShipping?: boolean;
   tags?: string[];
   specs?: Record<string, string>;
