@@ -6,7 +6,8 @@ type SortSelectProps = {
 };
 
 const options = [
-  { value: "featured", label: "ویژه" },
+  { value: "featured", label: "پیشنهاد ما" },
+  { value: "bestseller", label: "پرفروش‌ترین" },
   { value: "newest", label: "جدیدترین" },
   { value: "price-asc", label: "ارزان‌ترین" },
   { value: "price-desc", label: "گران‌ترین" },
@@ -17,7 +18,7 @@ export default function SortSelect({ value, onChange }: SortSelectProps) {
     <select
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      className="h-10 rounded-sm border border-border bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-foreground"
+      className="h-9 bg-surface border border-border rounded-lg text-xs px-2 focus:outline-none focus:ring-2 focus:ring-[var(--digi-blue)]/30 cursor-pointer"
       aria-label="مرتب‌سازی"
     >
       {options.map((opt) => (
