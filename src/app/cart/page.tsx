@@ -2,59 +2,62 @@
 
 import Link from "next/link";
 import Container from "@/components/ui/Container";
+import Breadcrumb from "@/components/ui/Breadcrumb";
 import CartItem from "@/components/cart/CartItem";
 import CartSummary from "@/components/cart/CartSummary";
-import Button from "@/components/ui/Button";
 import { useCart } from "@/context/CartContext";
+import { ShoppingBag } from "lucide-react";
+import { formatNumber } from "@/lib/utils";
 
 export default function CartPage() {
-  const { items, isReady } = useCart();
+  const { items, totalItems, isReady } = useCart();
 
   if (!isReady) {
     return (
-      <Container className="py-24 text-center type-caption">
-        در حال بارگذاری...
+      <Container className="py-20 text-center text-sm text-muted-foreground">
+        در حال بارگذاری سبد...
       </Container>
     );
   }
 
   if (items.length === 0) {
     return (
-      <Container className="py-24 sm:py-32 text-center">
-        <h1 className="type-headline mb-4">سبد خرید خالی است</h1>
-        <p className="type-body text-muted-foreground mb-10 max-w-sm mx-auto">
-          هنوز محصولی انتخاب نکرده‌اید. مجموعه را ببینید و شروع کنید.
-        </p>
-        <Link href="/products">
-          <Button size="lg">مشاهده محصولات</Button>
-        </Link>
+      <Container className="py-16 sm:py-24">
+        <div className="max-w-sm mx-auto text-center space-y-5">
+          <div className="mx-auto h-16 w-16 rounded-full bg-muted flex items-center justify-center">
+            <ShoppingBag className="h-7 w-7 text-muted-foreground" strokeWidth={1.5} />
+          </div>
+          <h1 className="text-xl font-bold">سبد خرید خالی است</h1>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            هنوز محصولی اضافه نکرده‌اید. از فروشگاه دیدن کنید و شروع کنید.
+          </p>
+          <Link
+            href="/products"
+            className="inline-flex h-11 items-center px-6 rounded-xl bg-foreground text-background text-sm font-semibold"
+          >
+            مشاهده محصولات
+          </Link>
+        </div>
       </Container>
     );
   }
 
   return (
-    <Container className="py-10 sm:py-14">
-      <nav className="type-caption mb-8">
-        <Link href="/" className="hover:text-foreground transition-colors">
-          خانه
-        </Link>
-        <span className="mx-2 text-border">/</span>
-        <span className="text-foreground">سبد خرید</span>
-      </nav>
-
-      <h1 className="type-headline mb-10">سبد خرید</h1>
-
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
-        <div className="lg:col-span-8">
-          <hr className="rule" />
+    <Container className="py-6 sm:py-10">
+      <Breadcrumb items={[{ label: "خانه", href: "/" }, { label: "سبد خرید" }]} />
+      <div className="flex items-baseline justify-between gap-4 mb-6 sm:mb-8">
+        <h1 className="text-xl sm:text-2xl font-bold tracking-tight">سبد خرید</h1>
+        <span className="text-xs text-muted-foreground num" data-num>
+          {formatNumber(totalItems)} کالا
+        </span>
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
+        <div className="lg:col-span-7 xl:col-span-8 space-y-3">
           {items.map((item) => (
-            <div key={item.id}>
-              <CartItem item={item} />
-              <hr className="rule" />
-            </div>
+            <CartItem key={item.id} item={item} />
           ))}
         </div>
-        <div className="lg:col-span-4 lg:sticky lg:top-24 lg:self-start">
+        <div className="lg:col-span-5 xl:col-span-4">
           <CartSummary />
         </div>
       </div>
