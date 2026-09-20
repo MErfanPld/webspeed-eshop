@@ -1,189 +1,185 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import ProductGrid from "@/components/products/ProductGrid";
 import Container from "@/components/ui/Container";
-import { getFeaturedProducts, getNewArrivals } from "@/data/products";
+import ProductCarousel from "@/components/home/ProductCarousel";
+import CategoryMarquee from "@/components/home/CategoryMarquee";
+import ProductGrid from "@/components/products/ProductGrid";
+import { getFeaturedProducts, getNewArrivals, products } from "@/data/products";
 import { categories } from "@/data/categories";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+
+const slides = [
+  {
+    image:
+      "https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1400&q=70",
+    eyebrow: "مجموعه جدید",
+    title: "فصل تازه، استایل تازه",
+    subtitle: "پوشاک مینیمال با کیفیت بالا — برای هر روز زندگی",
+    cta: "مشاهده محصولات",
+    href: "/products?sort=newest",
+  },
+  {
+    image:
+      "https://images.unsplash.com/photo-1490576476680-64ee07a35a7f?w=1400&q=70",
+    eyebrow: "مردانه",
+    title: "طراحی ساده، دوام بالا",
+    subtitle: "قطعات ضروری کمد مردانه با برش دقیق",
+    cta: "خرید مردانه",
+    href: "/products?gender=men",
+  },
+  {
+    image:
+      "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=1400&q=70",
+    eyebrow: "زنانه",
+    title: "ظرافت در جزئیات",
+    subtitle: "انتخاب‌های شیک برای استایل روزمره و رسمی",
+    cta: "خرید زنانه",
+    href: "/products?gender=women",
+  },
+];
 
 export default function HomePage() {
+  const [idx, setIdx] = useState(0);
   const featured = getFeaturedProducts().slice(0, 8);
-  const newest = getNewArrivals().slice(0, 4);
-  const cats = categories.filter((c) => c.id !== "all").slice(0, 6);
+  const newest = getNewArrivals().slice(0, 10);
+  const specials = products
+    .filter((p) => p.compareAtPrice && p.compareAtPrice > p.price)
+    .slice(0, 8);
+  const cats = categories.filter((c) => c.id !== "all");
+
+  useEffect(() => {
+    const t = setInterval(() => setIdx((i) => (i + 1) % slides.length), 5500);
+    return () => clearInterval(t);
+  }, []);
 
   return (
-    <div className="no-x-scroll">
-      <section className="relative h-[min(88vh,860px)] min-h-[480px] w-full overflow-hidden bg-foreground">
-        <Image
-          src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1920&q=80"
-          alt=""
-          fill
-          priority
-          className="object-cover object-[center_30%] opacity-75"
-          sizes="100vw"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-foreground/60 via-foreground/20 to-transparent" />
-        <div className="absolute inset-0 flex flex-col items-center justify-end pb-16 sm:pb-20 lg:pb-24 px-5 text-center">
-          <p className="type-label text-white/80 mb-4">فصل جدید</p>
-          <h1 className="type-display text-white max-w-[16ch]">
-            آماده برای شروع دوباره
-          </h1>
-          <p className="mt-4 type-body text-white/80 max-w-md">
-            لایه‌های سبک برای روزهای خنک. کیفیت بدون مصالحه.
-          </p>
-          <div className="mt-8 flex flex-col xs:flex-row gap-3 w-full xs:w-auto">
-            <Link href="/products?gender=men" className="btn-primary bg-white text-foreground hover:opacity-90 w-full xs:w-auto">
-              مردانه
-            </Link>
-            <Link href="/products?gender=women" className="btn-outline border-white text-white shadow-[inset_0_0_0_1px_#fff] hover:bg-white hover:text-foreground w-full xs:w-auto">
-              زنانه
-            </Link>
+    <div className="no-x-scroll pb-8">
+      <section className="relative w-full h-[min(72vh,520px)] min-h-[280px] sm:min-h-[360px] overflow-hidden bg-foreground">
+        {slides.map((s, i) => (
+          <div
+            key={i}
+            className={`absolute inset-0 transition-opacity duration-700 ease-out ${
+              i === idx ? "opacity-100 z-[1]" : "opacity-0 z-0"
+            }`}
+            aria-hidden={i !== idx}
+          >
+            <Image
+              src={s.image}
+              alt=""
+              fill
+              priority={i === 0}
+              className="object-cover object-center"
+              sizes="100vw"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/35 to-black/15" />
+            <div className="absolute inset-0 flex items-end sm:items-center">
+              <div className="w-full max-w-content mx-auto px-5 sm:px-8 lg:px-12 pb-12 sm:pb-0">
+                <p className="text-[11px] sm:text-xs font-semibold tracking-[0.2em] uppercase text-white/80 mb-3">
+                  {s.eyebrow}
+                </p>
+                <h1 className="text-[1.75rem] xs:text-3xl sm:text-4xl md:text-5xl font-bold text-white leading-[1.15] max-w-lg">
+                  {s.title}
+                </h1>
+                <p className="mt-3 sm:mt-4 text-sm sm:text-base text-white/85 max-w-md leading-relaxed">
+                  {s.subtitle}
+                </p>
+                <Link
+                  href={s.href}
+                  className="mt-5 sm:mt-7 inline-flex h-11 items-center justify-center px-6 rounded-lg bg-white text-foreground text-sm font-semibold hover:bg-white/90 transition-colors"
+                >
+                  {s.cta}
+                </Link>
+              </div>
+            </div>
           </div>
+        ))}
+
+        <button
+          type="button"
+          onClick={() => setIdx((i) => (i - 1 + slides.length) % slides.length)}
+          className="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 z-[2] h-10 w-10 rounded-full bg-white/90 hover:bg-white flex items-center justify-center shadow-md transition-colors"
+          aria-label="اسلاید قبلی"
+        >
+          <ChevronRight className="h-5 w-5" strokeWidth={1.5} />
+        </button>
+        <button
+          type="button"
+          onClick={() => setIdx((i) => (i + 1) % slides.length)}
+          className="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 z-[2] h-10 w-10 rounded-full bg-white/90 hover:bg-white flex items-center justify-center shadow-md transition-colors"
+          aria-label="اسلاید بعدی"
+        >
+          <ChevronLeft className="h-5 w-5" strokeWidth={1.5} />
+        </button>
+
+        <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-[2] flex items-center gap-2">
+          {slides.map((_, i) => (
+            <button
+              key={i}
+              type="button"
+              onClick={() => setIdx(i)}
+              className={`h-1.5 rounded-full transition-all duration-300 ${
+                i === idx ? "w-7 bg-white" : "w-1.5 bg-white/50 hover:bg-white/70"
+              }`}
+              aria-label={`اسلاید ${i + 1}`}
+            />
+          ))}
         </div>
       </section>
 
-      <section className="grid grid-cols-1 md:grid-cols-2">
-        <Link
-          href="/products?gender=men"
-          className="group relative aspect-[4/5] md:aspect-auto md:min-h-[520px] overflow-hidden bg-muted"
-        >
-          <Image
-            src="https://images.unsplash.com/photo-1490576476680-64ee07a35a7f?w=1200&q=80"
-            alt="مردانه"
-            fill
-            className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-            sizes="(max-width: 768px) 100vw, 50vw"
-          />
-          <div className="absolute inset-0 bg-foreground/25 group-hover:bg-foreground/35 transition-colors" />
-          <div className="absolute inset-0 flex flex-col items-center justify-end pb-10 sm:pb-14">
-            <span className="type-headline text-white mb-4">آقایان</span>
-            <span className="btn-outline text-white shadow-[inset_0_0_0_1px_#fff] hover:bg-white hover:text-foreground text-xs">
-              خرید مردانه
-            </span>
-          </div>
-        </Link>
-        <Link
-          href="/products?gender=women"
-          className="group relative aspect-[4/5] md:aspect-auto md:min-h-[520px] overflow-hidden bg-muted"
-        >
-          <Image
-            src="https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=1200&q=80"
-            alt="زنانه"
-            fill
-            className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
-            sizes="(max-width: 768px) 100vw, 50vw"
-          />
-          <div className="absolute inset-0 bg-foreground/25 group-hover:bg-foreground/35 transition-colors" />
-          <div className="absolute inset-0 flex flex-col items-center justify-end pb-10 sm:pb-14">
-            <span className="type-headline text-white mb-4">بانوان</span>
-            <span className="btn-outline text-white shadow-[inset_0_0_0_1px_#fff] hover:bg-white hover:text-foreground text-xs">
-              خرید زنانه
-            </span>
-          </div>
-        </Link>
-      </section>
+      <Container className="py-7 sm:py-9">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-base sm:text-lg font-bold">دسته‌بندی‌ها</h2>
+          <Link href="/products" className="text-xs text-muted-foreground hover:text-foreground">
+            همه
+          </Link>
+        </div>
+        <CategoryMarquee categories={cats} />
+      </Container>
 
-      <section className="py-14 sm:py-20">
-        <Container>
-          <div className="flex items-end justify-between mb-8 sm:mb-10">
-            <div>
-              <p className="type-label text-muted-foreground mb-1.5">تازه رسیده</p>
-              <h2 className="type-headline">جدیدترین‌ها</h2>
-            </div>
-            <Link
-              href="/products?sort=newest"
-              className="type-caption font-medium text-foreground underline underline-offset-4 hover:opacity-70"
-            >
-              مشاهده همه
-            </Link>
-          </div>
-          <ProductGrid products={newest} />
-        </Container>
-      </section>
+      <Container className="pb-8 sm:pb-10">
+        <div className="flex items-center justify-between mb-4 sm:mb-5">
+          <h2 className="text-base sm:text-lg font-bold">جدیدترین محصولات</h2>
+          <Link
+            href="/products?sort=newest"
+            className="text-xs font-medium text-[var(--discount)] hover:opacity-80"
+          >
+            مشاهده همه
+          </Link>
+        </div>
+        <ProductCarousel products={newest} />
+      </Container>
 
-      <section className="pb-14 sm:pb-20">
-        <Container>
-          <div className="mb-8 sm:mb-10">
-            <p className="type-label text-muted-foreground mb-1.5">کاوش</p>
-            <h2 className="type-headline">خرید بر اساس دسته</h2>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5 sm:gap-3">
-            {cats.map((cat) => (
-              <Link
-                key={cat.id}
-                href={`/products?category=${cat.slug}`}
-                className="group relative aspect-[3/4] overflow-hidden bg-muted"
-              >
-                {cat.image && (
-                  <Image
-                    src={cat.image}
-                    alt={cat.name}
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
-                    sizes="(max-width: 768px) 50vw, 33vw"
-                  />
-                )}
-                <div className="absolute inset-0 bg-foreground/20 group-hover:bg-foreground/30 transition-colors" />
-                <span className="absolute bottom-4 right-4 left-4 type-title text-white text-center">
-                  {cat.name}
-                </span>
+      {specials.length > 0 && (
+        <section className="bg-[#fff5f6] py-8 sm:py-10">
+          <Container>
+            <div className="flex items-center justify-between mb-4 sm:mb-5">
+              <h2 className="text-base sm:text-lg font-bold text-[var(--discount)]">
+                پیشنهاد شگفت‌انگیز
+              </h2>
+              <Link href="/products" className="text-xs font-medium text-[var(--discount)]">
+                همه تخفیف‌ها
               </Link>
-            ))}
-          </div>
-        </Container>
-      </section>
-
-      <section className="relative py-24 sm:py-32 overflow-hidden">
-        <Image
-          src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=1800&q=80"
-          alt=""
-          fill
-          className="object-cover"
-          sizes="100vw"
-        />
-        <div className="absolute inset-0 bg-foreground/55" />
-        <Container className="relative text-center">
-          <p className="type-label text-white/70 mb-4">کیفیت</p>
-          <h2 className="type-headline text-white max-w-lg mx-auto">
-            ساخته‌شده برای پیشرفت
-          </h2>
-          <p className="mt-4 type-body text-white/80 max-w-sm mx-auto">
-            هر قطعه با مواد منتخب و جزئیات دقیق طراحی شده تا سال‌ها همراه شما باشد.
-          </p>
-          <Link href="/about" className="inline-block mt-8 btn-primary bg-white text-foreground">
-            داستان ما
-          </Link>
-        </Container>
-      </section>
-
-      <section className="py-14 sm:py-20">
-        <Container>
-          <div className="flex items-end justify-between mb-8 sm:mb-10">
-            <div>
-              <p className="type-label text-muted-foreground mb-1.5">پرطرفدار</p>
-              <h2 className="type-headline">پرفروش‌ها</h2>
             </div>
-            <Link
-              href="/products"
-              className="type-caption font-medium text-foreground underline underline-offset-4 hover:opacity-70"
-            >
-              مشاهده همه
-            </Link>
-          </div>
-          <ProductGrid products={featured} />
-        </Container>
-      </section>
+            <ProductCarousel products={specials} />
+          </Container>
+        </section>
+      )}
 
-      <section className="bg-muted">
-        <Container className="py-14 sm:py-18 text-center">
-          <h2 className="type-headline mb-3">شروع کنید</h2>
-          <p className="type-body text-muted-foreground max-w-md mx-auto mb-8">
-            مجموعه کامل را ببینید و قطعه‌ای پیدا کنید که با سبک شما هماهنگ باشد.
-          </p>
-          <Link href="/products" className="btn-primary">
-            ورود به فروشگاه
+      <Container className="py-8 sm:py-12">
+        <div className="flex items-center justify-between mb-4 sm:mb-5">
+          <h2 className="text-base sm:text-lg font-bold">پرفروش‌ترین‌ها</h2>
+          <Link
+            href="/products?sort=bestseller"
+            className="text-xs text-muted-foreground hover:text-foreground"
+          >
+            مشاهده همه
           </Link>
-        </Container>
-      </section>
+        </div>
+        <ProductGrid products={featured} />
+      </Container>
     </div>
   );
 }
