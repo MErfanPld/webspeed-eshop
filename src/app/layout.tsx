@@ -40,9 +40,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fa" dir="rtl" className={vazirmatn.variable}>
+    <html lang="fa" dir="rtl" className={`${vazirmatn.variable} ${vazirmatn.className}`}>
       <body
-        className="min-h-screen flex flex-col no-x-scroll font-sans"
+        className="min-h-screen flex flex-col no-x-scroll font-sans antialiased"
+        style={{ fontFamily: "var(--font-vazirmatn), Tahoma, system-ui, sans-serif" }}
         suppressHydrationWarning
       >
         <CartProvider>
