@@ -54,11 +54,11 @@ export default function Navbar() {
   const router = useRouter();
 
   useEffect(() => {
-    document.body.style.overflow = drawerOpen ? "hidden" : "";
+    document.body.style.overflow = drawerOpen || megaOpen ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
     };
-  }, [drawerOpen]);
+  }, [drawerOpen, megaOpen]);
 
   const submitSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,7 +75,10 @@ export default function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 bg-white border-b border-border pt-safe">
+      <header
+        className="sticky top-0 z-50 bg-white border-b border-border pt-safe"
+        style={{ ["--header-offset" as string]: "7.25rem" }}
+      >
         <div className="mx-auto max-w-content px-3 sm:px-4 lg:px-6">
           <div className="flex items-center gap-2 sm:gap-3 h-14 sm:h-[4.25rem]">
             <button
@@ -167,7 +170,12 @@ export default function Navbar() {
           <div className="mx-auto max-w-content px-6 flex items-center h-11 gap-0.5 text-[13px]">
             <button
               type="button"
-              className="flex items-center gap-1.5 h-9 px-3 rounded-lg font-semibold text-foreground hover:bg-muted transition-colors"
+              className={cn(
+                "flex items-center gap-1.5 h-9 px-3 rounded-lg font-semibold transition-colors",
+                megaOpen
+                  ? "bg-primary/10 text-primary"
+                  : "text-foreground hover:bg-muted"
+              )}
               onClick={() => setMegaOpen((v) => !v)}
               aria-expanded={megaOpen}
             >
@@ -196,9 +204,11 @@ export default function Navbar() {
               </Link>
             ))}
           </div>
-          <MegaMenu open={megaOpen} onClose={() => setMegaOpen(false)} />
         </div>
       </header>
+
+      {/* Mega menu outside header flow so fixed panel works */}
+      <MegaMenu open={megaOpen} onClose={() => setMegaOpen(false)} />
 
       <div
         className={cn(
