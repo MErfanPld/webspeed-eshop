@@ -163,6 +163,24 @@ export class LocalStoragePageRepository implements PageRepository {
     return readAll().find((p) => p.id === id) ?? null;
   }
 
+  async getPublishedPage(id: string): Promise<ManagedPage | null> {
+    const page = await this.getPage(id);
+    if (!page) return null;
+    if (page.status !== "published") return null;
+    if (
+      !Array.isArray(page.publishedBlocks) ||
+      page.publishedBlocks.length === 0
+    ) {
+      return null;
+    }
+    const validated = validatePage(page);
+    if (!validated.ok) {
+      console.warn("[PageRepository] published page invalid:", validated.error);
+      return null;
+    }
+    return validated.data;
+  }
+
   async savePage(page: ManagedPage): Promise<ManagedPage> {
     const validated = validatePage({
       ...page,
@@ -228,12 +246,10 @@ export class LocalStoragePageRepository implements PageRepository {
   async unpublishPage(id: string): Promise<ManagedPage> {
     const page = await this.getPage(id);
     if (!page) throw new Error("صفحه یافت نشد");
-    if (id === "home") {
-      throw new Error("صفحه خانه را نمی‌توان از انتشار خارج کرد");
-    }
     return this.savePage({
       ...page,
       status: "draft",
+      publishedBlocks: [],
       publishedAt: null,
       updatedAt: nowIso(),
     });
