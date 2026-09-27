@@ -11,12 +11,16 @@ import {
   Store,
   Menu,
   X,
+  FileText,
+  PanelsTopLeft,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 const links = [
   { href: "/admin", label: "نمای کلی", icon: LayoutDashboard },
+  { href: "/admin/pages", label: "صفحات", icon: FileText },
+  { href: "/admin/builder/home", label: "صفحه‌ساز", icon: PanelsTopLeft },
   { href: "/admin/orders", label: "سفارش‌ها", icon: ShoppingBag },
   { href: "/admin/products", label: "محصولات", icon: Package },
   { href: "/admin/categories", label: "دسته‌بندی‌ها", icon: Tags },
@@ -27,13 +31,15 @@ export default function AdminSidebar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
+  if (pathname?.startsWith("/admin/builder")) {
+    return null;
+  }
+
   const Nav = (
     <nav className="flex flex-col gap-1 p-4">
       {links.map(({ href, label, icon: Icon }) => {
         const active =
-          href === "/admin"
-            ? pathname === "/admin"
-            : pathname.startsWith(href);
+          href === "/admin" ? pathname === "/admin" : pathname.startsWith(href);
         return (
           <Link
             key={href}
@@ -51,7 +57,7 @@ export default function AdminSidebar() {
           </Link>
         );
       })}
-      <hr className="rule my-3" />
+      <hr className="my-3 border-border" />
       <Link
         href="/"
         className="flex items-center gap-3 px-3 py-2.5 text-sm text-muted-foreground hover:text-foreground"
@@ -97,7 +103,11 @@ export default function AdminSidebar() {
         >
           <div className="flex items-center justify-between h-12 px-4 border-b border-border">
             <span className="text-sm font-bold">پنل مدیریت</span>
-            <button type="button" onClick={() => setOpen(false)} className="h-10 w-10 flex items-center justify-center">
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              className="h-10 w-10 flex items-center justify-center"
+            >
               <X className="h-5 w-5" strokeWidth={1.5} />
             </button>
           </div>
