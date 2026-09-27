@@ -11,10 +11,6 @@ import {
 } from "@/data/admin";
 import { formatPrice, formatNumber } from "@/lib/utils";
 import { products } from "@/data/products";
-import AdminCard from "@/components/admin/ui/AdminCard";
-import AdminBadge from "@/components/admin/ui/AdminBadge";
-import AdminButton from "@/components/admin/ui/AdminButton";
-import AdminPageHeader from "@/components/admin/ui/AdminPageHeader";
 import {
   ArrowUpRight,
   Package,
@@ -23,165 +19,197 @@ import {
   Users,
   Wallet,
   TrendingUp,
+  Sparkles,
 } from "lucide-react";
 
 type Period = "week" | "month" | "year";
-
-const kpiIconStyles = [
-  "bg-[#5D87FF]/15 text-[#5D87FF]",
-  "bg-[#13DEB9]/15 text-[#13DEB9]",
-  "bg-[#FFAE1F]/15 text-[#FFAE1F]",
-  "bg-[#FA896B]/15 text-[#FA896B]",
-];
 
 export default function AdminDashboardPage() {
   const [period, setPeriod] = useState<Period>("month");
 
   const revenue = adminStats.revenue[period];
-  const orders = adminStats.orders[period];
+  const ordersCount = adminStats.orders[period];
   const customers = adminStats.customers[period];
   const chartData = period === "week" ? revenueByDay : revenueByMonth;
   const maxVal = Math.max(...chartData.map((d) => d.value), 1);
   const periodLabel =
     period === "week" ? "هفته" : period === "month" ? "ماه" : "سال";
 
-  const kpis = [
-    { label: `فروش ${periodLabel}`, value: formatPrice(revenue), delta: "+۱۲٪", icon: Wallet },
-    { label: "سفارش‌ها", value: formatNumber(orders), delta: "+۸٪", icon: ShoppingBag },
-    { label: "مشتری جدید", value: formatNumber(customers), delta: "+۵٪", icon: Users },
-    { label: "محصولات", value: formatNumber(products.length), delta: null, icon: Package },
+  const cards = [
+    {
+      label: `فروش ${periodLabel}`,
+      value: formatPrice(revenue),
+      delta: "+۱۲٪",
+      icon: Wallet,
+      iconBg: "bg-[#ECF2FF]",
+      iconColor: "text-[#5D87FF]",
+    },
+    {
+      label: "سفارش‌ها",
+      value: formatNumber(ordersCount),
+      delta: "+۸٪",
+      icon: ShoppingBag,
+      iconBg: "bg-[#E6FFFA]",
+      iconColor: "text-[#13DEB9]",
+    },
+    {
+      label: "مشتری جدید",
+      value: formatNumber(customers),
+      delta: "+۵٪",
+      icon: Users,
+      iconBg: "bg-[#FEF5E5]",
+      iconColor: "text-[#FFAE1F]",
+    },
+    {
+      label: "محصولات",
+      value: formatNumber(products.length),
+      delta: null,
+      icon: Package,
+      iconBg: "bg-[#FDEDE8]",
+      iconColor: "text-[#FA896B]",
+    },
   ];
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6">
-      <AdminPageHeader
-        title="داشبورد"
-        description="خلاصه وضعیت فروشگاه WebSpeed"
-        actions={
-          <div className="flex items-center gap-1 p-1 rounded-xl bg-white border border-[var(--admin-border)] shadow-sm">
-            {([["week", "هفته"], ["month", "ماه"], ["year", "سال"]] as const).map(
-              ([key, label]) => (
-                <button
-                  key={key}
-                  type="button"
-                  onClick={() => setPeriod(key)}
-                  className={`h-8 px-3.5 rounded-lg text-xs font-semibold transition-colors ${
-                    period === key
-                      ? "bg-[var(--admin-accent)] text-white"
-                      : "text-[var(--admin-text-secondary)] hover:text-[var(--admin-text)]"
-                  }`}
-                >
-                  {label}
-                </button>
-              )
-            )}
+    <div className="max-w-[1200px] mx-auto space-y-6">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-l from-[#5D87FF] to-[#4570EA] text-white p-6 sm:p-8 shadow-[0_8px_24px_rgba(93,135,255,0.25)]">
+        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <div className="inline-flex items-center gap-1.5 text-white/80 text-xs font-medium mb-2">
+              <Sparkles className="h-3.5 w-3.5" />
+              پنل مدیریت WebSpeed
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight">خوش آمدید 👋</h1>
+            <p className="text-white/75 text-sm mt-2 max-w-md leading-relaxed">
+              خلاصه فروش، سفارش‌ها و وضعیت فروشگاه در یک نگاه.
+            </p>
           </div>
-        }
-      />
+          <div className="flex items-center gap-1 p-1 rounded-xl bg-white/15 backdrop-blur-sm shrink-0">
+            {([["week", "هفته"], ["month", "ماه"], ["year", "سال"]] as const).map(([key, label]) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setPeriod(key)}
+                className={`h-9 px-4 rounded-lg text-xs font-semibold transition-colors ${
+                  period === key ? "bg-white text-[#5D87FF]" : "text-white/80 hover:text-white"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="absolute -left-10 -bottom-10 h-40 w-40 rounded-full bg-white/10" />
+        <div className="absolute left-20 -top-8 h-24 w-24 rounded-full bg-white/10" />
+      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-        {kpis.map((kpi, i) => (
-          <AdminCard key={kpi.label} className="!p-5">
+        {cards.map((c) => (
+          <div
+            key={c.label}
+            className="bg-white rounded-2xl border border-[#E5EAEF] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-5"
+          >
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
-                <p className="text-sm text-[var(--admin-text-secondary)] font-medium">{kpi.label}</p>
-                <p className="text-xl font-semibold mt-2 tracking-tight tabular-nums text-[var(--admin-text)]">
-                  {kpi.value}
+                <p className="text-sm font-medium text-[#7C8FAC]">{c.label}</p>
+                <p className="text-[22px] font-semibold text-[#2A3547] mt-2 tabular-nums tracking-tight">
+                  {c.value}
                 </p>
-                {kpi.delta && (
-                  <p className="text-xs font-semibold text-[#13DEB9] mt-2 inline-flex items-center gap-1">
-                    <TrendingUp className="h-3 w-3" />
-                    {kpi.delta}
+                {c.delta && (
+                  <p className="mt-2 text-xs font-semibold text-[#13DEB9] inline-flex items-center gap-1">
+                    <TrendingUp className="h-3.5 w-3.5" />
+                    {c.delta} نسبت به قبل
                   </p>
                 )}
               </div>
-              <div className={`h-12 w-12 rounded-2xl flex items-center justify-center shrink-0 ${kpiIconStyles[i]}`}>
-                <kpi.icon className="h-5 w-5" strokeWidth={1.75} />
+              <div className={`h-12 w-12 rounded-2xl flex items-center justify-center shrink-0 ${c.iconBg}`}>
+                <c.icon className={`h-5 w-5 ${c.iconColor}`} strokeWidth={1.75} />
               </div>
             </div>
-          </AdminCard>
+          </div>
         ))}
       </div>
 
       <div className="grid lg:grid-cols-5 gap-4">
-        <AdminCard className="lg:col-span-3 !p-5 sm:!p-6">
+        <div className="lg:col-span-3 bg-white rounded-2xl border border-[#E5EAEF] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-5 sm:p-6">
           <div className="flex items-center justify-between mb-6">
-            <p className="text-base font-semibold text-[var(--admin-text)]">نمای فروش</p>
-            <span className="text-xs text-[var(--admin-text-secondary)]">{periodLabel} جاری</span>
+            <div>
+              <p className="text-base font-semibold text-[#2A3547]">نمای فروش</p>
+              <p className="text-xs text-[#7C8FAC] mt-0.5">{periodLabel} جاری</p>
+            </div>
           </div>
-          <div className="flex items-end gap-2 h-40">
+          <div className="flex items-end gap-2 h-44">
             {chartData.map((d) => (
               <div key={d.label} className="flex-1 flex flex-col items-center gap-2 min-w-0">
                 <div
-                  className="w-full rounded-t-lg bg-[var(--admin-accent)]/90"
-                  style={{ height: `${Math.max(8, (d.value / maxVal) * 100)}%`, minHeight: 4 }}
+                  className="w-full rounded-t-lg bg-[#5D87FF]"
+                  style={{
+                    height: `${Math.max(10, (d.value / maxVal) * 100)}%`,
+                    minHeight: 6,
+                    opacity: 0.85 + (d.value / maxVal) * 0.15,
+                  }}
                 />
-                <span className="text-[10px] text-[var(--admin-text-secondary)] truncate w-full text-center">
-                  {d.label}
-                </span>
+                <span className="text-[10px] text-[#7C8FAC] truncate w-full text-center">{d.label}</span>
               </div>
             ))}
           </div>
-        </AdminCard>
+        </div>
 
-        <AdminCard className="lg:col-span-2 !p-5 sm:!p-6">
-          <p className="text-base font-semibold mb-4">دسترسی سریع</p>
-          <div className="space-y-2">
+        <div className="lg:col-span-2 bg-white rounded-2xl border border-[#E5EAEF] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-5 sm:p-6">
+          <p className="text-base font-semibold text-[#2A3547] mb-4">دسترسی سریع</p>
+          <div className="space-y-2.5">
             {[
-              { href: "/admin/products", label: "محصولات", icon: Package, color: "bg-[#5D87FF]/15 text-[#5D87FF]" },
-              { href: "/admin/pages", label: "صفحه‌ساز", icon: FileText, color: "bg-[#13DEB9]/15 text-[#13DEB9]" },
-              { href: "/admin/orders", label: "سفارش‌ها", icon: ArrowUpRight, color: "bg-[#FFAE1F]/15 text-[#FFAE1F]" },
+              { href: "/admin/products", label: "مدیریت محصولات", icon: Package, bg: "bg-[#ECF2FF]", color: "text-[#5D87FF]" },
+              { href: "/admin/pages", label: "صفحه‌ساز", icon: FileText, bg: "bg-[#E6FFFA]", color: "text-[#13DEB9]" },
+              { href: "/admin/orders", label: "سفارش‌ها", icon: ArrowUpRight, bg: "bg-[#FEF5E5]", color: "text-[#FFAE1F]" },
             ].map((a) => (
               <Link
-                key={a.href + a.label}
+                key={a.href}
                 href={a.href}
-                className="flex items-center gap-3 h-12 px-3 rounded-xl border border-[var(--admin-border)] hover:bg-[var(--admin-muted)] transition-colors text-sm font-medium"
+                className="flex items-center gap-3 h-12 px-3 rounded-xl border border-[#E5EAEF] hover:border-[#5D87FF]/30 hover:bg-[#F8FAFC] transition-colors"
               >
-                <span className={`h-9 w-9 rounded-xl inline-flex items-center justify-center ${a.color}`}>
-                  <a.icon className="h-4 w-4" strokeWidth={1.75} />
+                <span className={`h-9 w-9 rounded-xl inline-flex items-center justify-center ${a.bg}`}>
+                  <a.icon className={`h-4 w-4 ${a.color}`} strokeWidth={1.75} />
                 </span>
-                {a.label}
+                <span className="text-sm font-medium text-[#2A3547]">{a.label}</span>
               </Link>
             ))}
           </div>
-        </AdminCard>
+        </div>
       </div>
 
-      <AdminCard padding={false}>
-        <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-[var(--admin-border)]">
-          <p className="text-base font-semibold">سفارش‌های اخیر</p>
-          <Link href="/admin/orders">
-            <AdminButton variant="ghost" size="sm">مشاهده همه</AdminButton>
+      <div className="bg-white rounded-2xl border border-[#E5EAEF] shadow-[0_4px_20px_rgba(0,0,0,0.03)] overflow-hidden">
+        <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-[#E5EAEF]">
+          <p className="text-base font-semibold text-[#2A3547]">سفارش‌های اخیر</p>
+          <Link href="/admin/orders" className="text-xs font-semibold text-[#5D87FF] hover:underline">
+            مشاهده همه
           </Link>
         </div>
-        <div className="divide-y divide-[var(--admin-border)]">
+        <div className="divide-y divide-[#E5EAEF]">
           {mockOrders.slice(0, 5).map((order) => (
-            <div
-              key={order.id}
-              className="flex items-center gap-3 px-5 sm:px-6 py-3.5 hover:bg-[var(--admin-muted)]/60 transition-colors"
-            >
+            <div key={order.id} className="flex items-center gap-3 px-5 sm:px-6 py-3.5 hover:bg-[#F8FAFC] transition-colors">
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-semibold truncate">{order.customer}</p>
-                <p className="text-xs text-[var(--admin-text-secondary)] mt-0.5 tabular-nums">{order.id}</p>
+                <p className="text-sm font-semibold text-[#2A3547] truncate">{order.customer}</p>
+                <p className="text-xs text-[#7C8FAC] mt-0.5 tabular-nums">{order.id}</p>
               </div>
-              <AdminBadge
-                tone={
+              <span
+                className={`inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${
                   order.status === "delivered"
-                    ? "success"
+                    ? "bg-[#E6FFFA] text-[#13DEB9]"
                     : order.status === "cancelled"
-                      ? "danger"
-                      : "default"
-                }
+                      ? "bg-[#FDEDE8] text-[#FA896B]"
+                      : "bg-[#ECF2FF] text-[#5D87FF]"
+                }`}
               >
                 {statusLabel[order.status] || order.status}
-              </AdminBadge>
-              <p className="text-sm font-semibold tabular-nums shrink-0 hidden sm:block">
+              </span>
+              <p className="text-sm font-semibold text-[#2A3547] tabular-nums shrink-0 hidden sm:block">
                 {formatPrice(order.total)}
               </p>
             </div>
           ))}
         </div>
-      </AdminCard>
+      </div>
     </div>
   );
 }
