@@ -19,6 +19,9 @@ type FilterSidebarProps = {
   className?: string;
 };
 
+const genderList = genders ?? [];
+const sizeList = allSizes ?? [];
+
 export default function FilterSidebar({
   filters,
   onChange,
@@ -41,17 +44,14 @@ export default function FilterSidebar({
 
   return (
     <aside className={cn("space-y-8", className)}>
-      {/* Category */}
       <div>
         <h3 className="text-sm font-semibold mb-3">دسته‌بندی</h3>
         <ul className="space-y-2">
-          {categories.map((cat) => (
+          {(categories ?? []).map((cat) => (
             <li key={cat.id}>
               <button
                 type="button"
-                onClick={() =>
-                  onChange({ ...filters, category: cat.slug })
-                }
+                onClick={() => onChange({ ...filters, category: cat.slug })}
                 className={cn(
                   "text-sm transition-colors",
                   filters.category === cat.slug
@@ -66,11 +66,10 @@ export default function FilterSidebar({
         </ul>
       </div>
 
-      {/* Gender */}
       <div>
         <h3 className="text-sm font-semibold mb-3">جنسیت</h3>
         <ul className="space-y-2">
-          {genders.map((g) => (
+          {genderList.map((g) => (
             <li key={g.id}>
               <button
                 type="button"
@@ -89,11 +88,10 @@ export default function FilterSidebar({
         </ul>
       </div>
 
-      {/* Size */}
       <div>
         <h3 className="text-sm font-semibold mb-3">سایز</h3>
         <div className="flex flex-wrap gap-2">
-          {allSizes.slice(0, 12).map((size) => (
+          {sizeList.slice(0, 12).map((size) => (
             <button
               key={size}
               type="button"
@@ -111,11 +109,10 @@ export default function FilterSidebar({
         </div>
       </div>
 
-      {/* Color */}
       <div>
         <h3 className="text-sm font-semibold mb-3">رنگ</h3>
         <div className="flex flex-wrap gap-2">
-          {availableColors.map((color) => (
+          {(availableColors ?? []).map((color) => (
             <button
               key={color.name}
               type="button"
@@ -134,7 +131,6 @@ export default function FilterSidebar({
         </div>
       </div>
 
-      {/* Price */}
       <div>
         <h3 className="text-sm font-semibold mb-3">محدوده قیمت (تومان)</h3>
         <div className="flex items-center gap-2">
