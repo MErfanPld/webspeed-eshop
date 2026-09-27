@@ -17,7 +17,7 @@ export default function MegaMenu({ open, onClose }: Props) {
     <>
       <div
         className="fixed inset-0 top-[8rem] z-40 bg-black/20 hidden lg:block"
-        onMouseEnter={onClose}
+        onClick={onClose}
       />
       <div
         className="absolute top-full right-0 left-0 z-50 hidden lg:block bg-white border-b border-border shadow-lg"
@@ -34,7 +34,11 @@ export default function MegaMenu({ open, onClose }: Props) {
                 {cat.image && (
                   <span className="relative h-10 w-10 rounded-lg overflow-hidden bg-muted shrink-0">
                     <Image
-                      src={cat.image}
+                      src={
+                        cat.image.startsWith("http")
+                          ? "/placeholders/samsung-banner.webp"
+                          : cat.image
+                      }
                       alt=""
                       fill
                       className="object-cover"

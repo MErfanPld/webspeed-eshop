@@ -13,6 +13,8 @@ type Props = {
 
 export default function CartDropdown({ open, onClose }: Props) {
   const { items, subtotal, isReady } = useCart();
+  const safeImage = (src?: string) =>
+    src && !src.startsWith("http") ? src : "/placeholders/samsung-banner.webp";
 
   if (!open) return null;
 
@@ -38,7 +40,13 @@ export default function CartDropdown({ open, onClose }: Props) {
               {items.slice(0, 4).map((item) => (
                 <li key={item.id} className="flex gap-3 p-3">
                   <div className="relative h-14 w-12 shrink-0 bg-muted overflow-hidden rounded">
-                    <Image src={item.image} alt="" fill className="object-cover" sizes="48px" />
+                    <Image
+                      src={safeImage(item.image)}
+                      alt=""
+                      fill
+                      className="object-cover"
+                      sizes="48px"
+                    />
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="text-xs line-clamp-1 font-medium">{item.name}</p>
