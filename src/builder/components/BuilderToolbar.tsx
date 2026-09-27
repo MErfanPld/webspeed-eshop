@@ -28,6 +28,7 @@ export default function BuilderToolbar() {
   const future = useBuilderStore((s) => s.future);
   const saveDraft = useBuilderStore((s) => s.saveDraft);
   const publish = useBuilderStore((s) => s.publish);
+  const unpublish = useBuilderStore((s) => s.unpublish);
   const saveStatus = useBuilderStore((s) => s.saveStatus);
   const isDirty = useBuilderStore((s) => s.isDirty);
 
@@ -134,6 +135,16 @@ export default function BuilderToolbar() {
         <Save className="h-3.5 w-3.5" />
         <span className="hidden md:inline">ذخیره</span>
       </button>
+
+      {page?.status === "published" && (
+        <button
+          type="button"
+          onClick={() => unpublish()}
+          className="h-8 px-2.5 flex items-center gap-1.5 rounded-md text-xs font-medium border border-border hover:bg-muted"
+        >
+          لغو انتشار
+        </button>
+      )}
 
       <button
         type="button"
