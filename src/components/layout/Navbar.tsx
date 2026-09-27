@@ -116,7 +116,6 @@ export default function Navbar() {
               </div>
             </form>
 
-            {/* ورود / پروفایل / سبد — سمت چپ در RTL */}
             <div className="flex items-center gap-0.5 shrink-0 ms-auto">
               <button
                 type="button"
@@ -169,8 +168,8 @@ export default function Navbar() {
             <button
               type="button"
               className="flex items-center gap-1.5 h-9 px-3 rounded-lg font-semibold text-foreground hover:bg-muted transition-colors"
-              onMouseEnter={() => setMegaOpen(true)}
               onClick={() => setMegaOpen((v) => !v)}
+              aria-expanded={megaOpen}
             >
               <Grid3X3 className="h-4 w-4" />
               دسته‌بندی‌ها
