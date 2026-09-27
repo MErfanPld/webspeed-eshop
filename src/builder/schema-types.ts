@@ -1,7 +1,3 @@
-/**
- * Schema-driven property panel field types.
- */
-
 export type FieldType =
   | "text"
   | "textarea"
@@ -12,9 +8,9 @@ export type FieldType =
   | "image"
   | "url"
   | "array"
-  | "products"
-  | "categories"
-  | "richText";
+  | "visibility"
+  | "spacing"
+  | "responsiveNumber";
 
 export type SelectOption = {
   label: string;
@@ -32,16 +28,29 @@ export type FieldSchema = {
   itemFields?: FieldSchema[];
   defaultItem?: Record<string, unknown>;
   description?: string;
+  group?: string;
+  responsive?: boolean;
 };
 
 export type BlockSchema = FieldSchema[];
 
 export type BlockCategory =
+  | "layout"
+  | "header"
+  | "footer"
   | "marketing"
   | "products"
   | "catalog"
   | "content"
-  | "store";
+  | "store"
+  | "commerce";
+
+export type NestingRules = {
+  canHaveChildren?: boolean;
+  allowedChildren?: string[];
+  allowedParents?: string[];
+  maxDepth?: number;
+};
 
 export type BlockDefinition = {
   type: string;
@@ -52,4 +61,10 @@ export type BlockDefinition = {
   icon: string;
   defaultData: Record<string, unknown>;
   schema: BlockSchema;
+  nesting?: NestingRules;
+  defaultVisibility?: {
+    desktop: boolean;
+    tablet: boolean;
+    mobile: boolean;
+  };
 };
