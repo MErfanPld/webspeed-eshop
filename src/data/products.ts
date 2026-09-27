@@ -12,9 +12,9 @@ export const products: Product[] = [
     category: "t-shirts",
     gender: "unisex",
     images: [
-      "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&q=80",
-      "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=800&q=80",
-      "https://images.unsplash.com/photo-1618354691373-d851c5c3a990?w=800&q=80",
+      "/placeholders/product-1.svg",
+      "/placeholders/product-2.svg",
+      "/placeholders/product-3.svg",
     ],
     sizes: ["S", "M", "L", "XL", "XXL"],
     colors: [
@@ -25,6 +25,10 @@ export const products: Product[] = [
     featured: true,
     newArrival: true,
     stock: 42,
+    rating: 4.4,
+    reviewCount: 24,
+    freeShipping: true,
+    brand: "UrbanWeave",
   },
   {
     id: "2",
@@ -36,10 +40,7 @@ export const products: Product[] = [
     compareAtPrice: 3990000,
     category: "jeans",
     gender: "unisex",
-    images: [
-      "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=800&q=80",
-      "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=800&q=80",
-    ],
+    images: ["/placeholders/product-4.svg", "/placeholders/product-5.svg"],
     sizes: ["28", "30", "32", "34", "36"],
     colors: [
       { name: "آبی روشن", hex: "#93C5FD" },
@@ -49,6 +50,10 @@ export const products: Product[] = [
     featured: true,
     newArrival: false,
     stock: 28,
+    rating: 3.9,
+    reviewCount: 64,
+    freeShipping: true,
+    brand: "Aether",
   },
   {
     id: "3",
@@ -59,10 +64,7 @@ export const products: Product[] = [
     price: 2450000,
     category: "shirts",
     gender: "men",
-    images: [
-      "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=800&q=80",
-      "https://images.unsplash.com/photo-1603252109303-16365112bd34?w=800&q=80",
-    ],
+    images: ["/placeholders/product-6.svg", "/placeholders/product-1.svg"],
     sizes: ["S", "M", "L", "XL"],
     colors: [
       { name: "کرم", hex: "#E8D5B7" },
@@ -72,6 +74,10 @@ export const products: Product[] = [
     featured: false,
     newArrival: true,
     stock: 35,
+    rating: 3.7,
+    reviewCount: 228,
+    freeShipping: false,
+    brand: "WebSpeed",
   },
   {
     id: "4",
@@ -83,10 +89,7 @@ export const products: Product[] = [
     compareAtPrice: 1190000,
     category: "t-shirts",
     gender: "women",
-    images: [
-      "https://images.unsplash.com/photo-1503342217505-b0a15ec3021f?w=800&q=80",
-      "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=800&q=80",
-    ],
+    images: ["/placeholders/product-2.svg", "/placeholders/product-3.svg"],
     sizes: ["XS", "S", "M", "L"],
     colors: [
       { name: "سفید", hex: "#FFFFFF" },
@@ -96,6 +99,10 @@ export const products: Product[] = [
     featured: true,
     newArrival: false,
     stock: 50,
+    rating: 3.9,
+    reviewCount: 270,
+    freeShipping: true,
+    brand: "Aether",
   },
   {
     id: "5",
@@ -106,10 +113,7 @@ export const products: Product[] = [
     price: 2790000,
     category: "hoodies",
     gender: "unisex",
-    images: [
-      "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800&q=80",
-      "https://images.unsplash.com/photo-1578768079052-aa76e52ff62e?w=800&q=80",
-    ],
+    images: ["/placeholders/product-4.svg", "/placeholders/product-5.svg"],
     sizes: ["S", "M", "L", "XL", "XXL"],
     colors: [
       { name: "خاکستری", hex: "#9CA3AF" },
@@ -119,6 +123,10 @@ export const products: Product[] = [
     featured: false,
     newArrival: true,
     stock: 22,
+    rating: 3.9,
+    reviewCount: 291,
+    freeShipping: true,
+    brand: "Nova Wear",
   },
   {
     id: "6",
@@ -129,10 +137,7 @@ export const products: Product[] = [
     price: 2190000,
     category: "dresses",
     gender: "women",
-    images: [
-      "https://images.unsplash.com/photo-1583496661160-fb5886a0aaaa?w=800&q=80",
-      "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=800&q=80",
-    ],
+    images: ["/placeholders/product-6.svg", "/placeholders/product-1.svg"],
     sizes: ["XS", "S", "M", "L"],
     colors: [
       { name: "مشکی", hex: "#111111" },
@@ -142,6 +147,10 @@ export const products: Product[] = [
     featured: false,
     newArrival: false,
     stock: 18,
+    rating: 4.4,
+    reviewCount: 15,
+    freeShipping: true,
+    brand: "UrbanWeave",
   },
   {
     id: "7",
@@ -153,10 +162,7 @@ export const products: Product[] = [
     compareAtPrice: 3100000,
     category: "pants",
     gender: "men",
-    images: [
-      "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=800&q=80",
-      "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=800&q=80",
-    ],
+    images: ["/placeholders/product-2.svg", "/placeholders/product-3.svg"],
     sizes: ["S", "M", "L", "XL"],
     colors: [
       { name: "زیتونی", hex: "#556B2F" },
@@ -166,6 +172,10 @@ export const products: Product[] = [
     featured: true,
     newArrival: false,
     stock: 30,
+    rating: 4.5,
+    reviewCount: 186,
+    freeShipping: false,
+    brand: "UrbanWeave",
   },
   {
     id: "8",
@@ -176,10 +186,7 @@ export const products: Product[] = [
     price: 3100000,
     category: "jackets",
     gender: "women",
-    images: [
-      "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=800&q=80",
-      "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=800&q=80",
-    ],
+    images: ["/placeholders/product-4.svg", "/placeholders/product-5.svg"],
     sizes: ["S", "M", "L"],
     colors: [
       { name: "کرم", hex: "#F5E6D3" },
@@ -189,6 +196,10 @@ export const products: Product[] = [
     featured: false,
     newArrival: true,
     stock: 15,
+    rating: 4.8,
+    reviewCount: 184,
+    freeShipping: false,
+    brand: "Nova Wear",
   },
   {
     id: "9",
@@ -199,10 +210,7 @@ export const products: Product[] = [
     price: 2650000,
     category: "shirts",
     gender: "men",
-    images: [
-      "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=800&q=80",
-      "https://images.unsplash.com/photo-1598033129183-c4f50c736f10?w=800&q=80",
-    ],
+    images: ["/placeholders/product-6.svg", "/placeholders/product-1.svg"],
     sizes: ["S", "M", "L", "XL"],
     colors: [
       { name: "آبی روشن", hex: "#BFDBFE" },
@@ -212,6 +220,10 @@ export const products: Product[] = [
     featured: true,
     newArrival: false,
     stock: 40,
+    rating: 3.7,
+    reviewCount: 188,
+    freeShipping: true,
+    brand: "WebSpeed",
   },
   {
     id: "10",
@@ -222,10 +234,7 @@ export const products: Product[] = [
     price: 2350000,
     category: "pants",
     gender: "men",
-    images: [
-      "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=800&q=80",
-      "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=800&q=80",
-    ],
+    images: ["/placeholders/product-2.svg", "/placeholders/product-3.svg"],
     sizes: ["30", "32", "34", "36"],
     colors: [
       { name: "بژ", hex: "#D4C4A8" },
@@ -235,6 +244,10 @@ export const products: Product[] = [
     featured: false,
     newArrival: true,
     stock: 25,
+    rating: 4.5,
+    reviewCount: 286,
+    freeShipping: false,
+    brand: "Nova Wear",
   },
   {
     id: "11",
@@ -246,10 +259,7 @@ export const products: Product[] = [
     compareAtPrice: 3490000,
     category: "shirts",
     gender: "women",
-    images: [
-      "https://images.unsplash.com/photo-1564257631407-4deb1f99d992?w=800&q=80",
-      "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=800&q=80",
-    ],
+    images: ["/placeholders/product-4.svg", "/placeholders/product-5.svg"],
     sizes: ["XS", "S", "M", "L"],
     colors: [
       { name: "کرم", hex: "#F5E6D3" },
@@ -259,6 +269,10 @@ export const products: Product[] = [
     featured: true,
     newArrival: true,
     stock: 20,
+    rating: 3.7,
+    reviewCount: 162,
+    freeShipping: true,
+    brand: "Aether",
   },
   {
     id: "12",
@@ -269,10 +283,7 @@ export const products: Product[] = [
     price: 3590000,
     category: "jackets",
     gender: "unisex",
-    images: [
-      "https://images.unsplash.com/photo-1576995853123-5a10305d93c0?w=800&q=80",
-      "https://images.unsplash.com/photo-1544022613-e87ca75a784a?w=800&q=80",
-    ],
+    images: ["/placeholders/product-6.svg", "/placeholders/product-1.svg"],
     sizes: ["S", "M", "L", "XL"],
     colors: [
       { name: "آبی", hex: "#3B82F6" },
@@ -281,6 +292,10 @@ export const products: Product[] = [
     featured: true,
     newArrival: false,
     stock: 18,
+    rating: 4.8,
+    reviewCount: 197,
+    freeShipping: true,
+    brand: "WebSpeed",
   },
   {
     id: "13",
@@ -291,10 +306,7 @@ export const products: Product[] = [
     price: 790000,
     category: "t-shirts",
     gender: "women",
-    images: [
-      "https://images.unsplash.com/photo-1503342217505-b0a15ec3021f?w=800&q=80",
-      "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?w=800&q=80",
-    ],
+    images: ["/placeholders/product-2.svg", "/placeholders/product-3.svg"],
     sizes: ["XS", "S", "M", "L"],
     colors: [
       { name: "سفید", hex: "#FFFFFF" },
@@ -304,6 +316,10 @@ export const products: Product[] = [
     featured: false,
     newArrival: true,
     stock: 45,
+    rating: 3.7,
+    reviewCount: 128,
+    freeShipping: true,
+    brand: "WebSpeed",
   },
   {
     id: "14",
@@ -315,10 +331,7 @@ export const products: Product[] = [
     compareAtPrice: 7200000,
     category: "jackets",
     gender: "women",
-    images: [
-      "https://images.unsplash.com/photo-1539533018447-63fcce2678e3?w=800&q=80",
-      "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=800&q=80",
-    ],
+    images: ["/placeholders/product-4.svg", "/placeholders/product-5.svg"],
     sizes: ["S", "M", "L"],
     colors: [
       { name: "کرم", hex: "#E8D5B7" },
@@ -328,6 +341,10 @@ export const products: Product[] = [
     featured: true,
     newArrival: false,
     stock: 12,
+    rating: 4.7,
+    reviewCount: 63,
+    freeShipping: false,
+    brand: "Nova Wear",
   },
   {
     id: "15",
@@ -338,10 +355,7 @@ export const products: Product[] = [
     price: 2490000,
     category: "pants",
     gender: "men",
-    images: [
-      "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=800&q=80",
-      "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=800&q=80",
-    ],
+    images: ["/placeholders/product-6.svg", "/placeholders/product-1.svg"],
     sizes: ["30", "32", "34", "36"],
     colors: [
       { name: "سرمه‌ای", hex: "#1E3A5F" },
@@ -351,6 +365,10 @@ export const products: Product[] = [
     featured: false,
     newArrival: false,
     stock: 33,
+    rating: 4.4,
+    reviewCount: 198,
+    freeShipping: false,
+    brand: "Minimal Co",
   },
   {
     id: "16",
@@ -361,10 +379,7 @@ export const products: Product[] = [
     price: 2750000,
     category: "dresses",
     gender: "women",
-    images: [
-      "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=800&q=80",
-      "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=800&q=80",
-    ],
+    images: ["/placeholders/product-2.svg", "/placeholders/product-3.svg"],
     sizes: ["XS", "S", "M", "L"],
     colors: [
       { name: "مشکی", hex: "#111111" },
@@ -374,6 +389,10 @@ export const products: Product[] = [
     featured: true,
     newArrival: true,
     stock: 22,
+    rating: 3.9,
+    reviewCount: 148,
+    freeShipping: true,
+    brand: "WebSpeed",
   },
   {
     id: "17",
@@ -384,10 +403,7 @@ export const products: Product[] = [
     price: 2190000,
     category: "hoodies",
     gender: "unisex",
-    images: [
-      "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=800&q=80",
-      "https://images.unsplash.com/photo-1578768079052-aa76e52ff62e?w=800&q=80",
-    ],
+    images: ["/placeholders/product-4.svg", "/placeholders/product-5.svg"],
     sizes: ["S", "M", "L", "XL"],
     colors: [
       { name: "خاکستری", hex: "#9CA3AF" },
@@ -397,6 +413,10 @@ export const products: Product[] = [
     featured: false,
     newArrival: true,
     stock: 38,
+    rating: 4.4,
+    reviewCount: 99,
+    freeShipping: true,
+    brand: "UrbanWeave",
   },
   {
     id: "18",
@@ -407,10 +427,7 @@ export const products: Product[] = [
     price: 1290000,
     category: "accessories",
     gender: "unisex",
-    images: [
-      "https://images.unsplash.com/photo-1624222247344-550fb60583fd?w=800&q=80",
-      "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=800&q=80",
-    ],
+    images: ["/placeholders/product-6.svg", "/placeholders/product-1.svg"],
     sizes: ["S", "M", "L"],
     colors: [
       { name: "قهوه‌ای", hex: "#8B4513" },
@@ -419,6 +436,10 @@ export const products: Product[] = [
     featured: false,
     newArrival: false,
     stock: 60,
+    rating: 3.8,
+    reviewCount: 206,
+    freeShipping: false,
+    brand: "Aether",
   },
   {
     id: "19",
@@ -430,10 +451,7 @@ export const products: Product[] = [
     compareAtPrice: 3590000,
     category: "jeans",
     gender: "women",
-    images: [
-      "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=800&q=80",
-      "https://images.unsplash.com/photo-1582418702059-97ebafb35d09?w=800&q=80",
-    ],
+    images: ["/placeholders/product-2.svg", "/placeholders/product-3.svg"],
     sizes: ["26", "28", "30", "32"],
     colors: [
       { name: "آبی تیره", hex: "#1E3A8A" },
@@ -442,6 +460,10 @@ export const products: Product[] = [
     featured: true,
     newArrival: false,
     stock: 27,
+    rating: 3.9,
+    reviewCount: 178,
+    freeShipping: true,
+    brand: "WebSpeed",
   },
   {
     id: "20",
@@ -452,10 +474,7 @@ export const products: Product[] = [
     price: 1590000,
     category: "accessories",
     gender: "unisex",
-    images: [
-      "https://images.unsplash.com/photo-1590874103328-eac38a67478a?w=800&q=80",
-      "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=800&q=80",
-    ],
+    images: ["/placeholders/product-4.svg", "/placeholders/product-5.svg"],
     sizes: ["One Size"],
     colors: [
       { name: "کرم", hex: "#E8D5B7" },
@@ -465,6 +484,10 @@ export const products: Product[] = [
     featured: false,
     newArrival: true,
     stock: 35,
+    rating: 3.9,
+    reviewCount: 28,
+    freeShipping: true,
+    brand: "Nova Wear",
   },
 ];
 
