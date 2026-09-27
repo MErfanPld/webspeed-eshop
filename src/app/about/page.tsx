@@ -7,98 +7,70 @@ import Button from "@/components/ui/Button";
 export const metadata: Metadata = {
   title: "درباره ما",
   description:
-    "داستان برند WebSpeed — طراحی مینیمال، کیفیت ماندگار و استایل بدون زمان.",
+    "فروشگاه اینترنتی WebSpeed — خرید آسان، ارسال سریع و ضمانت اصالت کالا.",
 };
 
 export default function AboutPage() {
   return (
     <div>
-      <section className="relative h-[50vh] min-h-[360px] overflow-hidden bg-muted">
+      <section className="relative h-[42vh] min-h-[280px] max-h-[420px] overflow-hidden bg-muted">
         <Image
-          src="https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=1600&q=80"
+          src="/placeholders/samsung-banner.webp"
           alt="درباره WebSpeed"
           fill
           priority
           className="object-cover"
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-black/40" />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <h1 className="text-4xl sm:text-5xl font-semibold text-white tracking-tight">
-            درباره ما
+        <div className="absolute inset-0 bg-black/45" />
+        <div className="absolute inset-0 flex items-center justify-center px-4">
+          <h1 className="text-3xl sm:text-4xl font-bold text-white tracking-tight text-center">
+            درباره WebSpeed
           </h1>
         </div>
       </section>
 
-      <Container className="py-16 sm:py-24 max-w-3xl">
-        <p className="text-sm tracking-[0.2em] uppercase text-muted-foreground mb-4">
-          داستان برند
-        </p>
-        <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight leading-tight mb-8">
-          کمتر، اما بهتر
-        </h2>
-        <div className="space-y-6 text-muted-foreground leading-relaxed text-base sm:text-lg">
-          <p>
-            WebSpeed با این باور شکل گرفت که پوشاک خوب باید ساده، باکیفیت و
-            ماندگار باشد. ما به جای دنبال کردن روندهای زودگذر، روی طراحی‌هایی
-            تمرکز می‌کنیم که سال‌ها با شما بمانند.
-          </p>
-          <p>
-            هر قطعه با دقت در انتخاب پارچه، دوخت و جزئیات ساخته می‌شود. هدف ما
-            ایجاد کمد لباسی است که احساس سبکی و اطمینان می‌دهد — نه شلوغی و
-            تصمیم‌گیری‌های بی‌پایان.
+      <Container className="py-12 sm:py-16 space-y-12">
+        <div className="max-w-2xl mx-auto text-center space-y-4">
+          <h2 className="text-xl sm:text-2xl font-bold">داستان ما</h2>
+          <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+            WebSpeed یک فروشگاه اینترنتی مدرن است با تمرکز روی کیفیت، قیمت منصفانه
+            و تجربه خرید ساده. از پوشاک تا کالای روزمره، هدف ما رساندن بهترین
+            انتخاب‌ها با ارسال سریع و پشتیبانی واقعی است.
           </p>
         </div>
-      </Container>
 
-      <section className="bg-muted/40 py-16 sm:py-20">
-        <Container>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 text-center">
-            {[
-              { value: "۱۰۰٪", label: "پارچه منتخب" },
-              { value: "۲۴+", label: "مدل در مجموعه" },
-              { value: "۷ روز", label: "ضمانت مرجوعی" },
-            ].map((stat) => (
-              <div key={stat.label}>
-                <p className="text-3xl sm:text-4xl font-semibold tracking-tight">
-                  {stat.value}
-                </p>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  {stat.label}
-                </p>
-              </div>
-            ))}
-          </div>
-        </Container>
-      </section>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+          {[
+            {
+              title: "ارسال سریع",
+              text: "تحویل در کوتاه‌ترین زمان در سراسر کشور",
+            },
+            {
+              title: "ضمانت اصالت",
+              text: "تمام کالاها اصل و با گارانتی معتبر",
+            },
+            {
+              title: "پشتیبانی",
+              text: "شنبه تا پنج‌شنبه پاسخگوی شما هستیم",
+            },
+          ].map((item) => (
+            <div
+              key={item.title}
+              className="rounded-2xl border border-border bg-white p-6 text-center space-y-2"
+            >
+              <h3 className="font-bold text-sm">{item.title}</h3>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                {item.text}
+              </p>
+            </div>
+          ))}
+        </div>
 
-      <Container className="py-16 sm:py-24">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div className="relative aspect-[4/5] overflow-hidden bg-muted">
-            <Image
-              src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80"
-              alt="فلسفه طراحی"
-              fill
-              className="object-cover"
-              sizes="(max-width: 1024px) 100vw, 50vw"
-            />
-          </div>
-          <div>
-            <p className="text-sm tracking-[0.2em] uppercase text-muted-foreground mb-4">
-              فلسفه
-            </p>
-            <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight mb-6">
-              طراحی بدون زمان
-            </h2>
-            <p className="text-muted-foreground leading-relaxed mb-8">
-              ما معتقدیم مد خوب نیاز به فریاد زدن ندارد. خطوط تمیز، رنگ‌های
-              خنثی و تناسب درست — این‌ها پایه‌های استایلی هستند که همیشه کار
-              می‌کند.
-            </p>
-            <Link href="/products">
-              <Button size="lg">کاوش مجموعه</Button>
-            </Link>
-          </div>
+        <div className="text-center">
+          <Link href="/products">
+            <Button className="h-12 px-8 rounded-xl">مشاهده فروشگاه</Button>
+          </Link>
         </div>
       </Container>
     </div>
