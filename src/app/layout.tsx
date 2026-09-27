@@ -1,14 +1,40 @@
 import type { Metadata, Viewport } from "next";
-import { Vazirmatn } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
 import ShopChrome from "@/components/layout/ShopChrome";
 
-const vazirmatn = Vazirmatn({
-  subsets: ["arabic", "latin"],
+const vazirmatn = localFont({
+  src: [
+    {
+      path: "../fonts/Vazirmatn-Regular.woff2",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../fonts/Vazirmatn-Medium.woff2",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "../fonts/Vazirmatn-SemiBold.woff2",
+      weight: "600",
+      style: "normal",
+    },
+    {
+      path: "../fonts/Vazirmatn-Bold.woff2",
+      weight: "700",
+      style: "normal",
+    },
+    {
+      path: "../fonts/Vazirmatn-ExtraBold.woff2",
+      weight: "800",
+      style: "normal",
+    },
+  ],
   variable: "--font-vazirmatn",
   display: "swap",
-  weight: ["300", "400", "500", "600", "700", "800"],
+  fallback: ["Tahoma", "Arial", "system-ui", "sans-serif"],
 });
 
 export const metadata: Metadata = {
