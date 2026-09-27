@@ -1,5 +1,7 @@
 import { Product } from "@/types/product";
 
+const IMG = "/placeholders/samsung-banner.webp";
+
 export const products: Product[] = [
   {
     id: "1",
@@ -11,11 +13,7 @@ export const products: Product[] = [
     compareAtPrice: 2490000,
     category: "t-shirts",
     gender: "unisex",
-    images: [
-      "/placeholders/product-1.svg",
-      "/placeholders/product-2.svg",
-      "/placeholders/product-3.svg",
-    ],
+    images: [IMG, IMG, IMG],
     sizes: ["S", "M", "L", "XL", "XXL"],
     colors: [
       { name: "مشکی", hex: "#111111" },
@@ -40,7 +38,7 @@ export const products: Product[] = [
     compareAtPrice: 3990000,
     category: "jeans",
     gender: "unisex",
-    images: ["/placeholders/product-4.svg", "/placeholders/product-5.svg"],
+    images: [IMG, IMG],
     sizes: ["28", "30", "32", "34", "36"],
     colors: [
       { name: "آبی روشن", hex: "#93C5FD" },
@@ -64,7 +62,7 @@ export const products: Product[] = [
     price: 2450000,
     category: "shirts",
     gender: "men",
-    images: ["/placeholders/product-6.svg", "/placeholders/product-1.svg"],
+    images: [IMG, IMG],
     sizes: ["S", "M", "L", "XL"],
     colors: [
       { name: "کرم", hex: "#E8D5B7" },
@@ -89,7 +87,7 @@ export const products: Product[] = [
     compareAtPrice: 1190000,
     category: "t-shirts",
     gender: "women",
-    images: ["/placeholders/product-2.svg", "/placeholders/product-3.svg"],
+    images: [IMG, IMG],
     sizes: ["XS", "S", "M", "L"],
     colors: [
       { name: "سفید", hex: "#FFFFFF" },
@@ -113,7 +111,7 @@ export const products: Product[] = [
     price: 2790000,
     category: "hoodies",
     gender: "unisex",
-    images: ["/placeholders/product-4.svg", "/placeholders/product-5.svg"],
+    images: [IMG, IMG],
     sizes: ["S", "M", "L", "XL", "XXL"],
     colors: [
       { name: "خاکستری", hex: "#9CA3AF" },
@@ -137,7 +135,7 @@ export const products: Product[] = [
     price: 2190000,
     category: "dresses",
     gender: "women",
-    images: ["/placeholders/product-6.svg", "/placeholders/product-1.svg"],
+    images: [IMG, IMG],
     sizes: ["XS", "S", "M", "L"],
     colors: [
       { name: "مشکی", hex: "#111111" },
@@ -162,7 +160,7 @@ export const products: Product[] = [
     compareAtPrice: 3100000,
     category: "pants",
     gender: "men",
-    images: ["/placeholders/product-2.svg", "/placeholders/product-3.svg"],
+    images: [IMG, IMG],
     sizes: ["S", "M", "L", "XL"],
     colors: [
       { name: "زیتونی", hex: "#556B2F" },
@@ -186,7 +184,7 @@ export const products: Product[] = [
     price: 3100000,
     category: "jackets",
     gender: "women",
-    images: ["/placeholders/product-4.svg", "/placeholders/product-5.svg"],
+    images: [IMG, IMG],
     sizes: ["S", "M", "L"],
     colors: [
       { name: "کرم", hex: "#F5E6D3" },
@@ -210,7 +208,7 @@ export const products: Product[] = [
     price: 2650000,
     category: "shirts",
     gender: "men",
-    images: ["/placeholders/product-6.svg", "/placeholders/product-1.svg"],
+    images: [IMG, IMG],
     sizes: ["S", "M", "L", "XL"],
     colors: [
       { name: "آبی روشن", hex: "#BFDBFE" },
@@ -234,7 +232,7 @@ export const products: Product[] = [
     price: 2350000,
     category: "pants",
     gender: "men",
-    images: ["/placeholders/product-2.svg", "/placeholders/product-3.svg"],
+    images: [IMG, IMG],
     sizes: ["30", "32", "34", "36"],
     colors: [
       { name: "بژ", hex: "#D4C4A8" },
@@ -259,7 +257,7 @@ export const products: Product[] = [
     compareAtPrice: 3490000,
     category: "shirts",
     gender: "women",
-    images: ["/placeholders/product-4.svg", "/placeholders/product-5.svg"],
+    images: [IMG, IMG],
     sizes: ["XS", "S", "M", "L"],
     colors: [
       { name: "کرم", hex: "#F5E6D3" },
@@ -283,7 +281,7 @@ export const products: Product[] = [
     price: 3590000,
     category: "jackets",
     gender: "unisex",
-    images: ["/placeholders/product-6.svg", "/placeholders/product-1.svg"],
+    images: [IMG, IMG],
     sizes: ["S", "M", "L", "XL"],
     colors: [
       { name: "آبی", hex: "#3B82F6" },
@@ -306,7 +304,7 @@ export const products: Product[] = [
     price: 790000,
     category: "t-shirts",
     gender: "women",
-    images: ["/placeholders/product-2.svg", "/placeholders/product-3.svg"],
+    images: [IMG, IMG],
     sizes: ["XS", "S", "M", "L"],
     colors: [
       { name: "سفید", hex: "#FFFFFF" },
@@ -331,7 +329,7 @@ export const products: Product[] = [
     compareAtPrice: 7200000,
     category: "jackets",
     gender: "women",
-    images: ["/placeholders/product-4.svg", "/placeholders/product-5.svg"],
+    images: [IMG, IMG],
     sizes: ["S", "M", "L"],
     colors: [
       { name: "کرم", hex: "#E8D5B7" },
@@ -355,7 +353,7 @@ export const products: Product[] = [
     price: 2490000,
     category: "pants",
     gender: "men",
-    images: ["/placeholders/product-6.svg", "/placeholders/product-1.svg"],
+    images: [IMG, IMG],
     sizes: ["30", "32", "34", "36"],
     colors: [
       { name: "سرمه‌ای", hex: "#1E3A5F" },
@@ -379,7 +377,7 @@ export const products: Product[] = [
     price: 2750000,
     category: "dresses",
     gender: "women",
-    images: ["/placeholders/product-2.svg", "/placeholders/product-3.svg"],
+    images: [IMG, IMG],
     sizes: ["XS", "S", "M", "L"],
     colors: [
       { name: "مشکی", hex: "#111111" },
@@ -403,7 +401,7 @@ export const products: Product[] = [
     price: 2190000,
     category: "hoodies",
     gender: "unisex",
-    images: ["/placeholders/product-4.svg", "/placeholders/product-5.svg"],
+    images: [IMG, IMG],
     sizes: ["S", "M", "L", "XL"],
     colors: [
       { name: "خاکستری", hex: "#9CA3AF" },
@@ -427,7 +425,7 @@ export const products: Product[] = [
     price: 1290000,
     category: "accessories",
     gender: "unisex",
-    images: ["/placeholders/product-6.svg", "/placeholders/product-1.svg"],
+    images: [IMG, IMG],
     sizes: ["S", "M", "L"],
     colors: [
       { name: "قهوه‌ای", hex: "#8B4513" },
@@ -451,7 +449,7 @@ export const products: Product[] = [
     compareAtPrice: 3590000,
     category: "jeans",
     gender: "women",
-    images: ["/placeholders/product-2.svg", "/placeholders/product-3.svg"],
+    images: [IMG, IMG],
     sizes: ["26", "28", "30", "32"],
     colors: [
       { name: "آبی تیره", hex: "#1E3A8A" },
@@ -474,7 +472,7 @@ export const products: Product[] = [
     price: 1590000,
     category: "accessories",
     gender: "unisex",
-    images: ["/placeholders/product-4.svg", "/placeholders/product-5.svg"],
+    images: [IMG, IMG],
     sizes: ["One Size"],
     colors: [
       { name: "کرم", hex: "#E8D5B7" },
