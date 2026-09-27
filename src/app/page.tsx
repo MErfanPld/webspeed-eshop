@@ -1,13 +1,18 @@
 import type { Metadata } from "next";
-import { PageRenderer } from "@/builder/BlockRenderer";
 import { homePageConfig } from "@/config/home-page";
+import HomePageView from "@/components/home/HomePageView";
+import type { PageBlock } from "@/builder/types";
 
 export const metadata: Metadata = {
   title: homePageConfig.title,
   description: homePageConfig.description,
 };
 
-/** Home is composition-driven. Edit blocks in src/config/home-page.ts */
+/**
+ * Server Component: always provides config-based fallback.
+ * Client HomePageView may upgrade to publishedBlocks after mount.
+ */
 export default function HomePage() {
-  return <PageRenderer blocks={homePageConfig.blocks} />;
+  const fallbackBlocks = homePageConfig.blocks as PageBlock[];
+  return <HomePageView fallbackBlocks={fallbackBlocks} />;
 }
