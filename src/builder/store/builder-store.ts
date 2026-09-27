@@ -47,6 +47,7 @@ type BuilderActions = {
   redo: () => void;
   saveDraft: () => Promise<void>;
   publish: () => Promise<void>;
+  unpublish: () => Promise<void>;
   markDirty: () => void;
 };
 
@@ -277,6 +278,23 @@ const actions: BuilderActions = {
       setState({
         page: updated,
         blocks: cloneBlocks(updated.blocks as unknown as PageBlock[]),
+        isDirty: false,
+        saveStatus: "saved",
+      });
+    } catch (e) {
+      console.error(e);
+      setState({ saveStatus: "error" });
+    }
+  },
+
+  unpublish: async () => {
+    const { page } = state;
+    if (!page) return;
+    setState({ saveStatus: "saving" });
+    try {
+      const updated = await pageRepository.unpublishPage(page.id);
+      setState({
+        page: updated,
         isDirty: false,
         saveStatus: "saved",
       });
