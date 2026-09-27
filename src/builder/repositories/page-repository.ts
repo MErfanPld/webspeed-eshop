@@ -1,5 +1,9 @@
 import type { ManagedPage } from "@/builder/contracts/page-contract";
 
+/**
+ * Persistence abstraction.
+ * Builder UI depends ONLY on this interface.
+ */
 export interface PageRepository {
   listPages(): Promise<ManagedPage[]>;
   getPage(id: string): Promise<ManagedPage | null>;
