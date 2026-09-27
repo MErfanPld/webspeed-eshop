@@ -1,28 +1,28 @@
-/* WebSpeed Admin — TailwindAdmin / Shadcn-inspired */
+/* WebSpeed Admin — TailwindAdmin style */
 :root {
-  --admin-bg: #F5F7FB;
+  --admin-bg: #F0F5F9;
   --admin-surface: #FFFFFF;
-  --admin-text: #111C2D;
+  --admin-text: #2A3547;
   --admin-text-secondary: #7C8FAC;
   --admin-border: #E5EAEF;
   --admin-muted: #F0F5F9;
   --admin-accent: #5D87FF;
-  --admin-accent-hover: #4A75E8;
-  --admin-accent-soft: rgba(93, 135, 255, 0.1);
+  --admin-accent-hover: #4570EA;
+  --admin-accent-soft: rgba(93, 135, 255, 0.12);
   --admin-success: #13DEB9;
   --admin-warning: #FFAE1F;
   --admin-danger: #FA896B;
-  --admin-sidebar-bg: #1C2536;
-  --admin-sidebar-text: #A0AEC0;
+  --admin-sidebar-bg: #253662;
+  --admin-sidebar-text: #BDC6D9;
   --admin-sidebar-active: #FFFFFF;
-  --admin-sidebar-hover: rgba(255, 255, 255, 0.06);
+  --admin-sidebar-hover: rgba(255, 255, 255, 0.08);
   --admin-radius-sm: 8px;
   --admin-radius: 12px;
-  --admin-radius-lg: 16px;
-  --admin-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-  --admin-shadow-md: 0 8px 24px rgba(0, 0, 0, 0.06);
-  --admin-sidebar-w: 260px;
-  --admin-sidebar-collapsed: 72px;
-  --admin-topbar-h: 64px;
-  --admin-motion: 180ms cubic-bezier(0.25, 0.1, 0.25, 1);
+  --admin-radius-lg: 18px;
+  --admin-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+  --admin-shadow-md: 0 12px 28px rgba(0, 0, 0, 0.06);
+  --admin-sidebar-w: 270px;
+  --admin-sidebar-collapsed: 80px;
+  --admin-topbar-h: 70px;
+  --admin-motion: 180ms ease;
 }
