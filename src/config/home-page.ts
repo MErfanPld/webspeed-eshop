@@ -1,28 +1,24 @@
 import type { PageConfig } from "@/builder/types";
 
-/**
- * Home page composition — pure config.
- * Store owners / future CMS can rearrange blocks without touching UI code.
- */
 export const homePageConfig: PageConfig = {
   id: "home",
   slug: "/",
-  title: "WebSpeed — فروشگاه آنلاین",
-  description: "خرید آنلاین پوشاک، الکترونیک و کالاهای روزمره با ارسال سریع",
+  title: "WebSpeed | فروشگاه اینترنتی",
+  description: "خرید آنلاین با ارسال سریع و ضمانت اصالت کالا",
   blocks: [
     {
       id: "hero-main",
       type: "hero",
       data: {
         autoplay: true,
-        intervalMs: 5500,
+        intervalMs: 5000,
         slides: [
           {
             id: "s1",
             image: "/placeholders/hero-1.svg",
             eyebrow: "مجموعه جدید",
-            title: "فصل تازه، استایل تازه",
-            subtitle: "کیفیت بدون مصالحه — برای هر روز زندگی",
+            title: "خرید هوشمند، ارسال سریع",
+            subtitle: "هزاران محصول اصل با بهترین قیمت و ضمانت اصالت",
             ctaLabel: "مشاهده محصولات",
             ctaHref: "/products?sort=newest",
             align: "right",
@@ -32,9 +28,9 @@ export const homePageConfig: PageConfig = {
             image: "/placeholders/hero-2.svg",
             eyebrow: "پیشنهاد ویژه",
             title: "تا ۴۰٪ تخفیف فصلی",
-            subtitle: "روی منتخب پوشاک و اکسسوری",
+            subtitle: "روی منتخب پوشاک و اکسسوری — فرصت محدود",
             ctaLabel: "خرید با تخفیف",
-            ctaHref: "/products?sort=price-asc",
+            ctaHref: "/products?discount=1",
             align: "right",
           },
           {
@@ -55,30 +51,10 @@ export const homePageConfig: PageConfig = {
       type: "features",
       data: {
         items: [
-          {
-            id: "f1",
-            icon: "truck",
-            title: "ارسال سریع",
-            description: "۲ تا ۴ روز کاری",
-          },
-          {
-            id: "f2",
-            icon: "shield",
-            title: "ضمانت اصالت",
-            description: "کالای اصل و معتبر",
-          },
-          {
-            id: "f3",
-            icon: "refresh",
-            title: "۷ روز بازگشت",
-            description: "بدون سوال اضافه",
-          },
-          {
-            id: "f4",
-            icon: "headset",
-            title: "پشتیبانی",
-            description: "شنبه تا پنجشنبه",
-          },
+          { id: "f1", icon: "truck", title: "ارسال سریع", description: "۲ تا ۴ روز کاری" },
+          { id: "f2", icon: "shield", title: "ضمانت اصالت", description: "کالای ۱۰۰٪ اصل" },
+          { id: "f3", icon: "refresh", title: "۷ روز بازگشت", description: "بدون شرط اضافه" },
+          { id: "f4", icon: "headset", title: "پشتیبانی آنلاین", description: "شنبه تا پنجشنبه" },
         ],
       },
     },
@@ -86,38 +62,16 @@ export const homePageConfig: PageConfig = {
       id: "cats",
       type: "category-grid",
       data: {
-        title: "خرید بر اساس دسته",
-        subtitle: "دسته‌بندی‌های محبوب",
-        columns: 4,
+        title: "دسته‌بندی‌ها",
+        subtitle: "خرید سریع بر اساس نیاز شما",
+        columns: 6,
         categories: [
-          {
-            id: "c1",
-            name: "تی‌شرت",
-            slug: "tshirt",
-            image: "/placeholders/cat-1.svg",
-            count: 24,
-          },
-          {
-            id: "c2",
-            name: "هودی",
-            slug: "hoodie",
-            image: "/placeholders/cat-2.svg",
-            count: 18,
-          },
-          {
-            id: "c3",
-            name: "شلوار",
-            slug: "pants",
-            image: "/placeholders/cat-3.svg",
-            count: 32,
-          },
-          {
-            id: "c4",
-            name: "اکسسوری",
-            slug: "accessories",
-            image: "/placeholders/cat-4.svg",
-            count: 15,
-          },
+          { id: "c1", name: "تی‌شرت", slug: "t-shirts", image: "/placeholders/cat-1.svg", count: 48 },
+          { id: "c2", name: "هودی", slug: "hoodies", image: "/placeholders/cat-2.svg", count: 32 },
+          { id: "c3", name: "شلوار", slug: "pants", image: "/placeholders/cat-3.svg", count: 56 },
+          { id: "c4", name: "جین", slug: "jeans", image: "/placeholders/cat-4.svg", count: 28 },
+          { id: "c5", name: "کت", slug: "jackets", image: "/placeholders/cat-1.svg", count: 22 },
+          { id: "c6", name: "اکسسوری", slug: "accessories", image: "/placeholders/cat-2.svg", count: 40 },
         ],
       },
     },
@@ -125,8 +79,8 @@ export const homePageConfig: PageConfig = {
       id: "featured",
       type: "product-slider",
       data: {
-        title: "پیشنهادهای ویژه",
-        subtitle: "منتخب تیم WebSpeed",
+        title: "پیشنهاد شگفت‌انگیز",
+        subtitle: "منتخب امروز WebSpeed",
         source: "featured",
         limit: 8,
         viewAllHref: "/products?sort=featured",
@@ -137,11 +91,22 @@ export const homePageConfig: PageConfig = {
       type: "promo-banner",
       data: {
         title: "فروش ویژه آخر هفته",
-        subtitle: "تا ۳۰٪ تخفیف روی کالکشن پاییز",
+        subtitle: "تا ۳۰٪ تخفیف روی کالکشن پاییز — فقط تا پایان هفته",
         image: "/placeholders/banner-1.svg",
         ctaLabel: "مشاهده پیشنهادها",
-        ctaHref: "/products",
+        ctaHref: "/products?discount=1",
         variant: "full",
+      },
+    },
+    {
+      id: "bestsellers",
+      type: "product-slider",
+      data: {
+        title: "پرفروش‌ترین‌ها",
+        subtitle: "محبوب‌ترین انتخاب مشتریان",
+        source: "bestsellers",
+        limit: 8,
+        viewAllHref: "/products?sort=bestsellers",
       },
     },
     {
@@ -149,7 +114,7 @@ export const homePageConfig: PageConfig = {
       type: "product-slider",
       data: {
         title: "تازه‌رسیده‌ها",
-        subtitle: "جدیدترین محصولات",
+        subtitle: "جدیدترین محصولات فروشگاه",
         source: "new",
         limit: 8,
         viewAllHref: "/products?sort=newest",
@@ -160,8 +125,8 @@ export const homePageConfig: PageConfig = {
       type: "flash-sale",
       data: {
         title: "فروش فوری",
-        endsAt: new Date(Date.now() + 1000 * 60 * 60 * 36).toISOString(),
-        limit: 6,
+        endsAt: new Date(Date.now() + 1000 * 60 * 60 * 28).toISOString(),
+        limit: 4,
       },
     },
     {
@@ -190,7 +155,7 @@ export const homePageConfig: PageConfig = {
             name: "سارا م.",
             role: "تهران",
             rating: 5,
-            text: "کیفیت پارچه عالی بود و ارسال خیلی سریع انجام شد.",
+            text: "ارسال سریع بود و کیفیت کالا دقیقاً مطابق توضیحات سایت.",
             avatar: "/placeholders/avatar.svg",
           },
           {
@@ -206,7 +171,7 @@ export const homePageConfig: PageConfig = {
             name: "مریم ک.",
             role: "شیراز",
             rating: 4,
-            text: "تجربه خرید راحت بود و پشتیبانی پاسخگو بود.",
+            text: "پشتیبانی پاسخگو بود و روند خرید خیلی ساده انجام شد.",
             avatar: "/placeholders/avatar.svg",
           },
         ],
@@ -243,8 +208,8 @@ export const homePageConfig: PageConfig = {
       id: "newsletter",
       type: "newsletter",
       data: {
-        title: "از تازه‌ها باخبر شوید",
-        subtitle: "تخفیف‌ها و محصولات جدید را در ایمیل دریافت کنید",
+        title: "از تخفیف‌ها جا نمانید",
+        subtitle: "با عضویت در خبرنامه، پیشنهادهای ویژه را زودتر دریافت کنید",
         placeholder: "ایمیل شما",
         buttonLabel: "عضویت",
       },
