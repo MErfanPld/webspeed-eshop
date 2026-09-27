@@ -5,6 +5,7 @@ const config: Config = {
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/blocks/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     screens: {
@@ -27,18 +28,27 @@ const config: Config = {
         "accent-foreground": "var(--accent-foreground)",
         surface: "var(--surface)",
         concrete: "var(--concrete)",
+        primary: "var(--primary)",
+        "primary-hover": "var(--primary-hover)",
+        discount: "var(--discount)",
+        success: "var(--success)",
       },
       fontFamily: {
-        sans: ["var(--font-vazirmatn)", "system-ui", "sans-serif"],
+        sans: ["var(--font-vazirmatn)", "Tahoma", "system-ui", "sans-serif"],
       },
       maxWidth: {
-        content: "1400px",
+        content: "1280px",
         prose: "40rem",
       },
       spacing: {
         18: "4.5rem",
         22: "5.5rem",
         30: "7.5rem",
+      },
+      boxShadow: {
+        sm: "var(--shadow-sm)",
+        md: "var(--shadow-md)",
+        lg: "var(--shadow-lg)",
       },
     },
   },
