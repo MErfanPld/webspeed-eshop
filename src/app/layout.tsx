@@ -13,16 +13,18 @@ const vazirmatn = Vazirmatn({
 
 export const metadata: Metadata = {
   title: {
-    default: "WebSpeed",
-    template: "%s — WebSpeed",
+    default: "WebSpeed | فروشگاه اینترنتی",
+    template: "%s | WebSpeed",
   },
-  description: "پوشاک مینیمال با کیفیت بالا. طراحی ماندگار برای زندگی روزمره.",
+  description:
+    "خرید آنلاین با ارسال سریع، ضمانت اصالت کالا و بهترین قیمت. پوشاک، دیجیتال و کالای روزمره.",
   openGraph: {
     type: "website",
     locale: "fa_IR",
     siteName: "WebSpeed",
-    title: "WebSpeed",
-    description: "پوشاک مینیمال با کیفیت بالا. طراحی ماندگار برای زندگی روزمره.",
+    title: "WebSpeed | فروشگاه اینترنتی",
+    description:
+      "خرید آنلاین با ارسال سریع، ضمانت اصالت کالا و بهترین قیمت.",
   },
 };
 
@@ -30,7 +32,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
-  themeColor: "#fbf9f9",
+  themeColor: "#E31B23",
   viewportFit: "cover",
 };
 
@@ -40,10 +42,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fa" dir="rtl" className={`${vazirmatn.variable} ${vazirmatn.className}`}>
+    <html
+      lang="fa"
+      dir="rtl"
+      className={`${vazirmatn.variable} ${vazirmatn.className}`}
+      suppressHydrationWarning
+    >
       <body
-        className="min-h-screen flex flex-col no-x-scroll font-sans antialiased"
-        style={{ fontFamily: "var(--font-vazirmatn), Tahoma, system-ui, sans-serif" }}
+        className="min-h-screen flex flex-col no-x-scroll font-sans antialiased bg-background text-foreground"
+        style={{
+          fontFamily: "var(--font-vazirmatn), Tahoma, system-ui, sans-serif",
+        }}
         suppressHydrationWarning
       >
         <CartProvider>
