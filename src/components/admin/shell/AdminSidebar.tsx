@@ -44,7 +44,10 @@ export default function AdminSidebar({
   };
 
   const NavBody = (
-    <div className="flex flex-col h-full bg-[#253662] text-[#BDC6D9]">
+    <div
+      className="flex flex-col h-full bg-[#253662] text-[#BDC6D9]"
+      style={{ fontFamily: "Vazirmatn, Tahoma, sans-serif" }}
+    >
       <div
         className={cn(
           "h-[70px] shrink-0 flex items-center border-b border-white/10",
@@ -52,8 +55,11 @@ export default function AdminSidebar({
         )}
       >
         {!collapsed && (
-          <Link href="/admin" className="text-[17px] font-bold tracking-tight text-white">
-            WebSpeed
+          <Link href="/admin" className="flex items-center gap-2.5 min-w-0">
+            <span className="h-9 w-9 rounded-xl bg-[#5D87FF] text-white text-sm font-bold flex items-center justify-center shrink-0 shadow-md shadow-[#5D87FF]/40">
+              W
+            </span>
+            <span className="text-[16px] font-bold tracking-tight text-white truncate">WebSpeed</span>
           </Link>
         )}
         {collapsed && (
@@ -94,7 +100,7 @@ export default function AdminSidebar({
                   collapsed ? "justify-center h-11 w-11 mx-auto" : "px-3 h-11",
                   item.disabled && "opacity-35 cursor-not-allowed",
                   !item.disabled && active && "bg-[#5D87FF] text-white shadow-md shadow-[#5D87FF]/25",
-                  !item.disabled && !active && "text-[#BDC6D9] hover:bg-white/8 hover:text-white"
+                  !item.disabled && !active && "text-[#BDC6D9] hover:bg-white/[0.08] hover:text-white"
                 );
 
                 const content = (
@@ -134,6 +140,15 @@ export default function AdminSidebar({
           </div>
         ))}
       </nav>
+
+      {!collapsed && (
+        <div className="p-4 border-t border-white/10">
+          <div className="rounded-xl bg-white/5 px-3 py-3">
+            <p className="text-xs font-semibold text-white">WebSpeed Admin</p>
+            <p className="text-[11px] text-white/40 mt-0.5">نسخه ۱.۰</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 
