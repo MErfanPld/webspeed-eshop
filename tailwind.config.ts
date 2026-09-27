@@ -34,7 +34,7 @@ const config: Config = {
         success: "var(--success)",
       },
       fontFamily: {
-        sans: ["var(--font-vazirmatn)", "Tahoma", "system-ui", "sans-serif"],
+        sans: ["Vazirmatn", "Tahoma", "Arial", "system-ui", "sans-serif"],
       },
       maxWidth: {
         content: "1280px",

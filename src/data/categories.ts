@@ -6,7 +6,7 @@ export const categories: Category[] = [
     id: "t-shirts",
     name: "تی‌شرت",
     slug: "t-shirts",
-    image: "/placeholders/cat-1.svg",
+    image: "/placeholders/samsung-banner.webp",
     children: [
       { name: "تی‌شرت ساده", slug: "t-shirts" },
       { name: "تی‌شرت اورسایز", slug: "t-shirts" },
@@ -17,7 +17,7 @@ export const categories: Category[] = [
     id: "shirts",
     name: "پیراهن",
     slug: "shirts",
-    image: "/placeholders/cat-2.svg",
+    image: "/placeholders/samsung-banner.webp",
     children: [
       { name: "پیراهن رسمی", slug: "shirts" },
       { name: "پیراهن کژوال", slug: "shirts" },
@@ -28,7 +28,7 @@ export const categories: Category[] = [
     id: "hoodies",
     name: "هودی و سویشرت",
     slug: "hoodies",
-    image: "/placeholders/cat-3.svg",
+    image: "/placeholders/samsung-banner.webp",
     children: [
       { name: "هودی", slug: "hoodies" },
       { name: "سویشرت", slug: "hoodies" },
@@ -38,7 +38,7 @@ export const categories: Category[] = [
     id: "jackets",
     name: "کت و پالتو",
     slug: "jackets",
-    image: "/placeholders/cat-4.svg",
+    image: "/placeholders/samsung-banner.webp",
     children: [
       { name: "کت جین", slug: "jackets" },
       { name: "پالتو", slug: "jackets" },
@@ -48,7 +48,7 @@ export const categories: Category[] = [
     id: "pants",
     name: "شلوار",
     slug: "pants",
-    image: "/placeholders/cat-1.svg",
+    image: "/placeholders/samsung-banner.webp",
     children: [
       { name: "شلوار پارچه‌ای", slug: "pants" },
       { name: "کارگو", slug: "pants" },
@@ -58,7 +58,7 @@ export const categories: Category[] = [
     id: "jeans",
     name: "جین",
     slug: "jeans",
-    image: "/placeholders/cat-2.svg",
+    image: "/placeholders/samsung-banner.webp",
     children: [
       { name: "جین بگ", slug: "jeans" },
       { name: "جین اسلیم", slug: "jeans" },
@@ -68,7 +68,7 @@ export const categories: Category[] = [
     id: "accessories",
     name: "اکسسوری",
     slug: "accessories",
-    image: "/placeholders/cat-3.svg",
+    image: "/placeholders/samsung-banner.webp",
     children: [
       { name: "کیف", slug: "accessories" },
       { name: "کمربند", slug: "accessories" },
