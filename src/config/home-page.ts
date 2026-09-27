@@ -1,5 +1,7 @@
 import type { PageConfig } from "@/builder/types";
 
+const IMG = "/placeholders/samsung-banner.webp";
+
 export const homePageConfig: PageConfig = {
   id: "home",
   slug: "/",
@@ -15,7 +17,7 @@ export const homePageConfig: PageConfig = {
         slides: [
           {
             id: "s1",
-            image: "/placeholders/hero-1.svg",
+            image: IMG,
             eyebrow: "مجموعه جدید",
             title: "خرید هوشمند، ارسال سریع",
             subtitle: "هزاران محصول اصل با بهترین قیمت و ضمانت اصالت",
@@ -25,7 +27,7 @@ export const homePageConfig: PageConfig = {
           },
           {
             id: "s2",
-            image: "/placeholders/hero-2.svg",
+            image: IMG,
             eyebrow: "پیشنهاد ویژه",
             title: "تا ۴۰٪ تخفیف فصلی",
             subtitle: "روی منتخب پوشاک و اکسسوری — فرصت محدود",
@@ -35,7 +37,7 @@ export const homePageConfig: PageConfig = {
           },
           {
             id: "s3",
-            image: "/placeholders/hero-3.svg",
+            image: IMG,
             eyebrow: "ارسال رایگان",
             title: "سفارش بالای ۲٫۵ میلیون",
             subtitle: "تحویل سریع در سراسر کشور",
@@ -66,12 +68,12 @@ export const homePageConfig: PageConfig = {
         subtitle: "خرید سریع بر اساس نیاز شما",
         columns: 6,
         categories: [
-          { id: "c1", name: "تی‌شرت", slug: "t-shirts", image: "/placeholders/cat-1.svg", count: 48 },
-          { id: "c2", name: "هودی", slug: "hoodies", image: "/placeholders/cat-2.svg", count: 32 },
-          { id: "c3", name: "شلوار", slug: "pants", image: "/placeholders/cat-3.svg", count: 56 },
-          { id: "c4", name: "جین", slug: "jeans", image: "/placeholders/cat-4.svg", count: 28 },
-          { id: "c5", name: "کت", slug: "jackets", image: "/placeholders/cat-1.svg", count: 22 },
-          { id: "c6", name: "اکسسوری", slug: "accessories", image: "/placeholders/cat-2.svg", count: 40 },
+          { id: "c1", name: "تی‌شرت", slug: "t-shirts", image: IMG, count: 48 },
+          { id: "c2", name: "هودی", slug: "hoodies", image: IMG, count: 32 },
+          { id: "c3", name: "شلوار", slug: "pants", image: IMG, count: 56 },
+          { id: "c4", name: "جین", slug: "jeans", image: IMG, count: 28 },
+          { id: "c5", name: "کت", slug: "jackets", image: IMG, count: 22 },
+          { id: "c6", name: "اکسسوری", slug: "accessories", image: IMG, count: 40 },
         ],
       },
     },
@@ -92,7 +94,7 @@ export const homePageConfig: PageConfig = {
       data: {
         title: "فروش ویژه آخر هفته",
         subtitle: "تا ۳۰٪ تخفیف روی کالکشن پاییز — فقط تا پایان هفته",
-        image: "/placeholders/banner-1.svg",
+        image: IMG,
         ctaLabel: "مشاهده پیشنهادها",
         ctaHref: "/products?discount=1",
         variant: "full",
@@ -135,12 +137,12 @@ export const homePageConfig: PageConfig = {
       data: {
         title: "برندهای منتخب",
         brands: [
-          { id: "b1", name: "Nova", logo: "/placeholders/brand-1.svg" },
-          { id: "b2", name: "Aether", logo: "/placeholders/brand-2.svg" },
-          { id: "b3", name: "Lumen", logo: "/placeholders/brand-3.svg" },
-          { id: "b4", name: "Orbit", logo: "/placeholders/brand-4.svg" },
-          { id: "b5", name: "Pulse", logo: "/placeholders/brand-1.svg" },
-          { id: "b6", name: "Form", logo: "/placeholders/brand-2.svg" },
+          { id: "b1", name: "Nova", logo: IMG },
+          { id: "b2", name: "Aether", logo: IMG },
+          { id: "b3", name: "Lumen", logo: IMG },
+          { id: "b4", name: "Orbit", logo: IMG },
+          { id: "b5", name: "Pulse", logo: IMG },
+          { id: "b6", name: "Form", logo: IMG },
         ],
       },
     },
@@ -156,7 +158,7 @@ export const homePageConfig: PageConfig = {
             role: "تهران",
             rating: 5,
             text: "ارسال سریع بود و کیفیت کالا دقیقاً مطابق توضیحات سایت.",
-            avatar: "/placeholders/avatar.svg",
+            avatar: IMG,
           },
           {
             id: "t2",
@@ -164,7 +166,7 @@ export const homePageConfig: PageConfig = {
             role: "اصفهان",
             rating: 5,
             text: "سایزبندی دقیق و بسته‌بندی مرتب. حتماً دوباره خرید می‌کنم.",
-            avatar: "/placeholders/avatar.svg",
+            avatar: IMG,
           },
           {
             id: "t3",
@@ -172,7 +174,7 @@ export const homePageConfig: PageConfig = {
             role: "شیراز",
             rating: 4,
             text: "پشتیبانی پاسخگو بود و روند خرید خیلی ساده انجام شد.",
-            avatar: "/placeholders/avatar.svg",
+            avatar: IMG,
           },
         ],
       },
