@@ -44,22 +44,22 @@ export default function AdminSidebar({
   };
 
   const NavBody = (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full bg-[var(--admin-sidebar-bg)] text-[var(--admin-sidebar-text)]">
       <div
         className={cn(
-          "h-[var(--admin-topbar-h)] shrink-0 flex items-center border-b border-[var(--admin-border)]",
+          "h-[var(--admin-topbar-h)] shrink-0 flex items-center border-b border-white/5",
           collapsed ? "justify-center px-2" : "px-5 gap-2"
         )}
       >
         {!collapsed && (
-          <Link href="/admin" className="text-[15px] font-semibold tracking-tight text-[var(--admin-text)]">
+          <Link href="/admin" className="text-[15px] font-semibold tracking-tight text-white">
             WebSpeed
           </Link>
         )}
         {collapsed && (
           <Link
             href="/admin"
-            className="h-8 w-8 rounded-lg bg-[var(--admin-text)] text-white text-xs font-bold flex items-center justify-center"
+            className="h-9 w-9 rounded-xl bg-[var(--admin-accent)] text-white text-xs font-bold flex items-center justify-center"
           >
             W
           </Link>
@@ -68,7 +68,7 @@ export default function AdminSidebar({
           type="button"
           onClick={toggle}
           className={cn(
-            "hidden lg:inline-flex h-8 w-8 items-center justify-center rounded-lg text-[var(--admin-text-secondary)] hover:bg-[var(--admin-muted)] hover:text-[var(--admin-text)] transition-colors",
+            "hidden lg:inline-flex h-8 w-8 items-center justify-center rounded-lg text-white/50 hover:bg-white/10 hover:text-white transition-colors",
             !collapsed && "mr-auto"
           )}
           aria-label={collapsed ? "باز کردن منو" : "جمع کردن منو"}
@@ -77,27 +77,34 @@ export default function AdminSidebar({
         </button>
       </div>
 
-      <nav className="flex-1 overflow-y-auto py-4 px-2 space-y-5">
+      <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-5">
         {adminNav.map((section) => (
           <div key={section.title}>
             {!collapsed && (
-              <p className="px-3 mb-1.5 text-[11px] font-medium text-[var(--admin-text-secondary)] tracking-wide">
+              <p className="px-3 mb-2 text-[10px] font-semibold uppercase tracking-wider text-white/35">
                 {section.title}
               </p>
             )}
-            <ul className="space-y-0.5">
+            <ul className="space-y-1">
               {section.items.map((item) => {
                 const active = isActive(item.href, item.match, item.label);
                 const Icon = item.icon;
+                const rowClass = cn(
+                  "flex items-center gap-3 rounded-xl text-sm font-medium transition-colors duration-150",
+                  collapsed ? "justify-center h-11 w-11 mx-auto" : "px-3 h-10",
+                  item.disabled && "opacity-40 cursor-not-allowed",
+                  !item.disabled && active && "bg-[var(--admin-accent)] text-white shadow-sm",
+                  !item.disabled &&
+                    !active &&
+                    "text-[var(--admin-sidebar-text)] hover:bg-[var(--admin-sidebar-hover)] hover:text-white"
+                );
+
                 const content = (
                   <>
-                    <Icon
-                      className={cn("h-[18px] w-[18px] shrink-0", active && "text-[var(--admin-accent)]")}
-                      strokeWidth={1.5}
-                    />
+                    <Icon className="h-[18px] w-[18px] shrink-0" strokeWidth={1.75} />
                     {!collapsed && <span className="truncate leading-none">{item.label}</span>}
                     {!collapsed && item.disabled && (
-                      <span className="mr-auto text-[10px] text-[var(--admin-text-secondary)] opacity-70">به‌زودی</span>
+                      <span className="mr-auto text-[10px] opacity-70">به‌زودی</span>
                     )}
                   </>
                 );
@@ -105,13 +112,7 @@ export default function AdminSidebar({
                 if (item.disabled) {
                   return (
                     <li key={item.href + item.label}>
-                      <span
-                        title={collapsed ? item.label : undefined}
-                        className={cn(
-                          "flex items-center gap-2.5 rounded-[var(--admin-radius-sm)] text-sm text-[var(--admin-text-secondary)]/60 cursor-not-allowed",
-                          collapsed ? "justify-center h-10 w-10 mx-auto" : "px-3 h-9"
-                        )}
-                      >
+                      <span title={collapsed ? item.label : undefined} className={rowClass}>
                         {content}
                       </span>
                     </li>
@@ -124,13 +125,7 @@ export default function AdminSidebar({
                       href={item.href}
                       title={collapsed ? item.label : undefined}
                       onClick={onMobileClose}
-                      className={cn(
-                        "flex items-center gap-2.5 rounded-[var(--admin-radius-sm)] text-sm font-medium transition-colors duration-150",
-                        collapsed ? "justify-center h-10 w-10 mx-auto" : "px-3 h-9",
-                        active
-                          ? "bg-[var(--admin-accent-soft)] text-[var(--admin-text)]"
-                          : "text-[var(--admin-text-secondary)] hover:bg-[var(--admin-muted)] hover:text-[var(--admin-text)]"
-                      )}
+                      className={rowClass}
                     >
                       {content}
                     </Link>
@@ -148,24 +143,29 @@ export default function AdminSidebar({
     <>
       <aside
         className={cn(
-          "hidden lg:flex flex-col shrink-0 border-l border-[var(--admin-border)] bg-[var(--admin-surface)] h-screen sticky top-0 transition-[width] duration-200 ease-out",
+          "hidden lg:flex flex-col shrink-0 h-screen sticky top-0 transition-[width] duration-200 ease-out overflow-hidden",
           collapsed ? "w-[var(--admin-sidebar-collapsed)]" : "w-[var(--admin-sidebar-w)]"
         )}
       >
         {NavBody}
       </aside>
 
-      <div className={cn("fixed inset-0 z-50 lg:hidden", mobileOpen ? "pointer-events-auto" : "pointer-events-none")}>
+      <div
+        className={cn(
+          "fixed inset-0 z-50 lg:hidden",
+          mobileOpen ? "pointer-events-auto" : "pointer-events-none"
+        )}
+      >
         <div
           className={cn(
-            "absolute inset-0 bg-black/25 transition-opacity duration-200",
+            "absolute inset-0 bg-black/40 transition-opacity duration-200",
             mobileOpen ? "opacity-100" : "opacity-0"
           )}
           onClick={onMobileClose}
         />
         <aside
           className={cn(
-            "absolute top-0 right-0 h-full w-[min(var(--admin-sidebar-w),85vw)] bg-[var(--admin-surface)] border-l border-[var(--admin-border)] shadow-[var(--admin-shadow-md)] transition-transform duration-200 ease-out",
+            "absolute top-0 right-0 h-full w-[min(var(--admin-sidebar-w),85vw)] shadow-2xl transition-transform duration-200 ease-out overflow-hidden",
             mobileOpen ? "translate-x-0" : "translate-x-full"
           )}
         >
