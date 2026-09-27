@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import AdminSidebar from "@/components/admin/AdminSidebar";
+import AdminShell from "@/components/admin/shell/AdminShell";
 
 export default function AdminLayout({
   children,
@@ -10,15 +10,11 @@ export default function AdminLayout({
 }) {
   const pathname = usePathname();
   const isBuilder = pathname?.startsWith("/admin/builder");
+  const isLogin = pathname === "/admin/login";
 
-  if (isBuilder) {
+  if (isBuilder || isLogin) {
     return <>{children}</>;
   }
 
-  return (
-    <div className="min-h-screen flex flex-col lg:flex-row bg-background">
-      <AdminSidebar />
-      <div className="flex-1 min-w-0 p-4 sm:p-6 lg:p-8">{children}</div>
-    </div>
-  );
+  return <AdminShell>{children}</AdminShell>;
 }
