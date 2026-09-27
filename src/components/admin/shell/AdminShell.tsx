@@ -8,11 +8,15 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <div className="min-h-screen flex bg-[var(--admin-bg)] text-[var(--admin-text)]">
+    <div
+      className="min-h-screen flex bg-[#F0F5F9] text-[#2A3547]"
+      style={{ fontFamily: "Vazirmatn, Tahoma, system-ui, sans-serif" }}
+      dir="rtl"
+    >
       <AdminSidebar mobileOpen={mobileOpen} onMobileClose={() => setMobileOpen(false)} />
       <div className="flex-1 min-w-0 flex flex-col min-h-screen">
         <AdminTopbar onMenuClick={() => setMobileOpen(true)} />
-        <main className="flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
+        <main className="flex-1 p-4 sm:p-6 lg:p-7">{children}</main>
       </div>
     </div>
   );
