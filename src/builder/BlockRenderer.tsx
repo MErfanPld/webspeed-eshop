@@ -1,5 +1,6 @@
 "use client";
 
+import type { ComponentType } from "react";
 import type { PageBlock } from "./types";
 import HeroBlockView from "@/blocks/hero/HeroBlock";
 import CategoryGridBlockView from "@/blocks/category-grid/CategoryGridBlock";
@@ -14,22 +15,19 @@ import FaqBlockView from "@/blocks/faq/FaqBlock";
 import NewsletterBlockView from "@/blocks/newsletter/NewsletterBlock";
 import RelatedSliderBlockView from "@/blocks/related-slider/RelatedSliderBlock";
 
-const registry: Record<
-  string,
-  React.ComponentType<{ block: PageBlock }>
-> = {
-  hero: HeroBlockView as React.ComponentType<{ block: PageBlock }>,
-  "category-grid": CategoryGridBlockView as React.ComponentType<{ block: PageBlock }>,
-  "product-slider": ProductSliderBlockView as React.ComponentType<{ block: PageBlock }>,
-  "product-grid": ProductGridBlockView as React.ComponentType<{ block: PageBlock }>,
-  "promo-banner": PromoBannerBlockView as React.ComponentType<{ block: PageBlock }>,
-  "brand-slider": BrandSliderBlockView as React.ComponentType<{ block: PageBlock }>,
-  features: FeaturesBlockView as React.ComponentType<{ block: PageBlock }>,
-  "flash-sale": FlashSaleBlockView as React.ComponentType<{ block: PageBlock }>,
-  testimonials: TestimonialsBlockView as React.ComponentType<{ block: PageBlock }>,
-  faq: FaqBlockView as React.ComponentType<{ block: PageBlock }>,
-  newsletter: NewsletterBlockView as React.ComponentType<{ block: PageBlock }>,
-  "related-slider": RelatedSliderBlockView as React.ComponentType<{ block: PageBlock }>,
+const registry: Record<string, ComponentType<{ block: PageBlock }>> = {
+  hero: HeroBlockView as ComponentType<{ block: PageBlock }>,
+  "category-grid": CategoryGridBlockView as ComponentType<{ block: PageBlock }>,
+  "product-slider": ProductSliderBlockView as ComponentType<{ block: PageBlock }>,
+  "product-grid": ProductGridBlockView as ComponentType<{ block: PageBlock }>,
+  "promo-banner": PromoBannerBlockView as ComponentType<{ block: PageBlock }>,
+  "brand-slider": BrandSliderBlockView as ComponentType<{ block: PageBlock }>,
+  features: FeaturesBlockView as ComponentType<{ block: PageBlock }>,
+  "flash-sale": FlashSaleBlockView as ComponentType<{ block: PageBlock }>,
+  testimonials: TestimonialsBlockView as ComponentType<{ block: PageBlock }>,
+  faq: FaqBlockView as ComponentType<{ block: PageBlock }>,
+  newsletter: NewsletterBlockView as ComponentType<{ block: PageBlock }>,
+  "related-slider": RelatedSliderBlockView as ComponentType<{ block: PageBlock }>,
 };
 
 export function BlockRenderer({ block }: { block: PageBlock }) {
