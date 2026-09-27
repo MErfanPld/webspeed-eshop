@@ -13,17 +13,19 @@ type Props = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 const variants: Record<Variant, string> = {
-  primary: "bg-[var(--admin-accent)] text-white hover:bg-[var(--admin-accent-hover)] shadow-sm",
-  secondary: "bg-[var(--admin-surface)] text-[var(--admin-text)] border border-[var(--admin-border)] hover:bg-[var(--admin-muted)]",
-  ghost: "bg-transparent text-[var(--admin-text-secondary)] hover:bg-[var(--admin-muted)] hover:text-[var(--admin-text)]",
-  danger: "bg-red-50 text-red-600 border border-red-100 hover:bg-red-100",
-  icon: "bg-transparent text-[var(--admin-text-secondary)] hover:bg-[var(--admin-muted)] hover:text-[var(--admin-text)]",
+  primary:
+    "bg-[#5D87FF] text-white hover:bg-[#4570EA] shadow-md shadow-[#5D87FF]/25 border border-transparent",
+  secondary:
+    "bg-white text-[#2A3547] border border-[#E5EAEF] hover:bg-[#F0F5F9]",
+  ghost: "bg-transparent text-[#7C8FAC] hover:bg-[#F0F5F9] hover:text-[#2A3547] border border-transparent",
+  danger: "bg-[#FDEDE8] text-[#FA896B] hover:bg-[#FA896B]/20 border border-transparent",
+  icon: "bg-transparent text-[#7C8FAC] hover:bg-[#F0F5F9] hover:text-[#2A3547] border border-transparent",
 };
 
 const sizes: Record<Size, string> = {
-  sm: "h-8 px-3 text-xs gap-1.5 rounded-[var(--admin-radius-sm)]",
-  md: "h-9 px-3.5 text-sm gap-2 rounded-[var(--admin-radius-sm)]",
-  lg: "h-11 px-5 text-sm gap-2 rounded-[var(--admin-radius)]",
+  sm: "h-9 px-3 text-xs gap-1.5 rounded-xl",
+  md: "h-10 px-4 text-sm gap-2 rounded-xl",
+  lg: "h-12 px-5 text-sm gap-2 rounded-xl",
 };
 
 const AdminButton = forwardRef<HTMLButtonElement, Props>(
@@ -32,11 +34,12 @@ const AdminButton = forwardRef<HTMLButtonElement, Props>(
       ref={ref}
       disabled={disabled || loading}
       className={cn(
-        "inline-flex items-center justify-center font-medium transition-all duration-150 disabled:opacity-50 disabled:pointer-events-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--admin-accent)]/30",
+        "inline-flex items-center justify-center font-semibold transition-all duration-150 disabled:opacity-50 disabled:pointer-events-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5D87FF]/30",
         variants[variant],
-        variant === "icon" ? "h-9 w-9 rounded-[var(--admin-radius-sm)] p-0" : sizes[size],
+        variant === "icon" ? "h-10 w-10 rounded-xl p-0" : sizes[size],
         className
       )}
+      style={{ fontFamily: "Vazirmatn, Tahoma, sans-serif" }}
       {...props}
     >
       {loading && (
