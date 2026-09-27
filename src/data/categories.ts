@@ -75,3 +75,34 @@ export const categories: Category[] = [
     ],
   },
 ];
+
+export const genders = [
+  { id: "all", name: "همه" },
+  { id: "men", name: "مردانه" },
+  { id: "women", name: "زنانه" },
+  { id: "unisex", name: "یونی‌سکس" },
+];
+
+export const allSizes = [
+  "XS",
+  "S",
+  "M",
+  "L",
+  "XL",
+  "XXL",
+  "26",
+  "28",
+  "30",
+  "32",
+  "34",
+  "36",
+  "One Size",
+];
+
+export const brands = [
+  "WebSpeed",
+  "UrbanWeave",
+  "Aether",
+  "Nova Wear",
+  "Minimal Co",
+];
