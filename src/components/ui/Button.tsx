@@ -22,7 +22,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       "inline-flex items-center justify-center font-semibold tracking-wide transition-all duration-200 focus-visible:outline-none disabled:opacity-35 disabled:pointer-events-none select-none";
 
     const variants = {
-      primary: "bg-foreground text-background hover:opacity-88",
+      primary: "bg-primary text-white hover:bg-primary-hover",
       accent: "bg-accent text-accent-foreground hover:bg-accent-hover",
       secondary: "bg-muted text-foreground hover:opacity-80",
       outline:
