@@ -44,22 +44,22 @@ export default function AdminSidebar({
   };
 
   const NavBody = (
-    <div className="flex flex-col h-full bg-[var(--admin-sidebar-bg)] text-[var(--admin-sidebar-text)]">
+    <div className="flex flex-col h-full bg-[#253662] text-[#BDC6D9]">
       <div
         className={cn(
-          "h-[var(--admin-topbar-h)] shrink-0 flex items-center border-b border-white/5",
+          "h-[70px] shrink-0 flex items-center border-b border-white/10",
           collapsed ? "justify-center px-2" : "px-5 gap-2"
         )}
       >
         {!collapsed && (
-          <Link href="/admin" className="text-[15px] font-semibold tracking-tight text-white">
+          <Link href="/admin" className="text-[17px] font-bold tracking-tight text-white">
             WebSpeed
           </Link>
         )}
         {collapsed && (
           <Link
             href="/admin"
-            className="h-9 w-9 rounded-xl bg-[var(--admin-accent)] text-white text-xs font-bold flex items-center justify-center"
+            className="h-10 w-10 rounded-xl bg-[#5D87FF] text-white text-sm font-bold flex items-center justify-center shadow-lg shadow-[#5D87FF]/30"
           >
             W
           </Link>
@@ -68,7 +68,7 @@ export default function AdminSidebar({
           type="button"
           onClick={toggle}
           className={cn(
-            "hidden lg:inline-flex h-8 w-8 items-center justify-center rounded-lg text-white/50 hover:bg-white/10 hover:text-white transition-colors",
+            "hidden lg:inline-flex h-8 w-8 items-center justify-center rounded-lg text-white/40 hover:bg-white/10 hover:text-white",
             !collapsed && "mr-auto"
           )}
           aria-label={collapsed ? "باز کردن منو" : "جمع کردن منو"}
@@ -77,11 +77,11 @@ export default function AdminSidebar({
         </button>
       </div>
 
-      <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-5">
+      <nav className="flex-1 overflow-y-auto py-5 px-3 space-y-5">
         {adminNav.map((section) => (
           <div key={section.title}>
             {!collapsed && (
-              <p className="px-3 mb-2 text-[10px] font-semibold uppercase tracking-wider text-white/35">
+              <p className="px-3 mb-2 text-[10px] font-bold uppercase tracking-wider text-white/30">
                 {section.title}
               </p>
             )}
@@ -90,21 +90,19 @@ export default function AdminSidebar({
                 const active = isActive(item.href, item.match, item.label);
                 const Icon = item.icon;
                 const rowClass = cn(
-                  "flex items-center gap-3 rounded-xl text-sm font-medium transition-colors duration-150",
-                  collapsed ? "justify-center h-11 w-11 mx-auto" : "px-3 h-10",
-                  item.disabled && "opacity-40 cursor-not-allowed",
-                  !item.disabled && active && "bg-[var(--admin-accent)] text-white shadow-sm",
-                  !item.disabled &&
-                    !active &&
-                    "text-[var(--admin-sidebar-text)] hover:bg-[var(--admin-sidebar-hover)] hover:text-white"
+                  "flex items-center gap-3 rounded-xl text-sm font-medium transition-all duration-150",
+                  collapsed ? "justify-center h-11 w-11 mx-auto" : "px-3 h-11",
+                  item.disabled && "opacity-35 cursor-not-allowed",
+                  !item.disabled && active && "bg-[#5D87FF] text-white shadow-md shadow-[#5D87FF]/25",
+                  !item.disabled && !active && "text-[#BDC6D9] hover:bg-white/8 hover:text-white"
                 );
 
                 const content = (
                   <>
                     <Icon className="h-[18px] w-[18px] shrink-0" strokeWidth={1.75} />
-                    {!collapsed && <span className="truncate leading-none">{item.label}</span>}
+                    {!collapsed && <span className="truncate">{item.label}</span>}
                     {!collapsed && item.disabled && (
-                      <span className="mr-auto text-[10px] opacity-70">به‌زودی</span>
+                      <span className="mr-auto text-[10px] opacity-60">به‌زودی</span>
                     )}
                   </>
                 );
@@ -143,8 +141,8 @@ export default function AdminSidebar({
     <>
       <aside
         className={cn(
-          "hidden lg:flex flex-col shrink-0 h-screen sticky top-0 transition-[width] duration-200 ease-out overflow-hidden",
-          collapsed ? "w-[var(--admin-sidebar-collapsed)]" : "w-[var(--admin-sidebar-w)]"
+          "hidden lg:flex flex-col shrink-0 h-screen sticky top-0 transition-[width] duration-200 overflow-hidden",
+          collapsed ? "w-20" : "w-[270px]"
         )}
       >
         {NavBody}
@@ -158,14 +156,14 @@ export default function AdminSidebar({
       >
         <div
           className={cn(
-            "absolute inset-0 bg-black/40 transition-opacity duration-200",
+            "absolute inset-0 bg-black/45 transition-opacity",
             mobileOpen ? "opacity-100" : "opacity-0"
           )}
           onClick={onMobileClose}
         />
         <aside
           className={cn(
-            "absolute top-0 right-0 h-full w-[min(var(--admin-sidebar-w),85vw)] shadow-2xl transition-transform duration-200 ease-out overflow-hidden",
+            "absolute top-0 right-0 h-full w-[min(270px,88vw)] shadow-2xl transition-transform duration-200 overflow-hidden",
             mobileOpen ? "translate-x-0" : "translate-x-full"
           )}
         >
