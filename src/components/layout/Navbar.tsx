@@ -8,7 +8,6 @@ import {
   ShoppingBag,
   Search,
   User,
-  Heart,
   ChevronDown,
   Home,
   Grid3X3,
@@ -117,7 +116,8 @@ export default function Navbar() {
               </div>
             </form>
 
-            <div className="flex items-center gap-0.5 mr-auto sm:mr-0 shrink-0">
+            {/* ورود / پروفایل / سبد — سمت چپ در RTL */}
+            <div className="flex items-center gap-0.5 shrink-0 ms-auto">
               <button
                 type="button"
                 className="sm:hidden flex h-10 w-10 items-center justify-center rounded-lg hover:bg-muted"
@@ -129,18 +129,19 @@ export default function Navbar() {
 
               <Link
                 href="/login"
-                className="hidden md:flex h-10 px-2.5 items-center gap-1.5 rounded-lg text-[13px] text-foreground/80 hover:text-foreground hover:bg-muted"
+                className="flex h-10 px-2 items-center gap-1.5 rounded-lg text-[13px] text-foreground/80 hover:text-foreground hover:bg-muted"
+                aria-label="ورود"
               >
-                <User className="h-5 w-5" strokeWidth={1.75} />
+                <LogIn className="h-5 w-5" strokeWidth={1.75} />
                 <span className="hidden lg:inline">ورود</span>
               </Link>
 
               <Link
                 href="/profile"
-                className="hidden sm:flex h-10 w-10 items-center justify-center rounded-lg text-foreground/70 hover:text-foreground hover:bg-muted"
-                aria-label="علاقه‌مندی"
+                className="flex h-10 w-10 items-center justify-center rounded-lg text-foreground/70 hover:text-foreground hover:bg-muted"
+                aria-label="پروفایل"
               >
-                <Heart className="h-5 w-5" strokeWidth={1.75} />
+                <User className="h-5 w-5" strokeWidth={1.75} />
               </Link>
 
               <div className="relative">
