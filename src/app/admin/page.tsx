@@ -11,9 +11,28 @@ import {
 } from "@/data/admin";
 import { formatPrice, formatNumber } from "@/lib/utils";
 import { products } from "@/data/products";
-import { categories } from "@/data/categories";
+import AdminCard from "@/components/admin/ui/AdminCard";
+import AdminBadge from "@/components/admin/ui/AdminBadge";
+import AdminButton from "@/components/admin/ui/AdminButton";
+import AdminPageHeader from "@/components/admin/ui/AdminPageHeader";
+import {
+  ArrowUpRight,
+  Package,
+  FileText,
+  ShoppingBag,
+  Users,
+  Wallet,
+  TrendingUp,
+} from "lucide-react";
 
 type Period = "week" | "month" | "year";
+
+const kpiIconStyles = [
+  "bg-[#5D87FF]/15 text-[#5D87FF]",
+  "bg-[#13DEB9]/15 text-[#13DEB9]",
+  "bg-[#FFAE1F]/15 text-[#FFAE1F]",
+  "bg-[#FA896B]/15 text-[#FA896B]",
+];
 
 export default function AdminDashboardPage() {
   const [period, setPeriod] = useState<Period>("month");
@@ -21,155 +40,148 @@ export default function AdminDashboardPage() {
   const revenue = adminStats.revenue[period];
   const orders = adminStats.orders[period];
   const customers = adminStats.customers[period];
-
   const chartData = period === "week" ? revenueByDay : revenueByMonth;
-  const maxVal = Math.max(...chartData.map((d) => d.value));
-
+  const maxVal = Math.max(...chartData.map((d) => d.value), 1);
   const periodLabel =
     period === "week" ? "هفته" : period === "month" ? "ماه" : "سال";
 
+  const kpis = [
+    { label: `فروش ${periodLabel}`, value: formatPrice(revenue), delta: "+۱۲٪", icon: Wallet },
+    { label: "سفارش‌ها", value: formatNumber(orders), delta: "+۸٪", icon: ShoppingBag },
+    { label: "مشتری جدید", value: formatNumber(customers), delta: "+۵٪", icon: Users },
+    { label: "محصولات", value: formatNumber(products.length), delta: null, icon: Package },
+  ];
+
   return (
-    <div className="space-y-8 max-w-6xl">
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-        <div>
-          <h1 className="type-headline">نمای کلی</h1>
-          <p className="type-caption mt-1">آمار فروشگاه WebSpeed</p>
+    <div className="max-w-6xl mx-auto space-y-6">
+      <AdminPageHeader
+        title="داشبورد"
+        description="خلاصه وضعیت فروشگاه WebSpeed"
+        actions={
+          <div className="flex items-center gap-1 p-1 rounded-xl bg-white border border-[var(--admin-border)] shadow-sm">
+            {([["week", "هفته"], ["month", "ماه"], ["year", "سال"]] as const).map(
+              ([key, label]) => (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => setPeriod(key)}
+                  className={`h-8 px-3.5 rounded-lg text-xs font-semibold transition-colors ${
+                    period === key
+                      ? "bg-[var(--admin-accent)] text-white"
+                      : "text-[var(--admin-text-secondary)] hover:text-[var(--admin-text)]"
+                  }`}
+                >
+                  {label}
+                </button>
+              )
+            )}
+          </div>
+        }
+      />
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        {kpis.map((kpi, i) => (
+          <AdminCard key={kpi.label} className="!p-5">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="text-sm text-[var(--admin-text-secondary)] font-medium">{kpi.label}</p>
+                <p className="text-xl font-semibold mt-2 tracking-tight tabular-nums text-[var(--admin-text)]">
+                  {kpi.value}
+                </p>
+                {kpi.delta && (
+                  <p className="text-xs font-semibold text-[#13DEB9] mt-2 inline-flex items-center gap-1">
+                    <TrendingUp className="h-3 w-3" />
+                    {kpi.delta}
+                  </p>
+                )}
+              </div>
+              <div className={`h-12 w-12 rounded-2xl flex items-center justify-center shrink-0 ${kpiIconStyles[i]}`}>
+                <kpi.icon className="h-5 w-5" strokeWidth={1.75} />
+              </div>
+            </div>
+          </AdminCard>
+        ))}
+      </div>
+
+      <div className="grid lg:grid-cols-5 gap-4">
+        <AdminCard className="lg:col-span-3 !p-5 sm:!p-6">
+          <div className="flex items-center justify-between mb-6">
+            <p className="text-base font-semibold text-[var(--admin-text)]">نمای فروش</p>
+            <span className="text-xs text-[var(--admin-text-secondary)]">{periodLabel} جاری</span>
+          </div>
+          <div className="flex items-end gap-2 h-40">
+            {chartData.map((d) => (
+              <div key={d.label} className="flex-1 flex flex-col items-center gap-2 min-w-0">
+                <div
+                  className="w-full rounded-t-lg bg-[var(--admin-accent)]/90"
+                  style={{ height: `${Math.max(8, (d.value / maxVal) * 100)}%`, minHeight: 4 }}
+                />
+                <span className="text-[10px] text-[var(--admin-text-secondary)] truncate w-full text-center">
+                  {d.label}
+                </span>
+              </div>
+            ))}
+          </div>
+        </AdminCard>
+
+        <AdminCard className="lg:col-span-2 !p-5 sm:!p-6">
+          <p className="text-base font-semibold mb-4">دسترسی سریع</p>
+          <div className="space-y-2">
+            {[
+              { href: "/admin/products", label: "محصولات", icon: Package, color: "bg-[#5D87FF]/15 text-[#5D87FF]" },
+              { href: "/admin/pages", label: "صفحه‌ساز", icon: FileText, color: "bg-[#13DEB9]/15 text-[#13DEB9]" },
+              { href: "/admin/orders", label: "سفارش‌ها", icon: ArrowUpRight, color: "bg-[#FFAE1F]/15 text-[#FFAE1F]" },
+            ].map((a) => (
+              <Link
+                key={a.href + a.label}
+                href={a.href}
+                className="flex items-center gap-3 h-12 px-3 rounded-xl border border-[var(--admin-border)] hover:bg-[var(--admin-muted)] transition-colors text-sm font-medium"
+              >
+                <span className={`h-9 w-9 rounded-xl inline-flex items-center justify-center ${a.color}`}>
+                  <a.icon className="h-4 w-4" strokeWidth={1.75} />
+                </span>
+                {a.label}
+              </Link>
+            ))}
+          </div>
+        </AdminCard>
+      </div>
+
+      <AdminCard padding={false}>
+        <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-[var(--admin-border)]">
+          <p className="text-base font-semibold">سفارش‌های اخیر</p>
+          <Link href="/admin/orders">
+            <AdminButton variant="ghost" size="sm">مشاهده همه</AdminButton>
+          </Link>
         </div>
-        <div className="flex gap-1 p-1 bg-muted">
-          {(
-            [
-              ["week", "هفته"],
-              ["month", "ماه"],
-              ["year", "سال"],
-            ] as const
-          ).map(([key, label]) => (
-            <button
-              key={key}
-              type="button"
-              onClick={() => setPeriod(key)}
-              className={`px-4 py-2 text-xs font-semibold transition-colors ${
-                period === key
-                  ? "bg-foreground text-background"
-                  : "text-muted-foreground hover:text-foreground"
-              }`}
+        <div className="divide-y divide-[var(--admin-border)]">
+          {mockOrders.slice(0, 5).map((order) => (
+            <div
+              key={order.id}
+              className="flex items-center gap-3 px-5 sm:px-6 py-3.5 hover:bg-[var(--admin-muted)]/60 transition-colors"
             >
-              {label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        <div className="border border-border p-4 sm:p-5 space-y-1">
-          <p className="type-label text-muted-foreground">درآمد {periodLabel}</p>
-          <p className="text-lg sm:text-xl font-bold num" data-num>
-            {formatPrice(revenue)}
-          </p>
-        </div>
-        <div className="border border-border p-4 sm:p-5 space-y-1">
-          <p className="type-label text-muted-foreground">سفارش‌ها</p>
-          <p className="text-lg sm:text-xl font-bold num" data-num>
-            {formatNumber(orders)}
-          </p>
-        </div>
-        <div className="border border-border p-4 sm:p-5 space-y-1">
-          <p className="type-label text-muted-foreground">مشتری جدید</p>
-          <p className="text-lg sm:text-xl font-bold num" data-num>
-            {formatNumber(customers)}
-          </p>
-        </div>
-        <div className="border border-border p-4 sm:p-5 space-y-1">
-          <p className="type-label text-muted-foreground">میانگین سبد</p>
-          <p className="text-lg sm:text-xl font-bold num" data-num>
-            {formatPrice(adminStats.avgOrder)}
-          </p>
-        </div>
-      </div>
-
-      <div className="border border-border p-4 sm:p-6">
-        <h2 className="type-title mb-6">
-          روند فروش ({period === "week" ? "۷ روز اخیر" : "۶ ماه اخیر"})
-        </h2>
-        <div className="flex items-end gap-2 sm:gap-3 h-40 sm:h-48">
-          {chartData.map((d) => (
-            <div key={d.label} className="flex-1 flex flex-col items-center gap-2 h-full justify-end">
-              <div
-                className="w-full bg-foreground/90 hover:bg-accent transition-colors min-h-[4px]"
-                style={{ height: `${Math.max(4, (d.value / maxVal) * 100)}%` }}
-                title={formatPrice(d.value)}
-              />
-              <span className="text-[10px] sm:text-xs text-muted-foreground">
-                {d.label}
-              </span>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-semibold truncate">{order.customer}</p>
+                <p className="text-xs text-[var(--admin-text-secondary)] mt-0.5 tabular-nums">{order.id}</p>
+              </div>
+              <AdminBadge
+                tone={
+                  order.status === "delivered"
+                    ? "success"
+                    : order.status === "cancelled"
+                      ? "danger"
+                      : "default"
+                }
+              >
+                {statusLabel[order.status] || order.status}
+              </AdminBadge>
+              <p className="text-sm font-semibold tabular-nums shrink-0 hidden sm:block">
+                {formatPrice(order.total)}
+              </p>
             </div>
           ))}
         </div>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <Link
-          href="/admin/products"
-          className="border border-border p-5 hover:bg-muted/50 transition-colors"
-        >
-          <p className="type-label text-muted-foreground mb-1">محصولات</p>
-          <p className="text-2xl font-bold num">{formatNumber(products.length)}</p>
-        </Link>
-        <Link
-          href="/admin/categories"
-          className="border border-border p-5 hover:bg-muted/50 transition-colors"
-        >
-          <p className="type-label text-muted-foreground mb-1">دسته‌بندی‌ها</p>
-          <p className="text-2xl font-bold num">
-            {formatNumber(categories.filter((c) => c.id !== "all").length)}
-          </p>
-        </Link>
-        <Link
-          href="/admin/orders"
-          className="border border-border p-5 hover:bg-muted/50 transition-colors"
-        >
-          <p className="type-label text-muted-foreground mb-1">در انتظار تأیید</p>
-          <p className="text-2xl font-bold num">
-            {formatNumber(mockOrders.filter((o) => o.status === "pending").length)}
-          </p>
-        </Link>
-      </div>
-
-      <div className="border border-border overflow-hidden">
-        <div className="flex items-center justify-between px-4 sm:px-5 py-4 border-b border-border">
-          <h2 className="type-title">آخرین سفارش‌ها</h2>
-          <Link href="/admin/orders" className="type-caption underline underline-offset-2">
-            همه
-          </Link>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-right">
-            <thead className="bg-muted/50 type-label text-muted-foreground">
-              <tr>
-                <th className="px-4 py-3 font-semibold">سفارش</th>
-                <th className="px-4 py-3 font-semibold">مشتری</th>
-                <th className="px-4 py-3 font-semibold hidden sm:table-cell">مبلغ</th>
-                <th className="px-4 py-3 font-semibold">وضعیت</th>
-              </tr>
-            </thead>
-            <tbody>
-              {mockOrders.slice(0, 5).map((o) => (
-                <tr key={o.id} className="border-t border-border">
-                  <td className="px-4 py-3 num font-medium" data-num>
-                    {o.id}
-                  </td>
-                  <td className="px-4 py-3">{o.customer}</td>
-                  <td className="px-4 py-3 hidden sm:table-cell num" data-num>
-                    {formatPrice(o.total)}
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className="text-xs">{statusLabel[o.status]}</span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
+      </AdminCard>
     </div>
   );
 }
