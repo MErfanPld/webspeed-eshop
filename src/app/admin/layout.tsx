@@ -1,16 +1,20 @@
-import type { Metadata } from "next";
-import AdminSidebar from "@/components/admin/AdminSidebar";
+"use client";
 
-export const metadata: Metadata = {
-  title: "پنل مدیریت",
-  robots: { index: false, follow: false },
-};
+import { usePathname } from "next/navigation";
+import AdminSidebar from "@/components/admin/AdminSidebar";
 
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+  const isBuilder = pathname?.startsWith("/admin/builder");
+
+  if (isBuilder) {
+    return <>{children}</>;
+  }
+
   return (
     <div className="min-h-screen flex flex-col lg:flex-row bg-background">
       <AdminSidebar />
