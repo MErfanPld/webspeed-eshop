@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import "./fonts.css";
 import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
 import ShopChrome from "@/components/layout/ShopChrome";
