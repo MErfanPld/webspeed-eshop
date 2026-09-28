@@ -78,7 +78,10 @@ function ProductsContent() {
     }
     switch (sort) {
       case "newest":
-        list = [...list.filter((p) => p.newArrival), ...list.filter((p) => !p.newArrival)];
+        list = [
+          ...list.filter((p) => p.newArrival),
+          ...list.filter((p) => !p.newArrival),
+        ];
         break;
       case "price-asc":
         list.sort((a, b) => a.price - b.price);
@@ -87,10 +90,15 @@ function ProductsContent() {
         list.sort((a, b) => b.price - a.price);
         break;
       case "bestseller":
-        list.sort((a, b) => b.reviewCount - a.reviewCount);
+        list.sort(
+          (a, b) => (b.reviewCount ?? 0) - (a.reviewCount ?? 0)
+        );
         break;
       default:
-        list = [...list.filter((p) => p.featured), ...list.filter((p) => !p.featured)];
+        list = [
+          ...list.filter((p) => p.featured),
+          ...list.filter((p) => !p.featured),
+        ];
     }
     return list;
   }, [filters, sort, query]);
@@ -119,7 +127,11 @@ function ProductsContent() {
       </div>
       <div className="flex gap-8 lg:gap-10">
         <div className="hidden lg:block w-56 shrink-0 border border-border rounded-lg p-4 h-fit sticky top-28">
-          <FilterSidebar filters={filters} onChange={setFilters} availableColors={availableColors} />
+          <FilterSidebar
+            filters={filters}
+            onChange={setFilters}
+            availableColors={availableColors}
+          />
         </div>
         <div className="flex-1 min-w-0">
           <ProductGrid products={filtered} />
@@ -127,16 +139,28 @@ function ProductsContent() {
       </div>
       {mobileFiltersOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setMobileFiltersOpen(false)} />
+          <div
+            className="absolute inset-0 bg-black/40"
+            onClick={() => setMobileFiltersOpen(false)}
+          />
           <div className="absolute top-0 right-0 h-full w-80 max-w-[90vw] bg-surface overflow-y-auto shadow-xl">
             <div className="flex items-center justify-between p-4 border-b border-border sticky top-0 bg-surface">
               <span className="font-semibold text-sm">فیلترها</span>
-              <button type="button" onClick={() => setMobileFiltersOpen(false)} className="p-2" aria-label="بستن">
+              <button
+                type="button"
+                onClick={() => setMobileFiltersOpen(false)}
+                className="p-2"
+                aria-label="بستن"
+              >
                 <X className="h-5 w-5" />
               </button>
             </div>
             <div className="p-4">
-              <FilterSidebar filters={filters} onChange={setFilters} availableColors={availableColors} />
+              <FilterSidebar
+                filters={filters}
+                onChange={setFilters}
+                availableColors={availableColors}
+              />
             </div>
           </div>
         </div>
@@ -147,7 +171,13 @@ function ProductsContent() {
 
 export default function ProductsPage() {
   return (
-    <Suspense fallback={<Container className="py-20 text-center text-sm text-muted-foreground">در حال بارگذاری...</Container>}>
+    <Suspense
+      fallback={
+        <Container className="py-20 text-center text-sm text-muted-foreground">
+          در حال بارگذاری...
+        </Container>
+      }
+    >
       <ProductsContent />
     </Suspense>
   );
