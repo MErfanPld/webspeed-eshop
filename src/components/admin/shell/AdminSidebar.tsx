@@ -36,7 +36,7 @@ export default function AdminSidebar({
   };
 
   const isActive = (href: string, match?: string, label?: string) => {
-    if (label === "\u0635\u0641\u062d\u0647\u200c\u0633\u0627\u0632") return pathname.startsWith("/admin/builder");
+    if (label === "صفحه‌ساز") return pathname.startsWith("/admin/builder");
     if (href === "/admin") return pathname === "/admin";
     if (match) return pathname.startsWith(match);
     if (href === "/") return false;
@@ -57,26 +57,22 @@ export default function AdminSidebar({
         {!collapsed && (
           <div className="min-w-0 flex-1">
             <p className="text-sm font-semibold tracking-tight truncate">WebSpeed</p>
-            <p className="text-[10px] text-[#737373] truncate">\u067e\u0646\u0644 \u0645\u062f\u06cc\u0631\u06cc\u062a</p>
+            <p className="text-[10px] text-[#737373] truncate">پنل مدیریت</p>
           </div>
         )}
         <button
           type="button"
           onClick={toggle}
           className="hidden lg:inline-flex h-8 w-8 items-center justify-center rounded-lg text-[#737373] hover:bg-[#F7F7F7] hover:text-[#111]"
-          aria-label={collapsed ? "expand" : "collapse"}
+          aria-label={collapsed ? "باز کردن منو" : "جمع کردن منو"}
         >
-          {collapsed ? (
-            <PanelLeftOpen className="h-4 w-4" />
-          ) : (
-            <PanelLeftClose className="h-4 w-4" />
-          )}
+          {collapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
         </button>
         <button
           type="button"
           onClick={onMobileClose}
           className="lg:hidden h-8 w-8 inline-flex items-center justify-center rounded-lg text-[#737373] hover:bg-[#F7F7F7]"
-          aria-label="close"
+          aria-label="بستن"
         >
           <X className="h-4 w-4" />
         </button>

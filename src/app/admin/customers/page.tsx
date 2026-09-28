@@ -26,8 +26,8 @@ export default function AdminCustomersPage() {
   return (
     <div className="max-w-5xl mx-auto space-y-6">
       <AdminPageHeader
-        title="\u0645\u0634\u062a\u0631\u06cc\u200c\u0647\u0627"
-        description={`${formatNumber(mockCustomers.length)} \u0645\u0634\u062a\u0631\u06cc`}
+        title="مشتری‌ها"
+        description={`${formatNumber(mockCustomers.length)} مشتری`}
       />
 
       <div className="relative max-w-sm">
@@ -35,7 +35,7 @@ export default function AdminCustomersPage() {
         <AdminInput
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="\u062c\u0633\u062a\u062c\u0648..."
+          placeholder="نام، ایمیل یا موبایل..."
           className="pr-9"
         />
       </div>
@@ -43,8 +43,8 @@ export default function AdminCustomersPage() {
       {!filtered.length ? (
         <AdminEmptyState
           icon={<Users className="h-5 w-5" />}
-          title="\u0645\u0634\u062a\u0631\u06cc\u200c\u0627\u06cc \u06cc\u0627\u0641\u062a \u0646\u0634\u062f"
-          description="\u0639\u0628\u0627\u0631\u062a \u062c\u0633\u062a\u062c\u0648 \u0631\u0627 \u062a\u063a\u06cc\u06cc\u0631 \u062f\u0647\u06cc\u062f."
+          title="مشتری‌ای یافت نشد"
+          description="عبارت جستجو را تغییر دهید."
         />
       ) : (
         <div className="rounded-2xl border border-[#E8E8E8] bg-white overflow-hidden">
@@ -58,7 +58,7 @@ export default function AdminCustomersPage() {
                   <p className="text-sm font-semibold text-[#111]">{c.name}</p>
                   <p className="text-xs text-[#737373] truncate">{c.email}</p>
                   <div className="mt-1.5 flex gap-1.5 items-center">
-                    <AdminBadge tone="neutral">{c.orders} \u0633\u0641\u0627\u0631\u0634</AdminBadge>
+                    <AdminBadge tone="neutral">{c.orders} سفارش</AdminBadge>
                     <span className="text-[11px] text-[#525252] tabular-nums">{formatPrice(c.totalSpent)}</span>
                   </div>
                 </div>
@@ -70,11 +70,11 @@ export default function AdminCustomersPage() {
             <table className="w-full text-sm text-right">
               <thead>
                 <tr className="border-b border-[#E8E8E8] bg-[#FAFAFA] text-[11px] text-[#737373]">
-                  <th className="font-semibold px-5 py-3">\u0645\u0634\u062a\u0631\u06cc</th>
-                  <th className="font-semibold px-3 py-3">\u0645\u0648\u0628\u0627\u06cc\u0644</th>
-                  <th className="font-semibold px-3 py-3">\u0633\u0641\u0627\u0631\u0634\u200c\u0647\u0627</th>
-                  <th className="font-semibold px-3 py-3">\u0645\u062c\u0645\u0648\u0639 \u062e\u0631\u06cc\u062f</th>
-                  <th className="font-semibold px-5 py-3">\u0639\u0636\u0648\u06cc\u062a</th>
+                  <th className="font-semibold px-5 py-3">مشتری</th>
+                  <th className="font-semibold px-3 py-3">موبایل</th>
+                  <th className="font-semibold px-3 py-3">سفارش‌ها</th>
+                  <th className="font-semibold px-3 py-3">مجموع خرید</th>
+                  <th className="font-semibold px-5 py-3">عضویت</th>
                 </tr>
               </thead>
               <tbody>

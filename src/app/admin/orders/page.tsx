@@ -41,8 +41,8 @@ export default function AdminOrdersPage() {
   return (
     <div className="max-w-5xl mx-auto space-y-6">
       <AdminPageHeader
-        title="\u0633\u0641\u0627\u0631\u0634\u200c\u0647\u0627"
-        description={`${formatNumber(mockOrders.length)} \u0633\u0641\u0627\u0631\u0634`}
+        title="سفارش‌ها"
+        description={`${formatNumber(mockOrders.length)} سفارش`}
       />
 
       <div className="flex flex-col sm:flex-row gap-2 sm:items-center">
@@ -51,19 +51,19 @@ export default function AdminOrdersPage() {
           <AdminInput
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="\u062c\u0633\u062a\u062c\u0648..."
+            placeholder="کد سفارش، مشتری یا موبایل..."
             className="pr-9"
           />
         </div>
         <div className="flex flex-wrap gap-1 p-0.5 bg-[#F0F0F0] rounded-xl">
           {(
             [
-              ["all", "\u0647\u0645\u0647"],
-              ["pending", "\u062f\u0631 \u0627\u0646\u062a\u0638\u0627\u0631"],
-              ["confirmed", "\u062a\u0623\u06cc\u06cc\u062f"],
-              ["shipped", "\u0627\u0631\u0633\u0627\u0644"],
-              ["delivered", "\u062a\u062d\u0648\u06cc\u0644"],
-              ["cancelled", "\u0644\u063a\u0648"],
+              ["all", "همه"],
+              ["pending", "در انتظار"],
+              ["confirmed", "تأیید"],
+              ["shipped", "ارسال"],
+              ["delivered", "تحویل"],
+              ["cancelled", "لغو"],
             ] as const
           ).map(([key, label]) => (
             <button
@@ -86,8 +86,8 @@ export default function AdminOrdersPage() {
       {!filtered.length ? (
         <AdminEmptyState
           icon={<ShoppingBag className="h-5 w-5" />}
-          title="\u0633\u0641\u0627\u0631\u0634\u06cc \u06cc\u0627\u0641\u062a \u0646\u0634\u062f"
-          description="\u0641\u06cc\u0644\u062a\u0631 \u06cc\u0627 \u062c\u0633\u062a\u062c\u0648 \u0631\u0627 \u062a\u063a\u06cc\u06cc\u0631 \u062f\u0647\u06cc\u062f."
+          title="سفارشی یافت نشد"
+          description="فیلتر یا جستجو را تغییر دهید."
         />
       ) : (
         <div className="rounded-2xl border border-[#E8E8E8] bg-white overflow-hidden">
@@ -113,12 +113,12 @@ export default function AdminOrdersPage() {
             <table className="w-full text-sm text-right">
               <thead>
                 <tr className="border-b border-[#E8E8E8] bg-[#FAFAFA] text-[11px] text-[#737373]">
-                  <th className="font-semibold px-5 py-3">\u06a9\u062f</th>
-                  <th className="font-semibold px-3 py-3">\u0645\u0634\u062a\u0631\u06cc</th>
-                  <th className="font-semibold px-3 py-3">\u0645\u0628\u0644\u063a</th>
-                  <th className="font-semibold px-3 py-3">\u0627\u0642\u0644\u0627\u0645</th>
-                  <th className="font-semibold px-3 py-3">\u062a\u0627\u0631\u06cc\u062e</th>
-                  <th className="font-semibold px-5 py-3">\u0648\u0636\u0639\u06cc\u062a</th>
+                  <th className="font-semibold px-5 py-3">کد</th>
+                  <th className="font-semibold px-3 py-3">مشتری</th>
+                  <th className="font-semibold px-3 py-3">مبلغ</th>
+                  <th className="font-semibold px-3 py-3">اقلام</th>
+                  <th className="font-semibold px-3 py-3">تاریخ</th>
+                  <th className="font-semibold px-5 py-3">وضعیت</th>
                 </tr>
               </thead>
               <tbody>
