@@ -1,120 +1,112 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import { mockCustomers } from "@/data/admin";
 import { formatPrice, formatNumber } from "@/lib/utils";
-import { Search, Users, MoreHorizontal } from "lucide-react";
-
-const avatarColors = [
-  "bg-[#5D87FF]",
-  "bg-[#13DEB9]",
-  "bg-[#FFAE1F]",
-  "bg-[#FA896B]",
-  "bg-[#8B5CF6]",
-  "bg-[#0EA5E9]",
-];
+import { Users, Search } from "lucide-react";
+import AdminPageHeader from "@/components/admin/ui/AdminPageHeader";
+import AdminBadge from "@/components/admin/ui/AdminBadge";
+import AdminEmptyState from "@/components/admin/ui/AdminEmptyState";
+import AdminInput from "@/components/admin/ui/AdminInput";
 
 export default function AdminCustomersPage() {
+  const [q, setQ] = useState("");
+
+  const filtered = useMemo(() => {
+    if (!q.trim()) return mockCustomers;
+    const s = q.trim().toLowerCase();
+    return mockCustomers.filter(
+      (c) =>
+        c.name.toLowerCase().includes(s) ||
+        c.email.toLowerCase().includes(s) ||
+        c.phone.includes(s)
+    );
+  }, [q]);
+
   return (
-    <div className="max-w-[1200px] mx-auto space-y-5" style={{ fontFamily: "Vazirmatn, Tahoma, sans-serif" }}>
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-semibold text-[#2A3547]">مشتری‌ها</h1>
-          <p className="text-sm text-[#7C8FAC] mt-1">{formatNumber(mockCustomers.length)} مشتری ثبت‌شده</p>
-        </div>
+    <div className="max-w-5xl mx-auto space-y-6">
+      <AdminPageHeader
+        title="\u0645\u0634\u062a\u0631\u06cc\u200c\u0647\u0627"
+        description={`${formatNumber(mockCustomers.length)} \u0645\u0634\u062a\u0631\u06cc`}
+      />
+
+      <div className="relative max-w-sm">
+        <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#A3A3A3]" />
+        <AdminInput
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="\u062c\u0633\u062a\u062c\u0648..."
+          className="pr-9"
+        />
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-        {[
-          { label: "کل مشتریان", value: formatNumber(mockCustomers.length), color: "text-[#5D87FF]" },
-          { label: "مجموع خرید", value: formatPrice(mockCustomers.reduce((s, c) => s + c.totalSpent, 0)), color: "text-[#13DEB9]" },
-          { label: "میانگین سفارش", value: formatNumber(Math.round(mockCustomers.reduce((s, c) => s + c.orders, 0) / Math.max(mockCustomers.length, 1))), color: "text-[#FFAE1F]" },
-        ].map((s) => (
-          <div key={s.label} className="bg-white rounded-2xl border border-[#E5EAEF] p-4 shadow-[0_4px_16px_rgba(0,0,0,0.03)]">
-            <p className="text-xs font-medium text-[#7C8FAC]">{s.label}</p>
-            <p className={`text-lg font-bold mt-1 tabular-nums ${s.color}`}>{s.value}</p>
-          </div>
-        ))}
-      </div>
-
-      <div className="bg-white rounded-2xl border border-[#E5EAEF] shadow-[0_4px_20px_rgba(0,0,0,0.03)] overflow-hidden">
-        <div className="p-4 border-b border-[#E5EAEF]">
-          <div className="flex items-center gap-2 h-11 px-3.5 rounded-xl border border-[#E5EAEF] bg-[#F0F5F9]">
-            <Search className="h-4 w-4 text-[#7C8FAC] shrink-0" />
-            <input placeholder="جستجوی نام، موبایل یا ایمیل..." className="flex-1 bg-transparent text-sm outline-none text-[#2A3547] placeholder:text-[#7C8FAC]/70" />
-          </div>
-        </div>
-
-        {!mockCustomers.length ? (
-          <div className="py-16 text-center">
-            <div className="h-14 w-14 rounded-2xl bg-[#ECF2FF] mx-auto flex items-center justify-center mb-4">
-              <Users className="h-6 w-6 text-[#5D87FF]" />
-            </div>
-            <p className="font-semibold text-[#2A3547]">مشتری‌ای یافت نشد</p>
-          </div>
-        ) : (
-          <>
-            <div className="md:hidden divide-y divide-[#E5EAEF]">
-              {mockCustomers.map((c, i) => (
-                <div key={c.id} className="p-4 flex gap-3 items-center">
-                  <div className={`h-11 w-11 rounded-full ${avatarColors[i % avatarColors.length]} text-white text-sm font-bold flex items-center justify-center shrink-0`}>
-                    {c.name.charAt(0)}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-semibold text-[#2A3547] truncate">{c.name}</p>
-                    <p className="text-xs text-[#7C8FAC] mt-0.5 tabular-nums dir-ltr text-right">{c.phone}</p>
-                    <p className="text-xs font-semibold text-[#5D87FF] mt-1 tabular-nums">
-                      {formatPrice(c.totalSpent)} · {c.orders} سفارش
-                    </p>
+      {!filtered.length ? (
+        <AdminEmptyState
+          icon={<Users className="h-5 w-5" />}
+          title="\u0645\u0634\u062a\u0631\u06cc\u200c\u0627\u06cc \u06cc\u0627\u0641\u062a \u0646\u0634\u062f"
+          description="\u0639\u0628\u0627\u0631\u062a \u062c\u0633\u062a\u062c\u0648 \u0631\u0627 \u062a\u063a\u06cc\u06cc\u0631 \u062f\u0647\u06cc\u062f."
+        />
+      ) : (
+        <div className="rounded-2xl border border-[#E8E8E8] bg-white overflow-hidden">
+          <div className="md:hidden divide-y divide-[#F0F0F0]">
+            {filtered.map((c) => (
+              <div key={c.id} className="p-4 flex gap-3 items-center">
+                <div className="h-10 w-10 rounded-full bg-[#111] text-white text-sm font-bold flex items-center justify-center shrink-0">
+                  {c.name.charAt(0)}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-semibold text-[#111]">{c.name}</p>
+                  <p className="text-xs text-[#737373] truncate">{c.email}</p>
+                  <div className="mt-1.5 flex gap-1.5 items-center">
+                    <AdminBadge tone="neutral">{c.orders} \u0633\u0641\u0627\u0631\u0634</AdminBadge>
+                    <span className="text-[11px] text-[#525252] tabular-nums">{formatPrice(c.totalSpent)}</span>
                   </div>
                 </div>
-              ))}
-            </div>
+              </div>
+            ))}
+          </div>
 
-            <div className="hidden md:block overflow-x-auto">
-              <table className="w-full text-sm text-right">
-                <thead>
-                  <tr className="bg-[#F8FAFC] border-b border-[#E5EAEF]">
-                    <th className="text-right px-5 py-3.5 text-[12px] font-semibold text-[#7C8FAC]">مشتری</th>
-                    <th className="text-right px-5 py-3.5 text-[12px] font-semibold text-[#7C8FAC]">تماس</th>
-                    <th className="text-right px-5 py-3.5 text-[12px] font-semibold text-[#7C8FAC]">سفارش‌ها</th>
-                    <th className="text-right px-5 py-3.5 text-[12px] font-semibold text-[#7C8FAC]">مجموع خرید</th>
-                    <th className="text-right px-5 py-3.5 text-[12px] font-semibold text-[#7C8FAC]">عضویت</th>
-                    <th className="px-5 py-3.5 w-12" />
-                  </tr>
-                </thead>
-                <tbody>
-                  {mockCustomers.map((c, i) => (
-                    <tr key={c.id} className="border-b border-[#E5EAEF] last:border-0 hover:bg-[#F8FAFC] transition-colors">
-                      <td className="px-5 py-3.5">
-                        <div className="flex items-center gap-3">
-                          <div className={`h-10 w-10 rounded-full ${avatarColors[i % avatarColors.length]} text-white text-sm font-bold flex items-center justify-center shrink-0`}>
-                            {c.name.charAt(0)}
-                          </div>
-                          <div className="min-w-0">
-                            <p className="font-semibold text-[#2A3547]">{c.name}</p>
-                            <p className="text-xs text-[#7C8FAC] mt-0.5 truncate">{c.email}</p>
-                          </div>
+          <div className="hidden md:block overflow-x-auto">
+            <table className="w-full text-sm text-right">
+              <thead>
+                <tr className="border-b border-[#E8E8E8] bg-[#FAFAFA] text-[11px] text-[#737373]">
+                  <th className="font-semibold px-5 py-3">\u0645\u0634\u062a\u0631\u06cc</th>
+                  <th className="font-semibold px-3 py-3">\u0645\u0648\u0628\u0627\u06cc\u0644</th>
+                  <th className="font-semibold px-3 py-3">\u0633\u0641\u0627\u0631\u0634\u200c\u0647\u0627</th>
+                  <th className="font-semibold px-3 py-3">\u0645\u062c\u0645\u0648\u0639 \u062e\u0631\u06cc\u062f</th>
+                  <th className="font-semibold px-5 py-3">\u0639\u0636\u0648\u06cc\u062a</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map((c) => (
+                  <tr
+                    key={c.id}
+                    className="border-b border-[#F5F5F5] last:border-0 hover:bg-[#FAFAFA] transition-colors"
+                  >
+                    <td className="px-5 py-3.5">
+                      <div className="flex items-center gap-3">
+                        <div className="h-9 w-9 rounded-full bg-[#111] text-white text-xs font-bold flex items-center justify-center shrink-0">
+                          {c.name.charAt(0)}
                         </div>
-                      </td>
-                      <td className="px-5 py-3.5 text-[#7C8FAC] tabular-nums dir-ltr text-right">{c.phone}</td>
-                      <td className="px-5 py-3.5">
-                        <span className="inline-flex min-w-[2rem] justify-center px-2.5 py-1 rounded-full text-[12px] font-semibold bg-[#ECF2FF] text-[#5D87FF]">{c.orders}</span>
-                      </td>
-                      <td className="px-5 py-3.5 font-semibold text-[#2A3547] tabular-nums">{formatPrice(c.totalSpent)}</td>
-                      <td className="px-5 py-3.5 text-[#7C8FAC] tabular-nums">{c.joined}</td>
-                      <td className="px-5 py-3.5">
-                        <button type="button" className="h-8 w-8 inline-flex items-center justify-center rounded-lg text-[#7C8FAC] hover:bg-[#F0F5F9]" aria-label="بیشتر">
-                          <MoreHorizontal className="h-4 w-4" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </>
-        )}
-      </div>
+                        <div className="min-w-0">
+                          <p className="font-semibold text-[#111]">{c.name}</p>
+                          <p className="text-[11px] text-[#A3A3A3] truncate">{c.email}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-3 py-3.5 text-[#525252] tabular-nums dir-ltr text-right">{c.phone}</td>
+                    <td className="px-3 py-3.5">
+                      <AdminBadge tone="neutral">{c.orders}</AdminBadge>
+                    </td>
+                    <td className="px-3 py-3.5 tabular-nums font-medium text-[#111]">{formatPrice(c.totalSpent)}</td>
+                    <td className="px-5 py-3.5 tabular-nums text-[#525252]">{c.joined}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
