@@ -1,31 +1,30 @@
-import { cn } from "@/lib/utils";
-import type { LucideIcon } from "lucide-react";
+"use client";
 
 export default function AdminEmptyState({
-  icon: Icon,
+  icon,
   title,
   description,
   action,
-  className,
 }: {
-  icon?: LucideIcon;
+  icon?: React.ReactNode;
   title: string;
   description?: string;
   action?: React.ReactNode;
-  className?: string;
 }) {
   return (
-    <div className={cn("flex flex-col items-center justify-center text-center py-16 px-6", className)}>
-      {Icon && (
-        <div className="h-12 w-12 rounded-2xl bg-[var(--admin-muted)] flex items-center justify-center mb-4">
-          <Icon className="h-5 w-5 text-[var(--admin-text-secondary)]" strokeWidth={1.5} />
+    <div className="rounded-2xl border border-dashed border-[#E8E8E8] bg-white px-6 py-12 sm:py-16 text-center">
+      {icon && (
+        <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#F7F7F7] text-[#737373]">
+          {icon}
         </div>
       )}
-      <p className="text-base font-semibold text-[var(--admin-text)]">{title}</p>
+      <p className="text-sm font-semibold text-[#111]">{title}</p>
       {description && (
-        <p className="text-sm text-[var(--admin-text-secondary)] mt-1.5 max-w-sm leading-relaxed">{description}</p>
+        <p className="mt-1.5 text-xs text-[#737373] max-w-sm mx-auto leading-relaxed">
+          {description}
+        </p>
       )}
-      {action && <div className="mt-5">{action}</div>}
+      {action && <div className="mt-5 flex justify-center">{action}</div>}
     </div>
   );
 }
