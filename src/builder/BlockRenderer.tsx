@@ -34,6 +34,24 @@ import {
   BreadcrumbsBlock,
   NotFoundBlock,
 } from "@/blocks/footer/FooterBlocks";
+import {
+  HeadingBlock,
+  TextBlock,
+  ButtonBlock,
+  BadgeBlock,
+  QuoteBlock,
+  VideoBlock,
+  CtaBlock,
+  StatsBlock,
+  CountdownBlock,
+  AccordionBlock,
+  TabsBlock,
+  LogoCloudBlock,
+  GridBlock,
+  FlexBlock,
+  ReviewsBlock,
+  AddToCartBannerBlock,
+} from "@/blocks/content/ContentBlocks";
 
 const registry: Record<string, ComponentType<{ block: PageBlock }>> = {
   hero: HeroBlockView as ComponentType<{ block: PageBlock }>,
@@ -65,17 +83,32 @@ const registry: Record<string, ComponentType<{ block: PageBlock }>> = {
   "featured-products": ProductGridBlockView as ComponentType<{ block: PageBlock }>,
   "best-sellers": ProductSliderBlockView as ComponentType<{ block: PageBlock }>,
   "new-arrivals": ProductSliderBlockView as ComponentType<{ block: PageBlock }>,
+  heading: HeadingBlock as ComponentType<{ block: PageBlock }>,
+  text: TextBlock as ComponentType<{ block: PageBlock }>,
+  button: ButtonBlock as ComponentType<{ block: PageBlock }>,
+  badge: BadgeBlock as ComponentType<{ block: PageBlock }>,
+  quote: QuoteBlock as ComponentType<{ block: PageBlock }>,
+  video: VideoBlock as ComponentType<{ block: PageBlock }>,
+  cta: CtaBlock as ComponentType<{ block: PageBlock }>,
+  stats: StatsBlock as ComponentType<{ block: PageBlock }>,
+  countdown: CountdownBlock as ComponentType<{ block: PageBlock }>,
+  accordion: AccordionBlock as ComponentType<{ block: PageBlock }>,
+  tabs: TabsBlock as ComponentType<{ block: PageBlock }>,
+  "logo-cloud": LogoCloudBlock as ComponentType<{ block: PageBlock }>,
+  grid: GridBlock as ComponentType<{ block: PageBlock }>,
+  flex: FlexBlock as ComponentType<{ block: PageBlock }>,
+  reviews: ReviewsBlock as ComponentType<{ block: PageBlock }>,
+  "add-to-cart-banner": AddToCartBannerBlock as ComponentType<{ block: PageBlock }>,
 };
 
 export function BlockRenderer({ block }: { block: PageBlock }) {
   if (block.enabled === false) return null;
   const View = registry[block.type];
   if (!View) {
-    return (
-      <div className="mx-4 my-2 rounded-lg border border-dashed border-border px-3 py-4 text-center text-xs text-muted-foreground">
-        بلوک ناشناخته: {block.type}
-      </div>
-    );
+    if (process.env.NODE_ENV === "development") {
+      console.warn(`[BlockRenderer] Unknown block type: ${block.type}`);
+    }
+    return null;
   }
   return <View block={block} />;
 }
@@ -89,3 +122,5 @@ export function PageRenderer({ blocks }: { blocks: PageBlock[] }) {
     </div>
   );
 }
+
+export default BlockRenderer;
