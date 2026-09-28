@@ -27,12 +27,12 @@ export default function AdminProductsPage() {
   return (
     <div className="max-w-5xl mx-auto space-y-6">
       <AdminPageHeader
-        title="\u0645\u062d\u0635\u0648\u0644\u0627\u062a"
-        description={`${formatNumber(products.length)} \u0645\u062d\u0635\u0648\u0644 \u062f\u0631 \u06a9\u0627\u062a\u0627\u0644\u0648\u06af`}
+        title="محصولات"
+        description={`${formatNumber(products.length)} محصول در کاتالوگ`}
         actions={
-          <AdminButton variant="primary" disabled title="soon">
+          <AdminButton variant="primary" disabled title="به‌زودی">
             <Plus className="h-4 w-4" />
-            \u0627\u0641\u0632\u0648\u062f\u0646 \u0645\u062d\u0635\u0648\u0644
+            افزودن محصول
           </AdminButton>
         }
       />
@@ -42,7 +42,7 @@ export default function AdminProductsPage() {
         <AdminInput
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="\u062c\u0633\u062a\u062c\u0648..."
+          placeholder="جستجوی نام، برند یا اسلاگ..."
           className="pr-9"
         />
       </div>
@@ -50,8 +50,12 @@ export default function AdminProductsPage() {
       {!filtered.length ? (
         <AdminEmptyState
           icon={<Package className="h-5 w-5" />}
-          title="\u0646\u062a\u06cc\u062c\u0647\u200c\u0627\u06cc \u06cc\u0627\u0641\u062a \u0646\u0634\u062f"
-          description="\u0639\u0628\u0627\u0631\u062a \u062c\u0633\u062a\u062c\u0648 \u0631\u0627 \u062a\u063a\u06cc\u06cc\u0631 \u062f\u0647\u06cc\u062f."
+          title={products.length === 0 ? "هنوز محصولی ندارید" : "نتیجه‌ای یافت نشد"}
+          description={
+            products.length === 0
+              ? "اولین محصول را به کاتالوگ اضافه کنید."
+              : "عبارت جستجو را تغییر دهید."
+          }
         />
       ) : (
         <div className="rounded-2xl border border-[#E8E8E8] bg-white overflow-hidden">
@@ -67,11 +71,11 @@ export default function AdminProductsPage() {
                   <p className="text-xs text-[#737373] mt-0.5 tabular-nums">{formatPrice(p.price)}</p>
                   <div className="mt-1.5 flex flex-wrap gap-1.5">
                     {p.stock > 0 ? (
-                      <AdminBadge tone="success">\u0645\u0648\u062c\u0648\u062f</AdminBadge>
+                      <AdminBadge tone="success">موجود</AdminBadge>
                     ) : (
-                      <AdminBadge tone="danger">\u0646\u0627\u0645\u0648\u062c\u0648\u062f</AdminBadge>
+                      <AdminBadge tone="danger">ناموجود</AdminBadge>
                     )}
-                    {p.newArrival && <AdminBadge tone="info">\u062c\u062f\u06cc\u062f</AdminBadge>}
+                    {p.newArrival && <AdminBadge tone="info">جدید</AdminBadge>}
                   </div>
                 </div>
               </div>
@@ -82,11 +86,11 @@ export default function AdminProductsPage() {
             <table className="w-full text-sm text-right">
               <thead>
                 <tr className="border-b border-[#E8E8E8] bg-[#FAFAFA] text-[11px] text-[#737373]">
-                  <th className="font-semibold px-5 py-3">\u0645\u062d\u0635\u0648\u0644</th>
-                  <th className="font-semibold px-3 py-3">\u0642\u06cc\u0645\u062a</th>
-                  <th className="font-semibold px-3 py-3">\u062f\u0633\u062a\u0647</th>
-                  <th className="font-semibold px-3 py-3">\u0645\u0648\u062c\u0648\u062f\u06cc</th>
-                  <th className="font-semibold px-5 py-3">\u0648\u0636\u0639\u06cc\u062a</th>
+                  <th className="font-semibold px-5 py-3">محصول</th>
+                  <th className="font-semibold px-3 py-3">قیمت</th>
+                  <th className="font-semibold px-3 py-3">دسته</th>
+                  <th className="font-semibold px-3 py-3">موجودی</th>
+                  <th className="font-semibold px-5 py-3">وضعیت</th>
                 </tr>
               </thead>
               <tbody>
@@ -113,11 +117,11 @@ export default function AdminProductsPage() {
                     <td className="px-5 py-3.5">
                       <div className="flex flex-wrap gap-1">
                         {p.stock > 0 ? (
-                          <AdminBadge tone="success">\u0645\u0648\u062c\u0648\u062f</AdminBadge>
+                          <AdminBadge tone="success">موجود</AdminBadge>
                         ) : (
-                          <AdminBadge tone="danger">\u0646\u0627\u0645\u0648\u062c\u0648\u062f</AdminBadge>
+                          <AdminBadge tone="danger">ناموجود</AdminBadge>
                         )}
-                        {p.newArrival && <AdminBadge tone="info">\u062c\u062f\u06cc\u062f</AdminBadge>}
+                        {p.newArrival && <AdminBadge tone="info">جدید</AdminBadge>}
                       </div>
                     </td>
                   </tr>

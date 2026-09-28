@@ -27,12 +27,12 @@ export default function AdminCategoriesPage() {
   return (
     <div className="max-w-5xl mx-auto space-y-6">
       <AdminPageHeader
-        title="\u062f\u0633\u062a\u0647\u200c\u0628\u0646\u062f\u06cc\u200c\u0647\u0627"
-        description={`${list.length} \u062f\u0633\u062a\u0647`}
+        title="دسته‌بندی‌ها"
+        description={`${list.length} دسته`}
         actions={
-          <AdminButton variant="primary" disabled title="soon">
+          <AdminButton variant="primary" disabled title="به‌زودی">
             <Plus className="h-4 w-4" />
-            \u062f\u0633\u062a\u0647 \u062c\u062f\u06cc\u062f
+            دسته جدید
           </AdminButton>
         }
       />
@@ -42,7 +42,7 @@ export default function AdminCategoriesPage() {
         <AdminInput
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder="\u062c\u0633\u062a\u062c\u0648..."
+          placeholder="جستجوی دسته..."
           className="pr-9"
         />
       </div>
@@ -50,8 +50,8 @@ export default function AdminCategoriesPage() {
       {!filtered.length ? (
         <AdminEmptyState
           icon={<FolderTree className="h-5 w-5" />}
-          title="\u062f\u0633\u062a\u0647\u200c\u0627\u06cc \u06cc\u0627\u0641\u062a \u0646\u0634\u062f"
-          description="\u0639\u0628\u0627\u0631\u062a \u062c\u0633\u062a\u062c\u0648 \u0631\u0627 \u062a\u063a\u06cc\u06cc\u0631 \u062f\u0647\u06cc\u062f."
+          title="دسته‌ای یافت نشد"
+          description="عبارت جستجو را تغییر دهید."
         />
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -73,9 +73,9 @@ export default function AdminCategoriesPage() {
                   <p className="text-sm font-semibold text-[#111]">{c.name}</p>
                   <p className="text-[11px] text-[#A3A3A3] font-mono mt-0.5">{c.slug}</p>
                   <div className="mt-2 flex flex-wrap gap-1.5">
-                    <AdminBadge tone="neutral">{countFor(c.slug)} \u0645\u062d\u0635\u0648\u0644</AdminBadge>
+                    <AdminBadge tone="neutral">{countFor(c.slug)} محصول</AdminBadge>
                     {c.children?.length ? (
-                      <AdminBadge tone="info">{c.children.length} \u0632\u06cc\u0631\u062f\u0633\u062a\u0647</AdminBadge>
+                      <AdminBadge tone="info">{c.children.length} زیردسته</AdminBadge>
                     ) : null}
                   </div>
                 </div>
