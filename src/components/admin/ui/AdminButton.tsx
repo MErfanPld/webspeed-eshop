@@ -14,29 +14,43 @@ type Props = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 
 const variants: Record<Variant, string> = {
   primary:
-    "bg-[#5D87FF] text-white hover:bg-[#4570EA] shadow-md shadow-[#5D87FF]/25 border border-transparent",
+    "bg-[#E31B23] text-white hover:bg-[#C4161D] border border-transparent",
   secondary:
-    "bg-white text-[#2A3547] border border-[#E5EAEF] hover:bg-[#F0F5F9]",
-  ghost: "bg-transparent text-[#7C8FAC] hover:bg-[#F0F5F9] hover:text-[#2A3547] border border-transparent",
-  danger: "bg-[#FDEDE8] text-[#FA896B] hover:bg-[#FA896B]/20 border border-transparent",
-  icon: "bg-transparent text-[#7C8FAC] hover:bg-[#F0F5F9] hover:text-[#2A3547] border border-transparent",
+    "bg-white text-[#111] border border-[#E8E8E8] hover:bg-[#F7F7F7]",
+  ghost:
+    "bg-transparent text-[#737373] hover:bg-[#F7F7F7] hover:text-[#111] border border-transparent",
+  danger:
+    "bg-[#FEF2F2] text-[#E31B23] hover:bg-[#FEE2E2] border border-transparent",
+  icon:
+    "bg-transparent text-[#737373] hover:bg-[#F7F7F7] hover:text-[#111] border border-transparent",
 };
 
 const sizes: Record<Size, string> = {
-  sm: "h-9 px-3 text-xs gap-1.5 rounded-xl",
+  sm: "h-8 px-3 text-xs gap-1.5 rounded-lg",
   md: "h-10 px-4 text-sm gap-2 rounded-xl",
-  lg: "h-12 px-5 text-sm gap-2 rounded-xl",
+  lg: "h-11 px-5 text-sm gap-2 rounded-xl",
 };
 
 const AdminButton = forwardRef<HTMLButtonElement, Props>(
-  ({ className, variant = "secondary", size = "md", loading, disabled, children, ...props }, ref) => (
+  (
+    {
+      className,
+      variant = "secondary",
+      size = "md",
+      loading,
+      disabled,
+      children,
+      ...props
+    },
+    ref
+  ) => (
     <button
       ref={ref}
       disabled={disabled || loading}
       className={cn(
-        "inline-flex items-center justify-center font-semibold transition-all duration-150 disabled:opacity-50 disabled:pointer-events-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5D87FF]/30",
+        "inline-flex items-center justify-center font-semibold transition-colors duration-150 disabled:opacity-45 disabled:pointer-events-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[rgba(227,27,35,0.25)]",
         variants[variant],
-        variant === "icon" ? "h-10 w-10 rounded-xl p-0" : sizes[size],
+        variant === "icon" ? "h-9 w-9 rounded-lg p-0" : sizes[size],
         className
       )}
       style={{ fontFamily: "Vazirmatn, Tahoma, sans-serif" }}
