@@ -7,6 +7,7 @@ import CanvasBlock from "./CanvasBlock";
 import { cn } from "@/lib/utils";
 import { LayoutTemplate } from "lucide-react";
 import { VIEWPORTS } from "@/builder/responsive/types";
+import { DeviceProvider } from "@/builder/responsive/device-context";
 
 export default function BuilderCanvas() {
   const blocks = useBuilderStore((s) => s.blocks);
@@ -21,28 +22,22 @@ export default function BuilderCanvas() {
   const vp = VIEWPORTS[previewDevice] || VIEWPORTS.desktop;
   const isDesktop = previewDevice === "desktop";
   const isMobile = previewDevice === "mobile";
-  const targetWidth = isDesktop ? null : vp.width;
+  // Real layout width — layout responds to this width, scale is display-only
+  const frameWidth = isDesktop ? Math.min(vp.width, 1100) : vp.width;
 
   useEffect(() => {
-    if (isDesktop || !targetWidth) {
-      setScale(1);
-      return;
-    }
     const el = containerRef.current;
     if (!el) return;
-
     const update = () => {
-      const available = el.clientWidth - 32;
+      const available = el.clientWidth - 48;
       if (available <= 0) return;
-      const next = Math.min(1, available / targetWidth);
-      setScale(next);
+      setScale(Math.min(1, available / frameWidth));
     };
-
     update();
     const ro = new ResizeObserver(update);
     ro.observe(el);
     return () => ro.disconnect();
-  }, [isDesktop, targetWidth, previewDevice]);
+  }, [frameWidth, previewDevice]);
 
   return (
     <div
@@ -57,47 +52,45 @@ export default function BuilderCanvas() {
           <span className="text-[10px] text-[#7C8FAC] tabular-nums">
             {vp.width} × {vp.height}
           </span>
-          {!isDesktop && scale < 0.99 && (
+          {scale < 0.99 && (
             <span className="text-[10px] text-[#5D87FF] font-medium tabular-nums">
-              {Math.round(scale * 100)}%
+              مقیاس {Math.round(scale * 100)}% (فقط نمایش)
             </span>
           )}
         </div>
 
-        {isDesktop ? (
+        <div
+          className="relative"
+          style={{
+            width: frameWidth * scale,
+          }}
+        >
           <div
-            className="w-full max-w-[1100px] bg-white rounded-xl border border-[#E5EAEF] shadow-sm overflow-x-hidden min-h-[min(70vh,720px)]"
+            className="origin-top-left"
+            style={{
+              width: frameWidth,
+              transform: `scale(${scale})`,
+            }}
             onClick={(e) => e.stopPropagation()}
           >
-            <CanvasContent blocks={blocks} dragFrom={dragFrom} moveBlock={moveBlock} />
-          </div>
-        ) : (
-          <div
-            className="relative"
-            style={{
-              width: targetWidth! * scale,
-              height: Math.min(vp.height, 820) * scale,
-            }}
-          >
-            <div
-              className="absolute top-0 left-0 origin-top-left"
-              style={{
-                width: targetWidth!,
-                transform: `scale(${scale})`,
-              }}
-              onClick={(e) => e.stopPropagation()}
-            >
+            <DeviceProvider device={previewDevice}>
               <div
                 className={cn(
-                  "bg-white overflow-hidden relative",
-                  isMobile ? "rounded-[1.6rem]" : "rounded-[1.25rem]"
+                  "bg-white overflow-hidden relative border border-[#E5EAEF]",
+                  isDesktop
+                    ? "rounded-xl shadow-sm min-h-[min(70vh,720px)]"
+                    : isMobile
+                      ? "rounded-[1.6rem] min-h-[560px] max-h-[820px]"
+                      : "rounded-[1.25rem] min-h-[640px] max-h-[900px]"
                 )}
-                style={{
-                  width: targetWidth!,
-                  height: Math.min(vp.height, 820),
-                  boxShadow:
-                    "0 0 0 3px #1e293b, 0 0 0 4px rgba(255,255,255,0.08), 0 24px 48px rgba(15,23,42,0.2)",
-                }}
+                style={
+                  !isDesktop
+                    ? {
+                        boxShadow:
+                          "0 0 0 3px #1e293b, 0 0 0 4px rgba(255,255,255,0.08), 0 24px 48px rgba(15,23,42,0.2)",
+                      }
+                    : undefined
+                }
               >
                 {isMobile && (
                   <div
@@ -105,66 +98,46 @@ export default function BuilderCanvas() {
                     aria-hidden
                   />
                 )}
-                <div className="h-full overflow-y-auto overflow-x-hidden">
-                  <CanvasContent blocks={blocks} dragFrom={dragFrom} moveBlock={moveBlock} />
-                </div>
+                {!blocks.length ? (
+                  <div className="flex flex-col items-center justify-center min-h-[48vh] px-6 py-12 text-center">
+                    <div className="h-14 w-14 rounded-2xl bg-[#F0F5F9] flex items-center justify-center mb-4">
+                      <LayoutTemplate className="h-6 w-6 text-[#7C8FAC]" />
+                    </div>
+                    <p className="text-sm font-semibold text-[#2A3547]">بوم خالی است</p>
+                    <p className="text-xs text-[#7C8FAC] mt-1.5 max-w-[16rem] leading-relaxed">
+                      از پنل بلوک‌ها، سکشن موردنظر را اضافه کنید.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="w-full overflow-x-hidden">
+                    {blocks.map((block: PageBlock, index: number) => (
+                      <CanvasBlock
+                        key={block.id}
+                        block={block}
+                        index={index}
+                        onDragStart={(i) => {
+                          dragFrom.current = i;
+                        }}
+                        onDrop={(to) => {
+                          const from = dragFrom.current;
+                          dragFrom.current = null;
+                          if (from == null || from === to) return;
+                          moveBlock(from, to);
+                        }}
+                        onDragOver={() => {}}
+                      />
+                    ))}
+                  </div>
+                )}
               </div>
-            </div>
+            </DeviceProvider>
           </div>
-        )}
-
-        {!isDesktop && (
-          <p className="mt-3 text-[10px] text-[#7C8FAC] text-center max-w-xs leading-relaxed">
-            پیش‌نمایش {vp.labelFa} — در صورت کمبود فضا خودکار کوچک می‌شود
-          </p>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function CanvasContent({
-  blocks,
-  dragFrom,
-  moveBlock,
-}: {
-  blocks: PageBlock[];
-  dragFrom: React.MutableRefObject<number | null>;
-  moveBlock: (from: number, to: number) => void;
-}) {
-  if (!blocks.length) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[48vh] px-6 py-12 text-center">
-        <div className="h-14 w-14 rounded-2xl bg-[#F0F5F9] flex items-center justify-center mb-4">
-          <LayoutTemplate className="h-6 w-6 text-[#7C8FAC]" />
         </div>
-        <p className="text-sm font-semibold text-[#2A3547]">بوم خالی است</p>
-        <p className="text-xs text-[#7C8FAC] mt-1.5 max-w-[16rem] leading-relaxed">
-          از پنل بلوک‌ها، سکشن موردنظر را اضافه کنید.
+
+        <p className="mt-3 text-[10px] text-[#7C8FAC] text-center max-w-sm leading-relaxed">
+          عرض واقعی {frameWidth}px — چیدمان بر اساس دستگاه تغییر می‌کند (نه فقط کوچک‌نمایی)
         </p>
       </div>
-    );
-  }
-
-  return (
-    <div className="w-full overflow-x-hidden">
-      {blocks.map((block, index) => (
-        <CanvasBlock
-          key={block.id}
-          block={block}
-          index={index}
-          onDragStart={(i) => {
-            dragFrom.current = i;
-          }}
-          onDrop={(to) => {
-            const from = dragFrom.current;
-            dragFrom.current = null;
-            if (from == null || from === to) return;
-            moveBlock(from, to);
-          }}
-          onDragOver={() => {}}
-        />
-      ))}
     </div>
   );
 }
