@@ -61,7 +61,7 @@ export const adminNav: NavSection[] = [
   },
   {
     title: "ظاهر",
-    items: [{ href: "/admin/theme", label: "قالب", icon: Palette, disabled: true }],
+    items: [{ href: "/admin/theme", label: "تم و ظاهر", icon: Palette }],
   },
   {
     title: "تنظیمات",
@@ -81,6 +81,7 @@ export function pageTitleFromPath(pathname: string): string {
   if (pathname.startsWith("/admin/customers")) return "مشتری‌ها";
   if (pathname.startsWith("/admin/pages")) return "صفحات";
   if (pathname.startsWith("/admin/builder")) return "صفحه‌ساز";
+  if (pathname.startsWith("/admin/theme")) return "تم و ظاهر";
   if (pathname.startsWith("/admin/settings")) return "تنظیمات";
   return "پنل مدیریت";
 }
