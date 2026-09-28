@@ -2,12 +2,13 @@
 
 import { useSyncExternalStore } from "react";
 import type { PageBlock } from "@/builder/types";
-import type {
-  ManagedPage,
-  PageStatus,
-} from "@/builder/contracts/page-contract";
+import type { ManagedPage } from "@/builder/contracts/page-contract";
 import { pageRepository } from "@/builder/repositories/local-storage-repository";
 import { createBlockInstance } from "@/builder/registry/block-registry";
+import {
+  mergeStyleIntoData,
+  pickStyleData,
+} from "@/builder/utils/style-keys";
 
 export type PreviewDevice = "desktop" | "tablet" | "mobile";
 export type SaveStatus = "idle" | "saving" | "saved" | "dirty" | "error";
@@ -28,6 +29,8 @@ type BuilderState = {
   past: HistorySnapshot[];
   future: HistorySnapshot[];
   hydrated: boolean;
+  clipboard: PageBlock[] | null;
+  styleClipboard: Record<string, unknown> | null;
 };
 
 type BuilderActions = {
@@ -49,6 +52,15 @@ type BuilderActions = {
   publish: () => Promise<void>;
   unpublish: () => Promise<void>;
   markDirty: () => void;
+  toggleBlockEnabled: (id: string) => void;
+  setBlockLocked: (id: string, locked: boolean) => void;
+  renameBlock: (id: string, label: string) => void;
+  copyBlock: (id?: string) => void;
+  pasteBlock: () => void;
+  copyStyle: (id?: string) => void;
+  pasteStyle: (id?: string) => void;
+  insertBlocks: (blocks: PageBlock[], index?: number) => void;
+  updatePageMeta: (patch: Partial<{ name: string; slug: string; description: string; seoTitle: string; seoDescription: string }>) => void;
 };
 
 const MAX_HISTORY = 50;
@@ -71,6 +83,14 @@ function setPath(obj: Record<string, unknown>, path: string, value: unknown) {
   cur[parts[parts.length - 1]] = value;
 }
 
+function getData(block: PageBlock): Record<string, unknown> {
+  return { ...((block as { data?: Record<string, unknown> }).data || {}) };
+}
+
+function isLocked(block: PageBlock): boolean {
+  return Boolean(getData(block)._locked);
+}
+
 let state: BuilderState = {
   page: null,
   blocks: [],
@@ -82,6 +102,8 @@ let state: BuilderState = {
   past: [],
   future: [],
   hydrated: false,
+  clipboard: null,
+  styleClipboard: null,
 };
 
 const listeners = new Set<() => void>();
@@ -111,6 +133,12 @@ function recordHistoryAndSetBlocks(blocks: PageBlock[]) {
     isDirty: true,
     saveStatus: "dirty",
   });
+}
+
+function reId(block: PageBlock): PageBlock {
+  const copy = structuredClone(block) as PageBlock;
+  copy.id = `${copy.type}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+  return copy;
 }
 
 const actions: BuilderActions = {
@@ -167,6 +195,8 @@ const actions: BuilderActions = {
   },
 
   removeBlock: (id) => {
+    const target = state.blocks.find((b) => b.id === id);
+    if (target && isLocked(target)) return;
     const blocks = state.blocks.filter((b) => b.id !== id);
     recordHistoryAndSetBlocks(blocks);
     if (state.selectedBlockId === id) setState({ selectedBlockId: null });
@@ -176,8 +206,7 @@ const actions: BuilderActions = {
     const blocks = cloneBlocks(state.blocks);
     const idx = blocks.findIndex((b) => b.id === id);
     if (idx < 0) return;
-    const copy = structuredClone(blocks[idx]) as PageBlock;
-    copy.id = `${copy.type}-${Date.now()}-dup`;
+    const copy = reId(blocks[idx]);
     blocks.splice(idx + 1, 0, copy);
     recordHistoryAndSetBlocks(blocks);
     setState({ selectedBlockId: copy.id });
@@ -186,6 +215,7 @@ const actions: BuilderActions = {
   moveBlock: (from, to) => {
     if (from === to) return;
     const blocks = cloneBlocks(state.blocks);
+    if (isLocked(blocks[from])) return;
     const [item] = blocks.splice(from, 1);
     blocks.splice(to, 0, item);
     recordHistoryAndSetBlocks(blocks);
@@ -194,7 +224,7 @@ const actions: BuilderActions = {
   moveBlockById: (id, direction) => {
     const blocks = cloneBlocks(state.blocks);
     const idx = blocks.findIndex((b) => b.id === id);
-    if (idx < 0) return;
+    if (idx < 0 || isLocked(blocks[idx])) return;
     const next = direction === "up" ? idx - 1 : idx + 1;
     if (next < 0 || next >= blocks.length) return;
     const [item] = blocks.splice(idx, 1);
@@ -205,11 +235,110 @@ const actions: BuilderActions = {
   updateBlockData: (id, path, value) => {
     const blocks = cloneBlocks(state.blocks);
     const block = blocks.find((b) => b.id === id);
-    if (!block) return;
-    const data = { ...(block as { data: Record<string, unknown> }).data };
+    if (!block || isLocked(block)) return;
+    const data = getData(block);
     setPath(data, path, value);
     (block as { data: Record<string, unknown> }).data = data;
     recordHistoryAndSetBlocks(blocks);
+  },
+
+  toggleBlockEnabled: (id) => {
+    const blocks = cloneBlocks(state.blocks);
+    const block = blocks.find((b) => b.id === id);
+    if (!block) return;
+    block.enabled = block.enabled === false ? true : false;
+    recordHistoryAndSetBlocks(blocks);
+  },
+
+  setBlockLocked: (id, locked) => {
+    const blocks = cloneBlocks(state.blocks);
+    const block = blocks.find((b) => b.id === id);
+    if (!block) return;
+    const data = getData(block);
+    data._locked = locked;
+    (block as { data: Record<string, unknown> }).data = data;
+    recordHistoryAndSetBlocks(blocks);
+  },
+
+  renameBlock: (id, label) => {
+    const blocks = cloneBlocks(state.blocks);
+    const block = blocks.find((b) => b.id === id);
+    if (!block || isLocked(block)) return;
+    const data = getData(block);
+    data._label = label;
+    (block as { data: Record<string, unknown> }).data = data;
+    recordHistoryAndSetBlocks(blocks);
+  },
+
+  copyBlock: (id) => {
+    const targetId = id ?? state.selectedBlockId;
+    if (!targetId) return;
+    const block = state.blocks.find((b) => b.id === targetId);
+    if (!block) return;
+    setState({ clipboard: [structuredClone(block)] });
+  },
+
+  pasteBlock: () => {
+    if (!state.clipboard?.length) return;
+    const blocks = cloneBlocks(state.blocks);
+    const copies = state.clipboard.map(reId);
+    const sel = state.selectedBlockId;
+    const idx = sel ? blocks.findIndex((b) => b.id === sel) : -1;
+    if (idx >= 0) blocks.splice(idx + 1, 0, ...copies);
+    else blocks.push(...copies);
+    recordHistoryAndSetBlocks(blocks);
+    setState({ selectedBlockId: copies[0]?.id ?? null });
+  },
+
+  copyStyle: (id) => {
+    const targetId = id ?? state.selectedBlockId;
+    if (!targetId) return;
+    const block = state.blocks.find((b) => b.id === targetId);
+    if (!block) return;
+    setState({ styleClipboard: pickStyleData(getData(block)) });
+  },
+
+  pasteStyle: (id) => {
+    const targetId = id ?? state.selectedBlockId;
+    if (!targetId || !state.styleClipboard) return;
+    const blocks = cloneBlocks(state.blocks);
+    const block = blocks.find((b) => b.id === targetId);
+    if (!block || isLocked(block)) return;
+    const data = mergeStyleIntoData(getData(block), state.styleClipboard);
+    (block as { data: Record<string, unknown> }).data = data;
+    recordHistoryAndSetBlocks(blocks);
+  },
+
+  insertBlocks: (incoming, index) => {
+    const blocks = cloneBlocks(state.blocks);
+    const copies = incoming.map(reId);
+    if (typeof index === "number" && index >= 0 && index <= blocks.length) {
+      blocks.splice(index, 0, ...copies);
+    } else {
+      blocks.push(...copies);
+    }
+    recordHistoryAndSetBlocks(blocks);
+    if (copies[0]) setState({ selectedBlockId: copies[0].id });
+  },
+
+  updatePageMeta: (patch) => {
+    const { page } = state;
+    if (!page) return;
+    const seo = { ...(page.seo || {}) };
+    if (patch.seoTitle !== undefined) seo.title = patch.seoTitle;
+    if (patch.seoDescription !== undefined) seo.description = patch.seoDescription;
+    setState({
+      page: {
+        ...page,
+        name: patch.name !== undefined ? patch.name : page.name,
+        slug: patch.slug !== undefined ? patch.slug : page.slug,
+        description:
+          patch.description !== undefined ? patch.description : page.description,
+        seo: Object.keys(seo).length ? seo : page.seo,
+      },
+      isDirty: true,
+      saveStatus: "dirty",
+    });
   },
 
   undo: () => {
@@ -254,11 +383,7 @@ const actions: BuilderActions = {
         ...page,
         blocks: cloneBlocks(blocks) as unknown as ManagedPage["blocks"],
       });
-      setState({
-        page: updated,
-        isDirty: false,
-        saveStatus: "saved",
-      });
+      setState({ page: updated, isDirty: false, saveStatus: "saved" });
     } catch (e) {
       console.error(e);
       setState({ saveStatus: "error" });
@@ -293,11 +418,7 @@ const actions: BuilderActions = {
     setState({ saveStatus: "saving" });
     try {
       const updated = await pageRepository.unpublishPage(page.id);
-      setState({
-        page: updated,
-        isDirty: false,
-        saveStatus: "saved",
-      });
+      setState({ page: updated, isDirty: false, saveStatus: "saved" });
     } catch (e) {
       console.error(e);
       setState({ saveStatus: "error" });
@@ -312,7 +433,6 @@ function subscribe(listener: () => void) {
   };
 }
 
-/** Lightweight Zustand-compatible selector store (no external dep) */
 export function useBuilderStore<T>(
   selector: (s: BuilderState & BuilderActions) => T
 ): T {
