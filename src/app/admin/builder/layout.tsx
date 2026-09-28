@@ -3,5 +3,9 @@ export default function BuilderLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <div className="min-h-screen bg-[#f5f5f5]">{children}</div>;
+  return (
+    <div className="h-[100dvh] overflow-hidden bg-[#E8ECF1]">
+      {children}
+    </div>
+  );
 }
