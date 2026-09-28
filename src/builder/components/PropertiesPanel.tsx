@@ -44,6 +44,26 @@ export default function PropertiesPanel() {
   const block = blocks.find((b) => b.id === selectedBlockId);
   const def = block ? getBlockDefinition(block.type) : undefined;
 
+  // Hooks must run unconditionally (before any early return)
+  const groups = useMemo(() => {
+    const schema = def?.schema ?? [];
+    const map = new Map<string, FieldSchema[]>();
+    for (const field of schema) {
+      const g = field.group || "محتوا";
+      if (!map.has(g)) map.set(g, []);
+      map.get(g)!.push(field);
+    }
+    const ordered: { name: string; fields: FieldSchema[] }[] = [];
+    for (const name of GROUP_ORDER) {
+      if (map.has(name)) {
+        ordered.push({ name, fields: map.get(name)! });
+        map.delete(name);
+      }
+    }
+    map.forEach((fields, name) => ordered.push({ name, fields }));
+    return ordered;
+  }, [def?.schema]);
+
   if (!block || !def) {
     return (
       <div className="flex flex-col h-full">
@@ -58,11 +78,15 @@ export default function PropertiesPanel() {
         </div>
         <div className="flex-1 overflow-y-auto p-3 space-y-4">
           {!page ? (
-            <p className="text-xs text-muted-foreground text-center py-8">صفحه‌ای بارگذاری نشده</p>
+            <p className="text-xs text-muted-foreground text-center py-8">
+              صفحه‌ای بارگذاری نشده
+            </p>
           ) : (
             <>
               <label className="block space-y-1.5">
-                <span className="text-[11px] font-semibold text-muted-foreground">نام صفحه</span>
+                <span className="text-[11px] font-semibold text-muted-foreground">
+                  نام صفحه
+                </span>
                 <input
                   value={page.name || ""}
                   onChange={(e) => updatePageMeta({ name: e.target.value })}
@@ -78,7 +102,9 @@ export default function PropertiesPanel() {
                 />
               </label>
               <label className="block space-y-1.5">
-                <span className="text-[11px] font-semibold text-muted-foreground">توضیح</span>
+                <span className="text-[11px] font-semibold text-muted-foreground">
+                  توضیح
+                </span>
                 <textarea
                   value={page.description || ""}
                   onChange={(e) => updatePageMeta({ description: e.target.value })}
@@ -89,7 +115,9 @@ export default function PropertiesPanel() {
               <div className="pt-2 border-t border-border space-y-3">
                 <p className="text-[11px] font-bold text-muted-foreground">SEO</p>
                 <label className="block space-y-1.5">
-                  <span className="text-[11px] font-semibold text-muted-foreground">SEO Title</span>
+                  <span className="text-[11px] font-semibold text-muted-foreground">
+                    SEO Title
+                  </span>
                   <input
                     value={(page.seo as { title?: string } | undefined)?.title || ""}
                     onChange={(e) => updatePageMeta({ seoTitle: e.target.value })}
@@ -97,10 +125,16 @@ export default function PropertiesPanel() {
                   />
                 </label>
                 <label className="block space-y-1.5">
-                  <span className="text-[11px] font-semibold text-muted-foreground">SEO Description</span>
+                  <span className="text-[11px] font-semibold text-muted-foreground">
+                    SEO Description
+                  </span>
                   <textarea
-                    value={(page.seo as { description?: string } | undefined)?.description || ""}
-                    onChange={(e) => updatePageMeta({ seoDescription: e.target.value })}
+                    value={
+                      (page.seo as { description?: string } | undefined)?.description || ""
+                    }
+                    onChange={(e) =>
+                      updatePageMeta({ seoDescription: e.target.value })
+                    }
                     rows={3}
                     className="w-full px-3 py-2 rounded-lg border border-border bg-white text-sm resize-none"
                   />
@@ -117,7 +151,7 @@ export default function PropertiesPanel() {
           <div className="pt-4 text-center">
             <Settings2 className="h-6 w-6 text-muted-foreground/30 mx-auto mb-2" />
             <p className="text-[11px] text-muted-foreground">
-              Select a block to edit its properties.
+              یک بلوک را انتخاب کنید تا ویژگی‌های آن را ویرایش کنید.
             </p>
           </div>
         </div>
@@ -136,45 +170,59 @@ export default function PropertiesPanel() {
     updateBlockData(block.id, "_visibility", { ...vis, [key]: value });
   };
 
-  const groups = useMemo(() => {
-    const map = new Map<string, FieldSchema[]>();
-    for (const field of def.schema) {
-      const g = field.group || "محتوا";
-      if (!map.has(g)) map.set(g, []);
-      map.get(g)!.push(field);
-    }
-    const ordered: { name: string; fields: FieldSchema[] }[] = [];
-    for (const name of GROUP_ORDER) {
-      if (map.has(name)) {
-        ordered.push({ name, fields: map.get(name)! });
-        map.delete(name);
-      }
-    }
-    map.forEach((fields, name) => ordered.push({ name, fields }));
-    return ordered;
-  }, [def.schema]);
-
   return (
     <div className="flex flex-col h-full">
       <div className="p-3 border-b border-border space-y-2">
         <div>
-          <p className="text-[11px] font-medium text-muted-foreground">Block</p>
-          <h2 className="text-sm font-bold mt-0.5">{String(data._label || def.nameFa)}</h2>
-          <p className="text-[11px] text-muted-foreground mt-0.5 font-mono">{block.type}</p>
+          <p className="text-[11px] font-medium text-muted-foreground">بلوک</p>
+          <h2 className="text-sm font-bold mt-0.5">
+            {String(data._label || def.nameFa)}
+          </h2>
+          <p className="text-[11px] text-muted-foreground mt-0.5 font-mono">
+            {block.type}
+          </p>
         </div>
         <div className="flex gap-1">
-          <button type="button" onClick={() => copyStyle(block.id)} className="flex-1 h-8 rounded-lg border border-border text-[10px] font-semibold hover:bg-muted">Copy Style</button>
-          <button type="button" onClick={() => pasteStyle(block.id)} className="flex-1 h-8 rounded-lg border border-border text-[10px] font-semibold hover:bg-muted">Paste Style</button>
+          <button
+            type="button"
+            onClick={() => copyStyle(block.id)}
+            className="flex-1 h-8 rounded-lg border border-border text-[10px] font-semibold hover:bg-muted"
+          >
+            کپی استایل
+          </button>
+          <button
+            type="button"
+            onClick={() => pasteStyle(block.id)}
+            className="flex-1 h-8 rounded-lg border border-border text-[10px] font-semibold hover:bg-muted"
+          >
+            پیست استایل
+          </button>
         </div>
       </div>
 
       <div className="p-3 border-b border-border">
-        <p className="text-[11px] font-semibold text-muted-foreground mb-2">Visibility</p>
+        <p className="text-[11px] font-semibold text-muted-foreground mb-2">
+          نمایش در دستگاه
+        </p>
         <div className="flex gap-1">
-          {([ ["desktop", Monitor, "Desktop"], ["tablet", Tablet, "Tablet"], ["mobile", Smartphone, "Mobile"] ] as const).map(([key, Icon, label]) => (
-            <button key={key} type="button" title={label} onClick={() => setVis(key, vis[key] === false)} className={`flex-1 h-9 rounded-lg border text-[10px] font-medium inline-flex flex-col items-center justify-center gap-0.5 ${
-              vis[key] !== false ? "border-[#111] bg-[#111] text-white" : "border-border text-muted-foreground opacity-60"
-            } ${previewDevice === key ? "ring-2 ring-[#E31B23]/40" : ""}`}>
+          {(
+            [
+              ["desktop", Monitor, "دسکتاپ"],
+              ["tablet", Tablet, "تبلت"],
+              ["mobile", Smartphone, "موبایل"],
+            ] as const
+          ).map(([key, Icon, label]) => (
+            <button
+              key={key}
+              type="button"
+              title={label}
+              onClick={() => setVis(key, vis[key] === false)}
+              className={`flex-1 h-9 rounded-lg border text-[10px] font-medium inline-flex flex-col items-center justify-center gap-0.5 ${
+                vis[key] !== false
+                  ? "border-[#111] bg-[#111] text-white"
+                  : "border-border text-muted-foreground opacity-60"
+              } ${previewDevice === key ? "ring-2 ring-[#E31B23]/40" : ""}`}
+            >
               <Icon className="h-3.5 w-3.5" />
               {label}
             </button>
@@ -185,13 +233,24 @@ export default function PropertiesPanel() {
       <div className="flex-1 overflow-y-auto p-3 space-y-5">
         {groups.map((g) => (
           <div key={g.name} className="space-y-3">
-            <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">{g.name}</p>
+            <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+              {g.name}
+            </p>
             {g.fields.map((field) => (
-              <FieldRenderer key={field.path} field={field} value={getPathValue(data, field.path)} onChange={(v) => updateBlockData(block.id, field.path, v)} />
+              <FieldRenderer
+                key={field.path}
+                field={field}
+                value={getPathValue(data, field.path)}
+                onChange={(v) => updateBlockData(block.id, field.path, v)}
+              />
             ))}
           </div>
         ))}
-        {!def.schema.length && <p className="text-xs text-muted-foreground">No editable fields.</p>}
+        {!def.schema.length && (
+          <p className="text-xs text-muted-foreground">
+            فیلد قابل ویرایشی تعریف نشده است.
+          </p>
+        )}
       </div>
     </div>
   );
