@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useBuilderStore } from "@/builder/store/builder-store";
+import type { PageBlock } from "@/builder/types";
 import CanvasBlock from "./CanvasBlock";
 import { cn } from "@/lib/utils";
 import { LayoutTemplate } from "lucide-react";
@@ -58,7 +59,7 @@ export default function BuilderCanvas() {
           </span>
           {!isDesktop && scale < 0.99 && (
             <span className="text-[10px] text-[#5D87FF] font-medium tabular-nums">
-              {Math.round(scale * 100)}٪
+              {Math.round(scale * 100)}%
             </span>
           )}
         </div>
@@ -127,7 +128,7 @@ function CanvasContent({
   dragFrom,
   moveBlock,
 }: {
-  blocks: ReturnType<typeof useBuilderStore.getState>["blocks"];
+  blocks: PageBlock[];
   dragFrom: React.MutableRefObject<number | null>;
   moveBlock: (from: number, to: number) => void;
 }) {
