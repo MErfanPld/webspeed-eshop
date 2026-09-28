@@ -84,6 +84,51 @@ export default function FieldRenderer({
     );
   }
 
+  if (field.type === "responsiveNumber") {
+    const obj =
+      value && typeof value === "object"
+        ? (value as { desktop?: number; tablet?: number; mobile?: number })
+        : typeof value === "number"
+          ? { desktop: value }
+          : {};
+    const setDev = (
+      key: "desktop" | "tablet" | "mobile",
+      n: number | undefined
+    ) => {
+      onChange({ ...obj, [key]: n });
+    };
+    return (
+      <div className="space-y-1.5">
+        <span className="text-xs font-medium text-muted-foreground">
+          {field.label}
+        </span>
+        <div className="grid grid-cols-3 gap-1.5">
+          {(["desktop", "tablet", "mobile"] as const).map((key) => (
+            <label key={key} className="block space-y-1">
+              <span className="text-[10px] text-muted-foreground">
+                {key === "desktop" ? "D" : key === "tablet" ? "T" : "M"}
+              </span>
+              <input
+                type="number"
+                className={inputClass}
+                value={obj[key] ?? ""}
+                min={field.min}
+                max={field.max}
+                placeholder="—"
+                onChange={(e) =>
+                  setDev(
+                    key,
+                    e.target.value === "" ? undefined : Number(e.target.value)
+                  )
+                }
+              />
+            </label>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   if (field.type === "boolean") {
     return (
       <label className="flex items-center justify-between gap-3 py-1">
@@ -133,6 +178,30 @@ export default function FieldRenderer({
             </option>
           ))}
         </select>
+      </label>
+    );
+  }
+
+  if (field.type === "color") {
+    return (
+      <label className="block space-y-1.5">
+        <span className="text-xs font-medium text-muted-foreground">
+          {field.label}
+        </span>
+        <div className="flex items-center gap-2">
+          <input
+            type="color"
+            className="h-9 w-12 rounded border border-border cursor-pointer"
+            value={String(value ?? "#000000")}
+            onChange={(e) => onChange(e.target.value)}
+          />
+          <input
+            type="text"
+            className={inputClass}
+            value={String(value ?? "")}
+            onChange={(e) => onChange(e.target.value)}
+          />
+        </div>
       </label>
     );
   }
