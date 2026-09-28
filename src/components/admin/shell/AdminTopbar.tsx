@@ -2,86 +2,67 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 import { Menu, Search, Bell, ExternalLink } from "lucide-react";
-import { useEffect, useState } from "react";
 import { pageTitleFromPath } from "./nav-config";
 
 export default function AdminTopbar({ onMenuClick }: { onMenuClick?: () => void }) {
-  const pathname = usePathname();
-  const title = pageTitleFromPath(pathname || "/admin");
+  const pathname = usePathname() || "/admin";
+  const title = pageTitleFromPath(pathname);
   const [searchOpen, setSearchOpen] = useState(false);
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
-        e.preventDefault();
-        setSearchOpen(true);
-      }
-      if (e.key === "Escape") setSearchOpen(false);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, []);
 
   return (
     <>
-      <header className="sticky top-0 z-30 h-[70px] shrink-0 bg-white border-b border-[#E5EAEF]">
-        <div className="h-full px-4 sm:px-6 flex items-center gap-3">
-          <button
-            type="button"
-            onClick={onMenuClick}
-            className="lg:hidden h-10 w-10 inline-flex items-center justify-center rounded-xl text-[#7C8FAC] hover:bg-[#F0F5F9]"
-            aria-label="منو"
-          >
-            <Menu className="h-5 w-5" strokeWidth={1.75} />
-          </button>
+      <header className="sticky top-0 z-20 h-14 shrink-0 bg-white/90 backdrop-blur border-b border-[#E8E8E8] flex items-center gap-3 px-3 sm:px-5">
+        <button
+          type="button"
+          onClick={onMenuClick}
+          className="lg:hidden h-9 w-9 inline-flex items-center justify-center rounded-lg text-[#525252] hover:bg-[#F7F7F7]"
+          aria-label="menu"
+        >
+          <Menu className="h-5 w-5" />
+        </button>
 
-          <div className="min-w-0 flex-1">
-            <p className="text-[15px] sm:text-base font-semibold text-[#2A3547] truncate">{title}</p>
-            <p className="text-[11px] text-[#7C8FAC] mt-0.5 hidden sm:block">پنل مدیریت فروشگاه</p>
-          </div>
+        <div className="min-w-0 flex-1">
+          <p className="text-[13px] font-semibold text-[#111] truncate">{title}</p>
+          <p className="text-[10px] text-[#A3A3A3] truncate hidden sm:block">
+            \u0645\u062f\u06cc\u0631\u06cc\u062a \u0641\u0631\u0648\u0634\u06af\u0627\u0647
+          </p>
+        </div>
 
-          <button
-            type="button"
-            onClick={() => setSearchOpen(true)}
-            className="hidden md:flex items-center gap-2 h-10 min-w-[200px] px-3.5 rounded-xl border border-[#E5EAEF] bg-[#F0F5F9] text-xs text-[#7C8FAC] hover:border-[#5D87FF]/40 transition-colors"
-          >
-            <Search className="h-4 w-4 shrink-0" />
-            <span className="flex-1 text-right">جستجو در پنل...</span>
-            <kbd className="text-[10px] px-1.5 py-0.5 rounded-md bg-white border border-[#E5EAEF] font-mono">⌘K</kbd>
-          </button>
-
+        <div className="flex items-center gap-1.5">
           <button
             type="button"
             onClick={() => setSearchOpen(true)}
-            className="md:hidden h-10 w-10 inline-flex items-center justify-center rounded-xl text-[#7C8FAC] hover:bg-[#F0F5F9]"
-            aria-label="جستجو"
+            className="h-9 w-9 sm:w-auto sm:px-3 inline-flex items-center justify-center gap-2 rounded-lg border border-[#E8E8E8] text-[#525252] hover:bg-[#F7F7F7] text-xs font-medium"
+            aria-label="search"
           >
             <Search className="h-4 w-4" />
+            <span className="hidden sm:inline">\u062c\u0633\u062a\u062c\u0648</span>
           </button>
 
           <Link
             href="/"
             target="_blank"
-            className="hidden sm:inline-flex h-10 items-center gap-2 px-3.5 rounded-xl border border-[#E5EAEF] text-xs font-semibold text-[#2A3547] hover:bg-[#F0F5F9]"
+            className="h-9 w-9 sm:w-auto sm:px-3 inline-flex items-center justify-center gap-1.5 rounded-lg text-[#525252] hover:bg-[#F7F7F7] text-xs font-medium"
+            title="store"
           >
-            <ExternalLink className="h-3.5 w-3.5 text-[#7C8FAC]" />
-            فروشگاه
+            <ExternalLink className="h-4 w-4" />
+            <span className="hidden md:inline">\u0641\u0631\u0648\u0634\u06af\u0627\u0647</span>
           </Link>
 
           <button
             type="button"
-            className="relative h-10 w-10 inline-flex items-center justify-center rounded-xl text-[#7C8FAC] hover:bg-[#F0F5F9]"
-            aria-label="اعلان‌ها"
+            className="relative h-9 w-9 inline-flex items-center justify-center rounded-lg text-[#525252] hover:bg-[#F7F7F7]"
+            aria-label="notifications"
           >
-            <Bell className="h-4 w-4" strokeWidth={1.75} />
-            <span className="absolute top-2.5 left-2.5 h-2 w-2 rounded-full bg-[#FA896B]" />
+            <Bell className="h-4 w-4" />
           </button>
 
           <Link
             href="/admin/login"
-            className="h-10 w-10 rounded-xl bg-[#5D87FF] text-white text-sm font-bold flex items-center justify-center shrink-0 shadow-md shadow-[#5D87FF]/25"
-            title="حساب"
+            className="h-8 w-8 rounded-full bg-[#111] text-white text-xs font-bold flex items-center justify-center shrink-0"
+            title="account"
           >
             W
           </Link>
@@ -90,23 +71,36 @@ export default function AdminTopbar({ onMenuClick }: { onMenuClick?: () => void 
 
       {searchOpen && (
         <div className="fixed inset-0 z-[60] flex items-start justify-center pt-[12vh] px-4">
-          <div className="absolute inset-0 bg-[#2A3547]/40 backdrop-blur-[2px]" onClick={() => setSearchOpen(false)} />
-          <div role="dialog" className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl border border-[#E5EAEF] overflow-hidden" style={{ fontFamily: "Vazirmatn, Tahoma, sans-serif" }}>
-            <div className="flex items-center gap-3 px-4 h-14 border-b border-[#E5EAEF]">
-              <Search className="h-4 w-4 text-[#7C8FAC] shrink-0" />
-              <input autoFocus placeholder="جستجوی صفحات، محصولات، سفارش‌ها..." className="flex-1 bg-transparent text-sm outline-none text-[#2A3547] placeholder:text-[#7C8FAC]/70" />
-              <kbd className="text-[10px] text-[#7C8FAC] border border-[#E5EAEF] px-1.5 py-0.5 rounded">ESC</kbd>
+          <div className="absolute inset-0 bg-black/25" onClick={() => setSearchOpen(false)} />
+          <div
+            role="dialog"
+            className="relative w-full max-w-lg bg-white rounded-2xl shadow-xl border border-[#E8E8E8] overflow-hidden"
+            style={{ fontFamily: "Vazirmatn, Tahoma, sans-serif" }}
+          >
+            <div className="flex items-center gap-3 px-4 h-12 border-b border-[#E8E8E8]">
+              <Search className="h-4 w-4 text-[#A3A3A3] shrink-0" />
+              <input
+                autoFocus
+                placeholder="\u062c\u0633\u062a\u062c\u0648..."
+                className="flex-1 bg-transparent text-sm outline-none text-[#111] placeholder:text-[#A3A3A3]"
+              />
+              <kbd className="text-[10px] text-[#A3A3A3] border border-[#E8E8E8] px-1.5 py-0.5 rounded">ESC</kbd>
             </div>
             <div className="p-2 max-h-72 overflow-y-auto">
               {[
-                { label: "داشبورد", href: "/admin" },
-                { label: "محصولات", href: "/admin/products" },
-                { label: "سفارش‌ها", href: "/admin/orders" },
-                { label: "صفحات", href: "/admin/pages" },
-                { label: "مشتری‌ها", href: "/admin/customers" },
-                { label: "دسته‌بندی‌ها", href: "/admin/categories" },
+                { label: "\u062f\u0627\u0634\u0628\u0648\u0631\u062f", href: "/admin" },
+                { label: "\u0645\u062d\u0635\u0648\u0644\u0627\u062a", href: "/admin/products" },
+                { label: "\u0633\u0641\u0627\u0631\u0634\u200c\u0647\u0627", href: "/admin/orders" },
+                { label: "\u0635\u0641\u062d\u0627\u062a", href: "/admin/pages" },
+                { label: "\u062a\u0645", href: "/admin/theme" },
+                { label: "\u0645\u0634\u062a\u0631\u06cc\u200c\u0647\u0627", href: "/admin/customers" },
               ].map((item) => (
-                <Link key={item.href + item.label} href={item.href} onClick={() => setSearchOpen(false)} className="flex items-center px-3 h-11 rounded-xl text-sm font-medium text-[#2A3547] hover:bg-[#F0F5F9]">
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setSearchOpen(false)}
+                  className="flex items-center px-3 h-10 rounded-xl text-sm font-medium text-[#111] hover:bg-[#F7F7F7]"
+                >
                   {item.label}
                 </Link>
               ))}
