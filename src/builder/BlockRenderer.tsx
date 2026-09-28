@@ -2,6 +2,11 @@
 
 import type { ComponentType } from "react";
 import type { PageBlock } from "./types";
+import { usePreviewDevice } from "@/builder/responsive/device-context";
+import {
+  isVisibleOnDevice,
+  type VisibilitySettings,
+} from "@/builder/responsive/types";
 import HeroBlockView from "@/blocks/hero/HeroBlock";
 import CategoryGridBlockView from "@/blocks/category-grid/CategoryGridBlock";
 import ProductSliderBlockView from "@/blocks/product-slider/ProductSliderBlock";
@@ -102,13 +107,18 @@ const registry: Record<string, ComponentType<{ block: PageBlock }>> = {
 };
 
 export function BlockRenderer({ block }: { block: PageBlock }) {
+  const device = usePreviewDevice();
   if (block.enabled === false) return null;
+  const data = (block as { data?: Record<string, unknown> }).data;
+  const vis = data?._visibility as VisibilitySettings | undefined;
+  if (!isVisibleOnDevice(vis, device)) return null;
   const View = registry[block.type];
   if (!View) {
-    if (process.env.NODE_ENV === "development") {
-      console.warn(`[BlockRenderer] Unknown block type: ${block.type}`);
-    }
-    return null;
+    return (
+      <div className="m-2 rounded-lg border border-dashed border-red-300 bg-red-50 px-3 py-2 text-xs text-red-700">
+        بلوک ناشناخته: <code className="font-mono">{block.type}</code>
+      </div>
+    );
   }
   return <View block={block} />;
 }
