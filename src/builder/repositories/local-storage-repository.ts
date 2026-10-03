@@ -14,6 +14,13 @@ function nowIso() {
   return new Date().toISOString();
 }
 
+function normalizePath(slug: string): string {
+  let s = (slug || "/").trim();
+  if (!s.startsWith("/")) s = `/${s}`;
+  if (s.length > 1 && s.endsWith("/")) s = s.slice(0, -1);
+  return s.replace(/\/+/g, "/") || "/";
+}
+
 function seedPages(): ManagedPage[] {
   const ts = nowIso();
   const homeBlocks = toPlainJson(homePageConfig.blocks) as ManagedPage["blocks"];
@@ -181,6 +188,23 @@ export class LocalStoragePageRepository implements PageRepository {
     return validated.data;
   }
 
+  async getPublishedPageBySlug(slug: string): Promise<ManagedPage | null> {
+    const target = normalizePath(slug);
+    const pages = readAll();
+    const page = pages.find((pg) => normalizePath(pg.slug || "") === target);
+    if (!page) return null;
+    if (page.status !== "published") return null;
+    if (
+      !Array.isArray(page.publishedBlocks) ||
+      page.publishedBlocks.length === 0
+    ) {
+      return null;
+    }
+    const validated = validatePage(page);
+    if (!validated.ok) return null;
+    return validated.data;
+  }
+
   async savePage(page: ManagedPage): Promise<ManagedPage> {
     const validated = validatePage({
       ...page,
@@ -192,7 +216,14 @@ export class LocalStoragePageRepository implements PageRepository {
     }
 
     const next = toPlainJson(validated.data);
+    next.slug = normalizePath(next.slug || "/");
     const pages = readAll();
+    const clash = pages.find(
+      (p) => p.id !== next.id && normalizePath(p.slug || "") === next.slug
+    );
+    if (clash) {
+      throw new Error(`این آدرس قبلاً استفاده شده: ${next.slug}`);
+    }
     const idx = pages.findIndex((p) => p.id === next.id);
     if (idx >= 0) pages[idx] = next;
     else pages.push(next);
@@ -211,11 +242,12 @@ export class LocalStoragePageRepository implements PageRepository {
     const source = await this.getPage(id);
     if (!source) throw new Error("صفحه یافت نشد");
 
+    const baseSlug = normalizePath(`${source.slug}-copy`);
     const copy: ManagedPage = {
       ...toPlainJson(source),
       id: `${source.id}-copy-${Date.now()}`,
       name: `${source.name} (کپی)`,
-      slug: `${source.slug}-copy`.replace(/\/+/g, "/"),
+      slug: baseSlug,
       status: "draft",
       schemaVersion: CURRENT_SCHEMA_VERSION,
       createdAt: nowIso(),
