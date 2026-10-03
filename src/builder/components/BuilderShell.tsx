@@ -15,6 +15,25 @@ type Props = {
 };
 
 type MobilePanel = "none" | "library" | "props" | "layers";
+type LayoutMode = "desktop" | "tablet" | "mobile";
+
+function useLayoutMode(): LayoutMode {
+  const [mode, setMode] = useState<LayoutMode>("desktop");
+
+  useEffect(() => {
+    const update = () => {
+      const w = window.innerWidth;
+      if (w < 768) setMode("mobile");
+      else if (w < 1100) setMode("tablet");
+      else setMode("desktop");
+    };
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
+  return mode;
+}
 
 export default function BuilderShell({ pageId }: Props) {
   const loadPage = useBuilderStore((s) => s.loadPage);
@@ -28,10 +47,18 @@ export default function BuilderShell({ pageId }: Props) {
   const clearSelection = useBuilderStore((s) => s.clearSelection);
   const selectedBlockId = useBuilderStore((s) => s.selectedBlockId);
   const removeBlock = useBuilderStore((s) => s.removeBlock);
+  const duplicateBlock = useBuilderStore((s) => s.duplicateBlock);
+  const copyBlock = useBuilderStore((s) => s.copyBlock);
+  const pasteBlock = useBuilderStore((s) => s.pasteBlock);
+  const copyStyle = useBuilderStore((s) => s.copyStyle);
+  const pasteStyle = useBuilderStore((s) => s.pasteStyle);
 
   const [mobilePanel, setMobilePanel] = useState<MobilePanel>("none");
   const [leftTab, setLeftTab] = useState<"blocks" | "layers">("blocks");
   const autosaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const layoutMode = useLayoutMode();
+
+  const showSidebars = !isPreview && layoutMode !== "mobile";
 
   useEffect(() => {
     loadPage(pageId);
@@ -49,27 +76,49 @@ export default function BuilderShell({ pageId }: Props) {
   }, [isDirty, saveDraft]);
 
   useEffect(() => {
-    if (selectedBlockId && typeof window !== "undefined" && window.innerWidth < 768) {
+    if (selectedBlockId && layoutMode === "mobile") {
       setMobilePanel("props");
     }
-  }, [selectedBlockId]);
+  }, [selectedBlockId, layoutMode]);
 
   useEffect(() => {
+    const isTypingTarget = (t: EventTarget | null) =>
+      t instanceof HTMLInputElement ||
+      t instanceof HTMLTextAreaElement ||
+      t instanceof HTMLSelectElement ||
+      (t instanceof HTMLElement && t.isContentEditable);
+
     const onKey = (e: KeyboardEvent) => {
       const mod = e.metaKey || e.ctrlKey;
       if (mod && e.key.toLowerCase() === "s") {
         e.preventDefault();
         saveDraft();
       }
+      if (mod && e.key.toLowerCase() === "c" && !e.shiftKey && !isTypingTarget(e.target)) {
+        e.preventDefault();
+        copyBlock();
+      }
+      if (mod && e.key.toLowerCase() === "v" && !e.shiftKey && !isTypingTarget(e.target)) {
+        e.preventDefault();
+        pasteBlock();
+      }
+      if (mod && e.shiftKey && e.key.toLowerCase() === "c" && !isTypingTarget(e.target)) {
+        e.preventDefault();
+        copyStyle();
+      }
+      if (mod && e.shiftKey && e.key.toLowerCase() === "v" && !isTypingTarget(e.target)) {
+        e.preventDefault();
+        pasteStyle();
+      }
+      if (mod && e.key.toLowerCase() === "d" && !isTypingTarget(e.target)) {
+        e.preventDefault();
+        if (selectedBlockId) duplicateBlock(selectedBlockId);
+      }
       if (mod && e.key.toLowerCase() === "z" && !e.shiftKey) {
         e.preventDefault();
         undo();
       }
-      if (
-        mod &&
-        (e.key.toLowerCase() === "y" ||
-          (e.key.toLowerCase() === "z" && e.shiftKey))
-      ) {
+      if (mod && (e.key.toLowerCase() === "y" || (e.key.toLowerCase() === "z" && e.shiftKey))) {
         e.preventDefault();
         redo();
       }
@@ -80,9 +129,7 @@ export default function BuilderShell({ pageId }: Props) {
       if (
         (e.key === "Delete" || e.key === "Backspace") &&
         selectedBlockId &&
-        !(e.target instanceof HTMLInputElement) &&
-        !(e.target instanceof HTMLTextAreaElement) &&
-        !(e.target instanceof HTMLSelectElement)
+        !isTypingTarget(e.target)
       ) {
         e.preventDefault();
         removeBlock(selectedBlockId);
@@ -90,11 +137,31 @@ export default function BuilderShell({ pageId }: Props) {
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [saveDraft, undo, redo, clearSelection, selectedBlockId, removeBlock]);
+  }, [
+    saveDraft,
+    undo,
+    redo,
+    clearSelection,
+    selectedBlockId,
+    removeBlock,
+    duplicateBlock,
+    copyBlock,
+    pasteBlock,
+    copyStyle,
+    pasteStyle,
+  ]);
+
+  const gridColumns = isPreview
+    ? "minmax(0, 1fr)"
+    : layoutMode === "mobile"
+      ? "minmax(0, 1fr)"
+      : layoutMode === "tablet"
+        ? "minmax(180px, 200px) minmax(0, 1fr) minmax(200px, 220px)"
+        : "minmax(240px, 260px) minmax(0, 1fr) minmax(260px, 300px)";
 
   return (
     <div
-      className="flex flex-col h-[100dvh] overflow-hidden"
+      className="flex flex-col h-[100dvh] max-h-[100dvh] overflow-hidden"
       style={{
         fontFamily: "Vazirmatn, Tahoma, system-ui, sans-serif",
         background: "#E8ECF1",
@@ -119,24 +186,28 @@ export default function BuilderShell({ pageId }: Props) {
           صفحه یافت نشد. از لیست صفحات یک صفحه بسازید یا انتخاب کنید.
         </div>
       ) : (
-        <div className="flex flex-1 min-h-0 relative">
-          {!isPreview && (
+        <div
+          className="flex-1 min-h-0 min-w-0"
+          style={{
+            display: "grid",
+            gridTemplateColumns: gridColumns,
+            gridTemplateRows: "minmax(0, 1fr)",
+          }}
+        >
+          {showSidebars && (
             <aside
-              className={cn(
-                "hidden md:flex flex-col shrink-0 bg-white border-border",
-                "w-[240px] lg:w-[260px] border-l"
-              )}
-              style={{ borderColor: "#E5EAEF" }}
+              className="min-h-0 min-w-0 flex flex-col bg-white border-l border-[#E5EAEF] overflow-hidden"
+              aria-label="کتابخانه و لایه‌ها"
             >
-              <div className="flex border-b shrink-0" style={{ borderColor: "#E5EAEF" }}>
+              <div className="flex shrink-0 border-b border-[#E5EAEF]">
                 <button
                   type="button"
                   onClick={() => setLeftTab("blocks")}
                   className={cn(
                     "flex-1 h-11 text-xs font-semibold transition-colors",
                     leftTab === "blocks"
-                      ? "border-b-2 border-[#5D87FF] text-[#2A3547]"
-                      : "text-[#7C8FAC] hover:text-[#2A3547]"
+                      ? "border-b-2 border-[#111] text-[#111]"
+                      : "text-[#7C8FAC] hover:text-[#111]"
                   )}
                 >
                   بلوک‌ها
@@ -147,88 +218,78 @@ export default function BuilderShell({ pageId }: Props) {
                   className={cn(
                     "flex-1 h-11 text-xs font-semibold transition-colors",
                     leftTab === "layers"
-                      ? "border-b-2 border-[#5D87FF] text-[#2A3547]"
-                      : "text-[#7C8FAC] hover:text-[#2A3547]"
+                      ? "border-b-2 border-[#111] text-[#111]"
+                      : "text-[#7C8FAC] hover:text-[#111]"
                   )}
                 >
                   لایه‌ها
                 </button>
               </div>
-              <div className="flex-1 min-h-0 overflow-hidden">
+              <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
                 {leftTab === "blocks" ? <BlockLibrary /> : <NavigatorPanel />}
               </div>
             </aside>
           )}
 
-          <div className="flex-1 min-w-0 min-h-0 flex flex-col">
+          <div className="min-h-0 min-w-0 flex flex-col overflow-hidden">
             <BuilderCanvas />
           </div>
 
-          {!isPreview && (
+          {showSidebars && (
             <aside
-              className={cn(
-                "hidden md:flex flex-col shrink-0 bg-white",
-                "w-[260px] lg:w-[300px] border-r"
-              )}
-              style={{ borderColor: "#E5EAEF" }}
+              className="min-h-0 min-w-0 flex flex-col bg-white border-r border-[#E5EAEF] overflow-hidden"
+              aria-label="ویژگی‌ها"
             >
-              <PropertiesPanel />
+              <div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
+                <PropertiesPanel />
+              </div>
             </aside>
-          )}
-
-          {!isPreview && mobilePanel !== "none" && (
-            <div className="md:hidden fixed inset-0 z-40">
-              <div
-                className="absolute inset-0 bg-black/40"
-                onClick={() => setMobilePanel("none")}
-              />
-              <aside
-                className={cn(
-                  "absolute top-0 bottom-0 bg-white shadow-2xl flex flex-col z-10",
-                  "w-[min(18.5rem,90vw)]"
-                )}
-                style={{
-                  ...(mobilePanel === "library" || mobilePanel === "layers"
-                    ? { right: 0, borderLeft: "1px solid #E5EAEF" }
-                    : { left: 0, borderRight: "1px solid #E5EAEF" }),
-                }}
-              >
-                <div
-                  className="h-12 shrink-0 flex items-center justify-between gap-2 px-3 border-b"
-                  style={{ borderColor: "#E5EAEF" }}
-                >
-                  <span className="text-xs font-bold text-[#2A3547]">
-                    {mobilePanel === "library"
-                      ? "کتابخانه بلوک‌ها"
-                      : mobilePanel === "layers"
-                        ? "لایه‌ها"
-                        : "ویژگی‌ها"}
-                  </span>
-                  <button
-                    type="button"
-                    className="h-9 w-9 rounded-lg hover:bg-[#F0F5F9] inline-flex items-center justify-center text-[#7C8FAC]"
-                    onClick={() => setMobilePanel("none")}
-                    aria-label="بستن"
-                  >
-                    <X className="h-4 w-4" />
-                  </button>
-                </div>
-                <div className="flex-1 min-h-0 overflow-hidden">
-                  {mobilePanel === "library" && <BlockLibrary />}
-                  {mobilePanel === "layers" && <NavigatorPanel />}
-                  {mobilePanel === "props" && <PropertiesPanel />}
-                </div>
-              </aside>
-            </div>
           )}
         </div>
       )}
 
-      {!isPreview && page && (
-        <div
-          className="md:hidden shrink-0 h-14 border-t bg-white flex items-center justify-around gap-1 px-2"
-          style={{ borderColor: "#E5EAEF" }}
-        >
+      {!isPreview && layoutMode === "mobile" && mobilePanel !== "none" && (
+        <div className="fixed inset-0 z-40">
+          <div
+            className="absolute inset-0 bg-black/40"
+            onClick={() => setMobilePanel("none")}
+          />
+          <aside
+            className="absolute top-0 bottom-0 bg-white shadow-2xl flex flex-col z-10 w-[min(18.5rem,90vw)]"
+            style={
+              mobilePanel === "props"
+                ? { left: 0, borderRight: "1px solid #E5EAEF" }
+                : { right: 0, borderLeft: "1px solid #E5EAEF" }
+            }
+          >
+            <div className="h-12 shrink-0 flex items-center justify-between gap-2 px-3 border-b border-[#E5EAEF]">
+              <span className="text-xs font-bold text-[#111]">
+                {mobilePanel === "library"
+                  ? "کتابخانه بلوک‌ها"
+                  : mobilePanel === "layers"
+                    ? "لایه‌ها"
+                    : "ویژگی‌ها"}
+              </span>
+              <button
+                type="button"
+                className="h-9 w-9 rounded-lg hover:bg-[#F0F5F9] inline-flex items-center justify-center text-[#7C8FAC]"
+                onClick={() => setMobilePanel("none")}
+                aria-label="بستن"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="flex-1 min-h-0 overflow-y-auto">
+              {mobilePanel === "library" && <BlockLibrary />}
+              {mobilePanel === "layers" && <NavigatorPanel />}
+              {mobilePanel === "props" && <PropertiesPanel />}
+            </div>
+          </aside>
+        </div>
+      )}
+
+      {!isPreview && page && layoutMode === "mobile" && (
+        <div className="shrink-0 h-14 border-t border-[#E5EAEF] bg-white flex items-center justify-around gap-1 px-2">
           <button
             type="button"
             onClick={() =>
@@ -237,7 +298,7 @@ export default function BuilderShell({ pageId }: Props) {
             className={cn(
               "flex-1 h-11 rounded-xl inline-flex flex-col items-center justify-center gap-0.5 text-[10px] font-medium",
               mobilePanel === "library"
-                ? "bg-[#5D87FF] text-white"
+                ? "bg-[#111] text-white"
                 : "text-[#7C8FAC] hover:bg-[#F0F5F9]"
             )}
           >
@@ -252,7 +313,7 @@ export default function BuilderShell({ pageId }: Props) {
             className={cn(
               "flex-1 h-11 rounded-xl inline-flex flex-col items-center justify-center gap-0.5 text-[10px] font-medium",
               mobilePanel === "layers"
-                ? "bg-[#5D87FF] text-white"
+                ? "bg-[#111] text-white"
                 : "text-[#7C8FAC] hover:bg-[#F0F5F9]"
             )}
           >
@@ -267,7 +328,7 @@ export default function BuilderShell({ pageId }: Props) {
             className={cn(
               "flex-1 h-11 rounded-xl inline-flex flex-col items-center justify-center gap-0.5 text-[10px] font-medium",
               mobilePanel === "props"
-                ? "bg-[#5D87FF] text-white"
+                ? "bg-[#111] text-white"
                 : "text-[#7C8FAC] hover:bg-[#F0F5F9]"
             )}
           >
