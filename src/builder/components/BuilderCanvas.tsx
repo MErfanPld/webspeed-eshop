@@ -9,6 +9,10 @@ import { LayoutTemplate } from "lucide-react";
 import { VIEWPORTS } from "@/builder/responsive/types";
 import { DeviceProvider } from "@/builder/responsive/device-context";
 
+/**
+ * Builder Canvas — renders real storefront blocks via BlockRenderer (inside CanvasBlock).
+ * Architecture: page.blocks → CanvasBlock → BlockRenderer → storefront block components
+ */
 export default function BuilderCanvas() {
   const blocks = useBuilderStore((s) => s.blocks);
   const previewDevice = useBuilderStore((s) => s.previewDevice);
@@ -22,8 +26,12 @@ export default function BuilderCanvas() {
   const vp = VIEWPORTS[previewDevice] || VIEWPORTS.desktop;
   const isDesktop = previewDevice === "desktop";
   const isMobile = previewDevice === "mobile";
-  // Real layout width — layout responds to this width, scale is display-only
-  const frameWidth = isDesktop ? Math.min(vp.width, 1100) : vp.width;
+  const frameWidth = isDesktop ? Math.min(vp.width, 1200) : vp.width;
+  const frameHeight = isDesktop
+    ? Math.min(vp.height, 900)
+    : isMobile
+      ? Math.min(vp.height, 844)
+      : Math.min(vp.height, 1024);
 
   useEffect(() => {
     const el = containerRef.current;
@@ -38,6 +46,48 @@ export default function BuilderCanvas() {
     ro.observe(el);
     return () => ro.disconnect();
   }, [frameWidth, previewDevice]);
+
+  const renderBlocks = () => {
+    if (!blocks.length) {
+      return (
+        <div className="flex flex-col items-center justify-center min-h-[48vh] px-6 py-12 text-center bg-white">
+          <div className="h-14 w-14 rounded-2xl bg-[#F0F5F9] flex items-center justify-center mb-4">
+            <LayoutTemplate className="h-6 w-6 text-[#7C8FAC]" />
+          </div>
+          <p className="text-sm font-semibold text-[#2A3547]">بوم خالی است</p>
+          <p className="text-xs text-[#7C8FAC] mt-1.5 max-w-[16rem] leading-relaxed">
+            از پنل بلوک‌ها، سکشن‌های صفحه را اضافه کنید تا پیش‌نمایش واقعی فروشگاه اینجا دیده شود.
+          </p>
+        </div>
+      );
+    }
+
+    return (
+      <div
+        className="w-full bg-white text-foreground"
+        data-builder-canvas-page
+        dir="rtl"
+      >
+        {blocks.map((block: PageBlock, index: number) => (
+          <CanvasBlock
+            key={block.id}
+            block={block}
+            index={index}
+            onDragStart={(i) => {
+              dragFrom.current = i;
+            }}
+            onDrop={(to) => {
+              const from = dragFrom.current;
+              dragFrom.current = null;
+              if (from == null || from === to) return;
+              moveBlock(from, to);
+            }}
+            onDragOver={() => {}}
+          />
+        ))}
+      </div>
+    );
+  };
 
   return (
     <div
@@ -57,31 +107,37 @@ export default function BuilderCanvas() {
               مقیاس {Math.round(scale * 100)}% (فقط نمایش)
             </span>
           )}
+          <span className="text-[10px] text-[#7C8FAC] tabular-nums">
+            {blocks.length} بلوک
+          </span>
         </div>
 
         <div
           className="relative"
           style={{
             width: frameWidth * scale,
+            height: frameHeight * scale,
           }}
         >
           <div
-            className="origin-top-left"
+            className="absolute top-0 left-0"
             style={{
               width: frameWidth,
+              height: frameHeight,
               transform: `scale(${scale})`,
+              transformOrigin: "top left",
             }}
             onClick={(e) => e.stopPropagation()}
           >
             <DeviceProvider device={previewDevice}>
               <div
                 className={cn(
-                  "bg-white overflow-hidden relative border border-[#E5EAEF]",
+                  "bg-white relative border border-[#E5EAEF] overflow-y-auto overflow-x-hidden h-full w-full",
                   isDesktop
-                    ? "rounded-xl shadow-sm min-h-[min(70vh,720px)]"
+                    ? "rounded-xl shadow-sm"
                     : isMobile
-                      ? "rounded-[1.6rem] min-h-[560px] max-h-[820px]"
-                      : "rounded-[1.25rem] min-h-[640px] max-h-[900px]"
+                      ? "rounded-[1.6rem]"
+                      : "rounded-[1.25rem]"
                 )}
                 style={
                   !isDesktop
@@ -91,51 +147,24 @@ export default function BuilderCanvas() {
                       }
                     : undefined
                 }
+                data-builder-device={previewDevice}
               >
                 {isMobile && (
                   <div
-                    className="absolute top-2 left-1/2 z-20 h-1.5 w-20 -translate-x-1/2 rounded-full bg-[#1e293b]/85"
+                    className="sticky top-0 z-30 flex justify-center pt-2 pb-1 pointer-events-none"
                     aria-hidden
-                  />
-                )}
-                {!blocks.length ? (
-                  <div className="flex flex-col items-center justify-center min-h-[48vh] px-6 py-12 text-center">
-                    <div className="h-14 w-14 rounded-2xl bg-[#F0F5F9] flex items-center justify-center mb-4">
-                      <LayoutTemplate className="h-6 w-6 text-[#7C8FAC]" />
-                    </div>
-                    <p className="text-sm font-semibold text-[#2A3547]">بوم خالی است</p>
-                    <p className="text-xs text-[#7C8FAC] mt-1.5 max-w-[16rem] leading-relaxed">
-                      از پنل بلوک‌ها، سکشن موردنظر را اضافه کنید.
-                    </p>
-                  </div>
-                ) : (
-                  <div className="w-full overflow-x-hidden">
-                    {blocks.map((block: PageBlock, index: number) => (
-                      <CanvasBlock
-                        key={block.id}
-                        block={block}
-                        index={index}
-                        onDragStart={(i) => {
-                          dragFrom.current = i;
-                        }}
-                        onDrop={(to) => {
-                          const from = dragFrom.current;
-                          dragFrom.current = null;
-                          if (from == null || from === to) return;
-                          moveBlock(from, to);
-                        }}
-                        onDragOver={() => {}}
-                      />
-                    ))}
+                  >
+                    <div className="h-1.5 w-20 rounded-full bg-[#1e293b]/85" />
                   </div>
                 )}
+                {renderBlocks()}
               </div>
             </DeviceProvider>
           </div>
         </div>
 
         <p className="mt-3 text-[10px] text-[#7C8FAC] text-center max-w-sm leading-relaxed">
-          عرض واقعی {frameWidth}px — چیدمان بر اساس دستگاه تغییر می‌کند (نه فقط کوچک‌نمایی)
+          پیش‌نمایش واقعی Storefront از Page JSON — عرض {frameWidth}px
         </p>
       </div>
     </div>

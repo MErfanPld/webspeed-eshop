@@ -22,6 +22,10 @@ type Props = {
   onDrop?: (index: number) => void;
 };
 
+/**
+ * Wraps a real storefront BlockRenderer with builder chrome (select, drag, label).
+ * Does NOT replace the block component — only overlays controls.
+ */
 export default function CanvasBlock({
   block,
   index,
@@ -50,7 +54,13 @@ export default function CanvasBlock({
 
   return (
     <div
-      className={cn("relative group", selected && "z-10")}
+      className={cn(
+        "relative group",
+        selected && "z-10",
+        block.enabled === false && "opacity-40"
+      )}
+      data-block-id={block.id}
+      data-block-type={block.type}
       draggable
       onDragStart={(e) => {
         e.dataTransfer.effectAllowed = "move";
@@ -71,28 +81,28 @@ export default function CanvasBlock({
     >
       <div
         className={cn(
-          "absolute inset-0 pointer-events-none z-10 transition-all",
+          "absolute inset-0 pointer-events-none z-10 transition-all rounded-sm",
           selected
-            ? "ring-2 ring-primary ring-offset-1"
-            : "group-hover:ring-1 group-hover:ring-primary/40"
+            ? "ring-2 ring-[#111] ring-offset-2"
+            : "group-hover:ring-1 group-hover:ring-[#111]/30"
         )}
       />
 
       {selected && (
         <div className="absolute top-0 right-0 z-20 flex items-center gap-0.5 -translate-y-full pb-1">
-          <span className="bg-primary text-white text-[10px] font-bold px-2 py-1 rounded-t-md">
+          <span className="bg-[#111] text-white text-[10px] font-bold px-2.5 py-1 rounded-t-md shadow-sm">
             {def?.nameFa || block.type}
           </span>
-          <div className="flex items-center bg-white border border-border shadow-sm rounded-t-md overflow-hidden">
+          <div className="flex items-center bg-white border border-[#E5EAEF] shadow-sm rounded-t-md overflow-hidden">
             <span
-              className="h-7 w-7 flex items-center justify-center cursor-grab active:cursor-grabbing"
+              className="h-7 w-7 flex items-center justify-center cursor-grab active:cursor-grabbing text-[#7C8FAC]"
               title="جابجایی"
             >
               <GripVertical className="h-3.5 w-3.5" />
             </span>
             <button
               type="button"
-              className="h-7 w-7 flex items-center justify-center hover:bg-muted disabled:opacity-30"
+              className="h-7 w-7 flex items-center justify-center hover:bg-[#F0F5F9] disabled:opacity-30"
               disabled={index === 0}
               onClick={(e) => {
                 e.stopPropagation();
@@ -104,7 +114,7 @@ export default function CanvasBlock({
             </button>
             <button
               type="button"
-              className="h-7 w-7 flex items-center justify-center hover:bg-muted disabled:opacity-30"
+              className="h-7 w-7 flex items-center justify-center hover:bg-[#F0F5F9] disabled:opacity-30"
               disabled={index >= blocksLen - 1}
               onClick={(e) => {
                 e.stopPropagation();
@@ -116,12 +126,12 @@ export default function CanvasBlock({
             </button>
             <button
               type="button"
-              className="h-7 w-7 flex items-center justify-center hover:bg-muted"
+              className="h-7 w-7 flex items-center justify-center hover:bg-[#F0F5F9]"
               onClick={(e) => {
                 e.stopPropagation();
                 duplicateBlock(block.id);
               }}
-              aria-label="کپی"
+              aria-label="تکرار"
             >
               <Copy className="h-3.5 w-3.5" />
             </button>
@@ -140,7 +150,15 @@ export default function CanvasBlock({
         </div>
       )}
 
-      <div className="pointer-events-none select-none">
+      <div
+        className="relative z-0"
+        onClick={(e) => {
+          const t = e.target as HTMLElement;
+          if (t.closest("a, button")) {
+            e.preventDefault();
+          }
+        }}
+      >
         <BlockErrorBoundary
           blockId={block.id}
           blockType={block.type}
