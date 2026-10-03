@@ -57,6 +57,13 @@ import {
   ReviewsBlock,
   AddToCartBannerBlock,
 } from "@/blocks/content/ContentBlocks";
+import {
+  ContactFormBlock,
+  NewsletterFormBlock,
+  LoginFormBlock,
+  SearchFormBlock,
+  IconListBlock,
+} from "@/blocks/content/FormBlocks";
 
 const registry: Record<string, ComponentType<{ block: PageBlock }>> = {
   hero: HeroBlockView as ComponentType<{ block: PageBlock }>,
@@ -104,6 +111,11 @@ const registry: Record<string, ComponentType<{ block: PageBlock }>> = {
   flex: FlexBlock as ComponentType<{ block: PageBlock }>,
   reviews: ReviewsBlock as ComponentType<{ block: PageBlock }>,
   "add-to-cart-banner": AddToCartBannerBlock as ComponentType<{ block: PageBlock }>,
+  "contact-form": ContactFormBlock as ComponentType<{ block: PageBlock }>,
+  "newsletter-form": NewsletterFormBlock as ComponentType<{ block: PageBlock }>,
+  "login-form": LoginFormBlock as ComponentType<{ block: PageBlock }>,
+  "search-form": SearchFormBlock as ComponentType<{ block: PageBlock }>,
+  "icon-list": IconListBlock as ComponentType<{ block: PageBlock }>,
 };
 
 export function BlockRenderer({ block }: { block: PageBlock }) {
@@ -121,16 +133,6 @@ export function BlockRenderer({ block }: { block: PageBlock }) {
     );
   }
   return <View block={block} />;
-}
-
-export function PageRenderer({ blocks }: { blocks: PageBlock[] }) {
-  return (
-    <div className="flex flex-col gap-0">
-      {blocks.map((block) => (
-        <BlockRenderer key={block.id} block={block} />
-      ))}
-    </div>
-  );
 }
 
 export default BlockRenderer;
