@@ -3,6 +3,7 @@
 import { useSyncExternalStore } from "react";
 import type { PageBlock } from "@/builder/types";
 import type { ManagedPage } from "@/builder/contracts/page-contract";
+import { homePageConfig } from "@/config/home-page";
 import { pageRepository } from "@/builder/repositories/local-storage-repository";
 import { createBlockInstance } from "@/builder/registry/block-registry";
 import {
@@ -144,14 +145,33 @@ function reId(block: PageBlock): PageBlock {
 const actions: BuilderActions = {
   loadPage: async (id: string) => {
     try {
-      const page = await pageRepository.getPage(id);
+      let page = await pageRepository.getPage(id);
       if (!page) {
         setState({ page: null, blocks: [], hydrated: true });
         return;
       }
+      let blocks = cloneBlocks((page.blocks || []) as unknown as PageBlock[]);
+      // Restore home storefront structure if LocalStorage has empty blocks
+      if (
+        blocks.length === 0 &&
+        id === "home" &&
+        Array.isArray(homePageConfig.blocks) &&
+        homePageConfig.blocks.length > 0
+      ) {
+        blocks = cloneBlocks(homePageConfig.blocks as unknown as PageBlock[]);
+        page = {
+          ...page,
+          blocks: blocks as unknown as typeof page.blocks,
+        };
+        try {
+          await pageRepository.savePage(page);
+        } catch (e) {
+          console.warn("[builder] failed to persist restored home blocks", e);
+        }
+      }
       setState({
         page,
-        blocks: cloneBlocks(page.blocks as unknown as PageBlock[]),
+        blocks,
         selectedBlockId: null,
         isDirty: false,
         saveStatus: "idle",
