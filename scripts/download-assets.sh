@@ -13,5 +13,4 @@ for w in Regular Medium SemiBold Bold ExtraBold; do
 done
 
 echo "Fonts ready in public/fonts"
-echo "Place your banner at: public/placeholders/samsung-banner.webp"
 ls -la "$ROOT/public/fonts"

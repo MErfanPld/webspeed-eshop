@@ -15,7 +15,7 @@ export default function AboutPage() {
     <div>
       <section className="relative h-[42vh] min-h-[280px] max-h-[420px] overflow-hidden bg-muted">
         <Image
-          src="/placeholders/samsung-banner.webp"
+          src="/placeholders/hero-2.svg"
           alt="درباره WebSpeed"
           fill
           priority

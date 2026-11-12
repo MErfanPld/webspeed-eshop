@@ -33,6 +33,15 @@ function isSerializable(value: unknown, depth = 0): boolean {
   return false;
 }
 
+function sanitizeSeo(raw: unknown): ManagedPage["seo"] {
+  if (!isPlainObject(raw)) return undefined;
+  const out: NonNullable<ManagedPage["seo"]> = {};
+  for (const key of ["title", "description", "ogImage"] as const) {
+    if (typeof raw[key] === "string") out[key] = raw[key] as string;
+  }
+  return Object.keys(out).length ? out : undefined;
+}
+
 export function validateBlock(
   raw: unknown
 ): ValidationResult<SerializablePageBlock> {
@@ -109,6 +118,7 @@ export function validatePage(raw: unknown): ValidationResult<ManagedPage> {
       status: raw.status as PageStatus,
       description:
         typeof raw.description === "string" ? raw.description : undefined,
+      seo: sanitizeSeo(raw.seo),
       blocks,
       publishedBlocks,
       createdAt:

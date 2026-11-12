@@ -43,7 +43,8 @@ export type BlockCategory =
   | "catalog"
   | "content"
   | "store"
-  | "commerce";
+  | "commerce"
+  | "forms";
 
 export type NestingRules = {
   canHaveChildren?: boolean;

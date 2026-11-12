@@ -20,7 +20,7 @@ function childrenOf(block: PageBlock): PageBlock[] {
 
 export function HeadingBlock({ block }: Props) {
   const data = d(block);
-  const text = String(data.text ?? "\u0639\u0646\u0648\u0627\u0646");
+  const text = String(data.text ?? "عنوان");
   const level = Number(data.level ?? 2);
   const align = String(data.align ?? "right") as "right" | "center" | "left";
   const Tag = (`h${Math.min(Math.max(level, 1), 4)}` as "h1" | "h2" | "h3" | "h4");
@@ -55,7 +55,7 @@ export function TextBlock({ block }: Props) {
 
 export function ButtonBlock({ block }: Props) {
   const data = d(block);
-  const label = String(data.label ?? "\u062f\u06a9\u0645\u0647");
+  const label = String(data.label ?? "دکمه");
   const href = String(data.href ?? "#");
   const variant = String(data.variant ?? "primary");
   const cls =
@@ -87,7 +87,7 @@ export function BadgeBlock({ block }: Props) {
   return (
     <div className="px-4 sm:px-6 py-2">
       <span className="inline-flex px-2.5 py-1 rounded-full text-xs font-bold bg-[#E31B23]/10 text-[#E31B23]">
-        {String(data.text ?? "\u0646\u0634\u0627\u0646")}
+        {String(data.text ?? "نشان")}
       </span>
     </div>
   );
@@ -98,11 +98,11 @@ export function QuoteBlock({ block }: Props) {
   return (
     <blockquote className="mx-auto max-w-2xl px-6 py-8 text-center">
       <p className="text-lg sm:text-xl font-medium leading-relaxed text-foreground">
-        \u00ab{String(data.text ?? "")}\u00bb
+        «{String(data.text ?? "")}»
       </p>
       {data.author ? (
         <footer className="mt-3 text-sm text-muted-foreground">
-          \u2014 {String(data.author)}
+          — {String(data.author)}
         </footer>
       ) : null}
     </blockquote>
@@ -118,14 +118,14 @@ export function VideoBlock({ block }: Props) {
         {url ? (
           <iframe
             src={url}
-            title={String(data.title ?? "\u0648\u06cc\u062f\u06cc\u0648")}
+            title={String(data.title ?? "ویدیو")}
             className="absolute inset-0 h-full w-full"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
           />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center text-sm text-muted-foreground">
-            \u0622\u062f\u0631\u0633 \u0648\u06cc\u062f\u06cc\u0648 \u0631\u0627 \u062a\u0646\u0638\u06cc\u0645 \u06a9\u0646\u06cc\u062f
+            آدرس ویدیو را تنظیم کنید
           </div>
         )}
       </div>
@@ -139,7 +139,7 @@ export function CtaBlock({ block }: Props) {
     <section className="w-full px-4 sm:px-6 py-12 sm:py-16">
       <div className="mx-auto max-w-3xl rounded-2xl bg-[#111] text-white px-6 py-10 sm:px-10 sm:py-12 text-center">
         <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
-          {String(data.title ?? "\u0647\u0645\u06cc\u0646 \u062d\u0627\u0644\u0627 \u0634\u0631\u0648\u0639 \u06a9\u0646\u06cc\u062f")}
+          {String(data.title ?? "همین حالا شروع کنید")}
         </h2>
         {data.subtitle ? (
           <p className="mt-3 text-sm sm:text-base text-white/70 leading-relaxed">
@@ -150,7 +150,7 @@ export function CtaBlock({ block }: Props) {
           href={String(data.href ?? "/products")}
           className="mt-6 inline-flex h-11 items-center px-6 rounded-lg bg-white text-[#111] text-sm font-bold hover:bg-white/90"
         >
-          {String(data.buttonLabel ?? "\u0645\u0634\u0627\u0647\u062f\u0647 \u0641\u0631\u0648\u0634\u06af\u0627\u0647")}
+          {String(data.buttonLabel ?? "مشاهده فروشگاه")}
         </Link>
       </div>
     </section>
@@ -162,9 +162,9 @@ export function StatsBlock({ block }: Props) {
   const items = (Array.isArray(data.items)
     ? data.items
     : [
-        { value: "10k+", label: "\u0645\u0634\u062a\u0631\u06cc" },
-        { value: "500+", label: "\u0645\u062d\u0635\u0648\u0644" },
-        { value: "98%", label: "\u0631\u0636\u0627\u06cc\u062a" },
+        { value: "10k+", label: "مشتری" },
+        { value: "500+", label: "محصول" },
+        { value: "98%", label: "رضایت" },
       ]) as { value: string; label: string }[];
   return (
     <section className="w-full px-4 sm:px-6 py-10 border-y border-border bg-[#fafafa]">
@@ -203,16 +203,16 @@ export function CountdownBlock({ block }: Props) {
   }, [target]);
 
   const cells = [
-    { v: left.d, l: "\u0631\u0648\u0632" },
-    { v: left.h, l: "\u0633\u0627\u0639\u062a" },
-    { v: left.m, l: "\u062f\u0642\u06cc\u0642\u0647" },
-    { v: left.s, l: "\u062b\u0627\u0646\u06cc\u0647" },
+    { v: left.d, l: "روز" },
+    { v: left.h, l: "ساعت" },
+    { v: left.m, l: "دقیقه" },
+    { v: left.s, l: "ثانیه" },
   ];
 
   return (
     <section className="w-full px-4 sm:px-6 py-8 text-center">
       <p className="text-sm font-semibold text-foreground mb-4">
-        {String(data.title ?? "\u0632\u0645\u0627\u0646 \u0628\u0627\u0642\u06cc\u200c\u0645\u0627\u0646\u062f\u0647")}
+        {String(data.title ?? "زمان باقی‌مانده")}
       </p>
       <div className="inline-flex gap-2 sm:gap-3">
         {cells.map((c) => (
@@ -373,7 +373,7 @@ export function ReviewsBlock({ block }: Props) {
       <div className="mx-auto max-w-4xl grid sm:grid-cols-2 gap-4">
         {items.map((it, i) => (
           <div key={i} className="rounded-xl border border-border bg-white p-5">
-            <p className="text-amber-400 text-sm mb-2">{"\u2605".repeat(it.rating || 5)}</p>
+            <p className="text-amber-400 text-sm mb-2">{"★".repeat(it.rating || 5)}</p>
             <p className="text-sm text-foreground leading-relaxed">{it.text}</p>
             <p className="mt-3 text-xs font-semibold text-muted-foreground">{it.name}</p>
           </div>

@@ -108,7 +108,7 @@ export function RichTextBlock({ block }: Props) {
 
 export function ImageBlock({ block }: Props) {
   const d = (block as { data: Record<string, unknown> }).data || {};
-  const src = String(d.src ?? "/placeholders/samsung-banner.webp");
+  const src = String(d.src ?? "/placeholders/banner-1.svg");
   const alt = String(d.alt ?? "");
   return (
     <div className="w-full">

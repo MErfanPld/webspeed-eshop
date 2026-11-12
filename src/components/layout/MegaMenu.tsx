@@ -41,7 +41,7 @@ export default function MegaMenu({ open, onClose }: Props) {
                       <Image
                         src={
                           cat.image.startsWith("http")
-                            ? "/placeholders/samsung-banner.webp"
+                            ? "/placeholders/product-1.svg"
                             : cat.image
                         }
                         alt=""

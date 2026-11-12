@@ -17,7 +17,7 @@ export default function AdminLoginPage() {
     e.preventDefault();
     setError("");
     if (!email.trim() || !password.trim()) {
-      setError("\u0627\u06cc\u0645\u06cc\u0644 \u0648 \u0631\u0645\u0632 \u0639\u0628\u0648\u0631 \u0631\u0627 \u0648\u0627\u0631\u062f \u06a9\u0646\u06cc\u062f.");
+      setError("ایمیل و رمز عبور را وارد کنید.");
       return;
     }
     setLoading(true);
@@ -37,7 +37,7 @@ export default function AdminLoginPage() {
           <div className="mx-auto h-11 w-11 rounded-xl bg-[#111] text-white text-sm font-bold flex items-center justify-center mb-4">
             W
           </div>
-          <h1 className="text-xl font-semibold text-[#111] tracking-tight">\u0648\u0631\u0648\u062f \u0628\u0647 \u067e\u0646\u0644</h1>
+          <h1 className="text-xl font-semibold text-[#111] tracking-tight">ورود به پنل</h1>
           <p className="text-sm text-[#737373] mt-1.5">WebSpeed Admin</p>
         </div>
 
@@ -46,7 +46,7 @@ export default function AdminLoginPage() {
           className="bg-white border border-[#E8E8E8] rounded-2xl p-6 sm:p-7 space-y-4 shadow-sm"
         >
           <label className="block space-y-1.5">
-            <span className="text-xs font-semibold text-[#525252]">\u0627\u06cc\u0645\u06cc\u0644</span>
+            <span className="text-xs font-semibold text-[#525252]">ایمیل</span>
             <AdminInput
               type="email"
               autoComplete="username"
@@ -56,13 +56,13 @@ export default function AdminLoginPage() {
             />
           </label>
           <label className="block space-y-1.5">
-            <span className="text-xs font-semibold text-[#525252]">\u0631\u0645\u0632 \u0639\u0628\u0648\u0631</span>
+            <span className="text-xs font-semibold text-[#525252]">رمز عبور</span>
             <AdminInput
               type="password"
               autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022"
+              placeholder="••••••••"
             />
           </label>
 
@@ -71,13 +71,13 @@ export default function AdminLoginPage() {
           )}
 
           <AdminButton type="submit" variant="primary" className="w-full" loading={loading}>
-            \u0648\u0631\u0648\u062f
+            ورود
           </AdminButton>
         </form>
 
         <p className="text-center text-xs text-[#A3A3A3] mt-6">
           <Link href="/" className="hover:text-[#111] underline-offset-2 hover:underline">
-            \u0628\u0627\u0632\u06af\u0634\u062a \u0628\u0647 \u0641\u0631\u0648\u0634\u06af\u0627\u0647
+            بازگشت به فروشگاه
           </Link>
         </p>
       </div>

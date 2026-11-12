@@ -1,6 +1,6 @@
 import type { BlockDefinition } from "@/builder/schema-types";
 
-const PLACEHOLDER = "/placeholders/samsung-banner.webp";
+const PLACEHOLDER = "/placeholders/banner-1.svg";
 
 function uid(prefix: string) {
   return `${prefix}-${Math.random().toString(36).slice(2, 9)}`;
@@ -358,7 +358,7 @@ export const blockRegistry: BlockDefinition[] = [
         type: "array",
         label: "آیتم‌ها",
         path: "items",
-        defaultItem: { id: uid("f"), title: "عنوان", description: "" },
+        defaultItem: { title: "عنوان", description: "" },
         itemFields: [
           { type: "text", label: "عنوان", path: "title" },
           { type: "textarea", label: "توضیح", path: "description" },
@@ -383,7 +383,7 @@ export const blockRegistry: BlockDefinition[] = [
         type: "array",
         label: "سوالات",
         path: "items",
-        defaultItem: { id: uid("q"), question: "؟", answer: "" },
+        defaultItem: { question: "؟", answer: "" },
         itemFields: [
           { type: "text", label: "سوال", path: "question" },
           { type: "textarea", label: "پاسخ", path: "answer" },

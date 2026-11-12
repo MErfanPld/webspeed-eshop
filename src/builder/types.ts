@@ -106,7 +106,8 @@ export type FlashSaleBlock = BlockBase & {
   type: "flash-sale";
   data: {
     title: string;
-    endsAt: string;
+    endsAt?: string;
+    recurring?: "none" | "daily";
     productIds?: string[];
     limit?: number;
   };

@@ -248,7 +248,7 @@ export default function FieldRenderer({
               const item = structuredClone(
                 field.defaultItem || {}
               ) as Record<string, unknown>;
-              if (!item.id) item.id = `item-${Date.now()}`;
+              item.id = `item-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
               onChange([...list, item]);
             }}
           >

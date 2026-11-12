@@ -10,12 +10,31 @@ import ProductCard from "@/components/products/ProductCard";
 import { resolveProducts } from "@/lib/products-query";
 import { formatNumber } from "@/lib/utils";
 
-function useCountdown(endsAt: string) {
+/**
+ * Resolve the countdown target.
+ * - A valid future `endsAt` wins.
+ * - Otherwise, when `recurring` is "daily" (or endsAt is empty/invalid),
+ *   count down to the next local midnight so the block never freezes at 0.
+ */
+export function resolveFlashSaleTarget(
+  endsAt: string | undefined,
+  recurring: string | undefined,
+  now: number = Date.now()
+): number {
+  const t = endsAt ? new Date(endsAt).getTime() : NaN;
+  if (Number.isFinite(t) && (t > now || recurring !== "daily")) return t;
+  const d = new Date(now);
+  d.setHours(24, 0, 0, 0);
+  return d.getTime();
+}
+
+function useCountdown(endsAt: string | undefined, recurring?: string) {
   const [left, setLeft] = useState({ d: 0, h: 0, m: 0, s: 0 });
 
   useEffect(() => {
     const tick = () => {
-      const diff = Math.max(0, new Date(endsAt).getTime() - Date.now());
+      const target = resolveFlashSaleTarget(endsAt, recurring);
+      const diff = Math.max(0, target - Date.now());
       const s = Math.floor(diff / 1000);
       setLeft({
         d: Math.floor(s / 86400),
@@ -27,7 +46,7 @@ function useCountdown(endsAt: string) {
     tick();
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
-  }, [endsAt]);
+  }, [endsAt, recurring]);
 
   return left;
 }
@@ -39,7 +58,7 @@ export default function FlashSaleBlockView({ block }: { block: PageBlock }) {
     source: "featured",
     limit: data.limit ?? 6,
   });
-  const t = useCountdown(data.endsAt);
+  const t = useCountdown(data.endsAt, data.recurring);
 
   if (!list.length) return null;
 

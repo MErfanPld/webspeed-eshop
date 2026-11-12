@@ -16,7 +16,7 @@ export default function CartItem({ item }: Props) {
   const img =
     item.image && !item.image.startsWith("http")
       ? item.image
-      : "/placeholders/samsung-banner.webp";
+      : "/placeholders/product-1.svg";
 
   return (
     <div className="flex gap-3 sm:gap-5 p-3 sm:p-4 rounded-2xl border border-border bg-surface hover:border-foreground/15 transition-colors">

@@ -37,9 +37,12 @@ export default function BuilderToolbar({ onOpenLibrary }: Props) {
   const unpublish = useBuilderStore((s) => s.unpublish);
   const saveStatus = useBuilderStore((s) => s.saveStatus);
   const isDirty = useBuilderStore((s) => s.isDirty);
+  const saveError = useBuilderStore((s) => s.saveError);
 
   const statusLabel =
-    saveStatus === "saving"
+    saveStatus === "error"
+      ? `خطا: ${saveError || "ذخیره ناموفق بود"}`
+      : saveStatus === "saving"
       ? "در حال ذخیره..."
       : saveStatus === "saved"
         ? "ذخیره شد"
@@ -67,7 +70,14 @@ export default function BuilderToolbar({ onOpenLibrary }: Props) {
             <p className="text-xs font-bold truncate leading-tight">
               {page?.name || "صفحه‌ساز"}
             </p>
-            <p className="text-[10px] text-muted-foreground truncate leading-tight">
+            <p
+              className={cn(
+                "text-[10px] truncate leading-tight",
+                saveStatus === "error" ? "text-red-600 font-semibold" : "text-muted-foreground"
+              )}
+              title={statusLabel}
+              role={saveStatus === "error" ? "alert" : undefined}
+            >
               {statusLabel}
               {page?.status === "published" ? " · منتشر" : " · پیش‌نویس"}
             </p>

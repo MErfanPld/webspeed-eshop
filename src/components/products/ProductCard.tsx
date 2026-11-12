@@ -45,7 +45,7 @@ export default function ProductCard({ product, priority }: ProductCardProps) {
       <Link href={`/products/${product.slug}`} className="block">
         <div className="relative aspect-[3/4] bg-muted overflow-hidden">
           <Image
-            src={product.images[0] || "/placeholders/samsung-banner.webp"}
+            src={product.images[0] || "/placeholders/product-1.svg"}
             alt={product.name}
             fill
             priority={priority}

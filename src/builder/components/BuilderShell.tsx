@@ -64,8 +64,13 @@ export default function BuilderShell({ pageId }: Props) {
     loadPage(pageId);
   }, [pageId, loadPage]);
 
+  const blocks = useBuilderStore((s) => s.blocks);
+  const saveStatus = useBuilderStore((s) => s.saveStatus);
+
+  // Debounced autosave: restarts on every edit, skipped while a save runs
+  // and after an error (until the next edit) to avoid retry loops.
   useEffect(() => {
-    if (!isDirty) return;
+    if (!isDirty || saveStatus === "saving" || saveStatus === "error") return;
     if (autosaveTimer.current) clearTimeout(autosaveTimer.current);
     autosaveTimer.current = setTimeout(() => {
       saveDraft();
@@ -73,7 +78,18 @@ export default function BuilderShell({ pageId }: Props) {
     return () => {
       if (autosaveTimer.current) clearTimeout(autosaveTimer.current);
     };
-  }, [isDirty, saveDraft]);
+  }, [isDirty, blocks, page, saveStatus, saveDraft]);
+
+  // Warn before leaving with unsaved changes
+  useEffect(() => {
+    const onBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (!isDirty) return;
+      e.preventDefault();
+      e.returnValue = "";
+    };
+    window.addEventListener("beforeunload", onBeforeUnload);
+    return () => window.removeEventListener("beforeunload", onBeforeUnload);
+  }, [isDirty]);
 
   useEffect(() => {
     if (selectedBlockId && layoutMode === "mobile") {

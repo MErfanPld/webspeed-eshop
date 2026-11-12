@@ -27,6 +27,8 @@ type BuilderState = {
   isPreview: boolean;
   isDirty: boolean;
   saveStatus: SaveStatus;
+  /** Last persistence error message (Persian), null when OK */
+  saveError: string | null;
   past: HistorySnapshot[];
   future: HistorySnapshot[];
   hydrated: boolean;
@@ -100,6 +102,7 @@ let state: BuilderState = {
   isPreview: false,
   isDirty: false,
   saveStatus: "idle",
+  saveError: null,
   past: [],
   future: [],
   hydrated: false,
@@ -134,6 +137,10 @@ function recordHistoryAndSetBlocks(blocks: PageBlock[]) {
     isDirty: true,
     saveStatus: "dirty",
   });
+}
+
+function errorMessage(e: unknown): string {
+  return e instanceof Error && e.message ? e.message : "ذخیره ناموفق بود";
 }
 
 function reId(block: PageBlock): PageBlock {
@@ -403,10 +410,17 @@ const actions: BuilderActions = {
         ...page,
         blocks: cloneBlocks(blocks) as unknown as ManagedPage["blocks"],
       });
-      setState({ page: updated, isDirty: false, saveStatus: "saved" });
+      // Edits made while the save was in flight stay dirty
+      const changedMeanwhile = state.blocks !== blocks || state.page !== page;
+      setState({
+        page: changedMeanwhile ? { ...updated, ...pickMeta(state.page) } : updated,
+        isDirty: changedMeanwhile,
+        saveStatus: changedMeanwhile ? "dirty" : "saved",
+        saveError: null,
+      });
     } catch (e) {
       console.error(e);
-      setState({ saveStatus: "error" });
+      setState({ saveStatus: "error", saveError: errorMessage(e) });
     }
   },
 
@@ -425,26 +439,47 @@ const actions: BuilderActions = {
         blocks: cloneBlocks(updated.blocks as unknown as PageBlock[]),
         isDirty: false,
         saveStatus: "saved",
+        saveError: null,
       });
     } catch (e) {
       console.error(e);
-      setState({ saveStatus: "error" });
+      setState({ saveStatus: "error", saveError: errorMessage(e) });
     }
   },
 
   unpublish: async () => {
-    const { page } = state;
+    const { page, blocks } = state;
     if (!page) return;
     setState({ saveStatus: "saving" });
     try {
+      // Persist pending edits first so they are not silently dropped
+      await pageRepository.savePage({
+        ...page,
+        blocks: cloneBlocks(blocks) as unknown as ManagedPage["blocks"],
+      });
       const updated = await pageRepository.unpublishPage(page.id);
-      setState({ page: updated, isDirty: false, saveStatus: "saved" });
+      setState({
+        page: updated,
+        isDirty: false,
+        saveStatus: "saved",
+        saveError: null,
+      });
     } catch (e) {
       console.error(e);
-      setState({ saveStatus: "error" });
+      setState({ saveStatus: "error", saveError: errorMessage(e) });
     }
   },
 };
+
+function pickMeta(page: ManagedPage | null): Partial<ManagedPage> {
+  if (!page) return {};
+  return {
+    name: page.name,
+    slug: page.slug,
+    description: page.description,
+    seo: page.seo,
+  };
+}
 
 function subscribe(listener: () => void) {
   listeners.add(listener);

@@ -14,7 +14,7 @@ type Props = {
 export default function CartDropdown({ open, onClose }: Props) {
   const { items, subtotal, isReady } = useCart();
   const safeImage = (src?: string) =>
-    src && !src.startsWith("http") ? src : "/placeholders/samsung-banner.webp";
+    src && !src.startsWith("http") ? src : "/placeholders/product-1.svg";
 
   if (!open) return null;
 

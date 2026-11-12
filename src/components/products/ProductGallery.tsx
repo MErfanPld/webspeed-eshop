@@ -16,9 +16,9 @@ export default function ProductGallery({ images, alt }: Props) {
       ? images.map((img) =>
           img && !img.startsWith("http")
             ? img
-            : "/placeholders/samsung-banner.webp"
+            : "/placeholders/product-1.svg"
         )
-      : ["/placeholders/samsung-banner.webp"];
+      : ["/placeholders/product-1.svg"];
 
   return (
     <div className="flex flex-col gap-3">

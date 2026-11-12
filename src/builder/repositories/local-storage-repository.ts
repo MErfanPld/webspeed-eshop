@@ -7,6 +7,7 @@ import {
 } from "@/builder/contracts/page-contract";
 import { migratePage, validatePage } from "@/builder/validation/page-schema";
 import { homePageConfig } from "@/config/home-page";
+import { isReservedSlug, isValidSlug } from "@/lib/page-slug";
 
 const STORAGE_KEY = "webspeed-pages-v1";
 
@@ -217,6 +218,16 @@ export class LocalStoragePageRepository implements PageRepository {
 
     const next = toPlainJson(validated.data);
     next.slug = normalizePath(next.slug || "/");
+    if (next.type === "home") {
+      next.slug = "/";
+    } else {
+      if (!isValidSlug(next.slug)) {
+        throw new Error(`آدرس نامعتبر است: ${next.slug}`);
+      }
+      if (isReservedSlug(next.slug)) {
+        throw new Error(`این مسیر سیستمی است و قابل استفاده نیست: ${next.slug}`);
+      }
+    }
     const pages = readAll();
     const clash = pages.find(
       (p) => p.id !== next.id && normalizePath(p.slug || "") === next.slug
@@ -242,12 +253,17 @@ export class LocalStoragePageRepository implements PageRepository {
     const source = await this.getPage(id);
     if (!source) throw new Error("صفحه یافت نشد");
 
-    const baseSlug = normalizePath(`${source.slug}-copy`);
+    const pages = readAll();
+    const taken = new Set(pages.map((p) => normalizePath(p.slug || "")));
+    const root = source.slug === "/" ? "/home" : normalizePath(source.slug);
+    let baseSlug = `${root}-copy`;
+    for (let i = 2; taken.has(baseSlug); i++) baseSlug = `${root}-copy-${i}`;
     const copy: ManagedPage = {
       ...toPlainJson(source),
       id: `${source.id}-copy-${Date.now()}`,
       name: `${source.name} (کپی)`,
       slug: baseSlug,
+      type: source.type === "home" ? "landing" : source.type,
       status: "draft",
       schemaVersion: CURRENT_SCHEMA_VERSION,
       createdAt: nowIso(),
@@ -257,7 +273,6 @@ export class LocalStoragePageRepository implements PageRepository {
       publishedBlocks: undefined,
     };
 
-    const pages = readAll();
     pages.push(copy);
     writeAll(pages);
     return copy;
