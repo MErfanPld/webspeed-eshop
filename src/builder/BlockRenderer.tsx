@@ -29,8 +29,15 @@ function sanitizeAnchor(v: unknown): string | undefined {
  *  - per-device visibility → CSS media-query classes (works on storefront)
  *  - common `_style` (responsive margins, background) and `_anchor`
  */
-export function BlockRenderer({ block }: { block: PageBlock }) {
-  if (block.enabled === false) return null;
+export function BlockRenderer({
+  block,
+  showDisabled = false,
+}: {
+  block: PageBlock;
+  /** Builder: render disabled blocks faded instead of omitting them */
+  showDisabled?: boolean;
+}) {
+  if (block.enabled === false && !showDisabled) return null;
   const data = ((block as { data?: Record<string, unknown> }).data || {}) as Record<
     string,
     unknown
@@ -59,7 +66,12 @@ export function BlockRenderer({ block }: { block: PageBlock }) {
     <div
       id={sanitizeAnchor(data._anchor)}
       data-ws-block={block.type}
-      className={cn("ws-block min-w-0", visibilityClasses(vis), responsive.className)}
+      className={cn(
+        "ws-block min-w-0",
+        visibilityClasses(vis),
+        responsive.className,
+        block.enabled === false && "opacity-30 grayscale"
+      )}
       style={{ ...responsive.style, background }}
     >
       <View block={block} />

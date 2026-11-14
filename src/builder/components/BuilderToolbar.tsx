@@ -13,9 +13,11 @@ import {
   Save,
   Upload,
   Layers,
+  PanelsTopBottom,
 } from "lucide-react";
 import { useBuilderStore } from "@/builder/store/builder-store";
 import { cn } from "@/lib/utils";
+import { confirmDialog } from "@/components/ui/ConfirmDialog";
 
 type Props = {
   onOpenLibrary?: () => void;
@@ -38,6 +40,30 @@ export default function BuilderToolbar({ onOpenLibrary }: Props) {
   const saveStatus = useBuilderStore((s) => s.saveStatus);
   const isDirty = useBuilderStore((s) => s.isDirty);
   const saveError = useBuilderStore((s) => s.saveError);
+  const showSiteChrome = useBuilderStore((s) => s.showSiteChrome);
+  const setShowSiteChrome = useBuilderStore((s) => s.setShowSiteChrome);
+
+  const onPublish = async () => {
+    const ok = await confirmDialog({
+      title: "انتشار صفحه؟",
+      message:
+        page?.status === "published"
+          ? "نسخه فعلی جایگزین نسخه منتشرشده در فروشگاه می‌شود."
+          : "صفحه برای همه بازدیدکنندگان فروشگاه قابل مشاهده می‌شود.",
+      confirmLabel: "انتشار",
+    });
+    if (ok) await publish();
+  };
+
+  const onUnpublish = async () => {
+    const ok = await confirmDialog({
+      title: "لغو انتشار؟",
+      message: "صفحه از فروشگاه حذف می‌شود ولی پیش‌نویس آن باقی می‌ماند.",
+      confirmLabel: "لغو انتشار",
+      danger: true,
+    });
+    if (ok) await unpublish();
+  };
 
   const statusLabel =
     saveStatus === "error"
@@ -87,7 +113,7 @@ export default function BuilderToolbar({ onOpenLibrary }: Props) {
         <button
           type="button"
           onClick={onOpenLibrary}
-          className="lg:hidden h-9 px-2.5 rounded-lg border border-border text-xs font-medium inline-flex items-center gap-1.5 hover:bg-muted"
+          className="md:hidden h-9 px-2.5 rounded-lg border border-border text-xs font-medium inline-flex items-center gap-1.5 hover:bg-muted"
         >
           <Layers className="h-3.5 w-3.5 shrink-0" />
           <span>بلوک‌ها</span>
@@ -123,13 +149,23 @@ export default function BuilderToolbar({ onOpenLibrary }: Props) {
         <span className="hidden md:block w-px h-4 bg-border shrink-0" />
 
         <div className="flex items-center gap-0.5 shrink-0">
-          <button type="button" onClick={() => undo()} disabled={!past.length} className={iconBtn} title="واگرد">
+          <button type="button" onClick={() => undo()} disabled={!past.length} className={iconBtn} title="واگرد (Ctrl+Z)" aria-label="واگرد">
             <Undo2 className="h-3.5 w-3.5" />
           </button>
-          <button type="button" onClick={() => redo()} disabled={!future.length} className={iconBtn} title="ازنو">
+          <button type="button" onClick={() => redo()} disabled={!future.length} className={iconBtn} title="ازنو (Ctrl+Y)" aria-label="ازنو">
             <Redo2 className="h-3.5 w-3.5" />
           </button>
         </div>
+
+        <button
+          type="button"
+          onClick={() => setShowSiteChrome(!showSiteChrome)}
+          className={cn(iconBtn, "hidden sm:flex", showSiteChrome && "bg-muted text-foreground")}
+          title={showSiteChrome ? "مخفی کردن هدر/فوتر سراسری در پیش‌نمایش" : "نمایش هدر/فوتر سراسری در پیش‌نمایش"}
+          aria-pressed={showSiteChrome}
+        >
+          <PanelsTopBottom className="h-3.5 w-3.5" />
+        </button>
 
         <button
           type="button"
@@ -155,7 +191,7 @@ export default function BuilderToolbar({ onOpenLibrary }: Props) {
         {page?.status === "published" && (
           <button
             type="button"
-            onClick={() => unpublish()}
+            onClick={onUnpublish}
             className="h-9 sm:h-8 px-2 sm:px-2.5 flex items-center gap-1.5 rounded-lg text-xs font-medium border border-border hover:bg-muted shrink-0"
           >
             <span className="text-[11px] sm:text-xs">لغو انتشار</span>
@@ -164,7 +200,7 @@ export default function BuilderToolbar({ onOpenLibrary }: Props) {
 
         <button
           type="button"
-          onClick={() => publish()}
+          onClick={onPublish}
           className="h-9 sm:h-8 px-2.5 sm:px-3 flex items-center gap-1.5 rounded-lg text-xs font-bold bg-primary text-white hover:bg-primary-hover shrink-0"
         >
           <Upload className="h-3.5 w-3.5 shrink-0" />

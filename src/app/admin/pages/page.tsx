@@ -27,10 +27,14 @@ const typeLabel: Record<ManagedPage["type"], string> = {
   landing: "لندینگ",
   content: "محتوا",
   custom: "سفارشی",
+  header: "هدر سراسری",
+  footer: "فوتر سراسری",
 };
 
 const SYSTEM_IDS = new Set([
   "home",
+  "site-header",
+  "site-footer",
   "product",
   "category",
   "search",

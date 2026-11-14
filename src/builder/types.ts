@@ -221,7 +221,20 @@ export type TrustBlock = BlockBase & {
   };
 };
 
-export type PageBlock =
+/**
+ * A block in a page document, as stored and rendered.
+ * `type` is any registered block type (see block-definitions.ts);
+ * block views narrow it to their specific shape (e.g. `HeroBlock`).
+ */
+export type PageBlock = {
+  id: string;
+  type: string;
+  enabled?: boolean;
+  data: Record<string, unknown>;
+};
+
+/** Legacy typed shapes kept for the original block views */
+export type TypedPageBlock =
   | HeroBlock
   | PromoBannerBlock
   | CategoryGridBlock

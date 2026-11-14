@@ -1,5 +1,9 @@
 import type { PageRepository } from "./page-repository";
 import {
+  LAYOUT_SLUGS,
+  SITE_FOOTER_ID,
+  SITE_HEADER_ID,
+  isLayoutPageType,
   CURRENT_SCHEMA_VERSION,
   type ManagedPage,
   reassignBlockIds,
@@ -8,6 +12,7 @@ import {
 import { migratePage, validatePage } from "@/builder/validation/page-schema";
 import { homePageConfig } from "@/config/home-page";
 import { isReservedSlug, isValidSlug } from "@/lib/page-slug";
+import { createBlockInstance } from "@/builder/registry/block-registry";
 
 const STORAGE_KEY = "webspeed-pages-v1";
 
@@ -68,6 +73,7 @@ function seedPages(): ManagedPage[] {
       blocks: [],
       publishedBlocks: [],
     },
+    ...layoutSeeds(ts),
     {
       schemaVersion: CURRENT_SCHEMA_VERSION,
       id: "landing-season",
@@ -80,6 +86,41 @@ function seedPages(): ManagedPage[] {
       publishedAt: null,
       description: "صفحه کمپین فصلی",
       blocks: [],
+    },
+  ];
+}
+
+/** Global header/footer documents (draft until the merchant publishes them) */
+function layoutSeeds(ts: string): ManagedPage[] {
+  return [
+    {
+      schemaVersion: CURRENT_SCHEMA_VERSION,
+      id: SITE_HEADER_ID,
+      name: "هدر سراسری",
+      slug: LAYOUT_SLUGS.header,
+      type: "header",
+      status: "draft",
+      createdAt: ts,
+      updatedAt: ts,
+      publishedAt: null,
+      description: "تا زمان انتشار، هدر پیش‌فرض فروشگاه نمایش داده می‌شود.",
+      blocks: [
+        createBlockInstance("announcement-bar"),
+        createBlockInstance("header"),
+      ] as unknown as ManagedPage["blocks"],
+    },
+    {
+      schemaVersion: CURRENT_SCHEMA_VERSION,
+      id: SITE_FOOTER_ID,
+      name: "فوتر سراسری",
+      slug: LAYOUT_SLUGS.footer,
+      type: "footer",
+      status: "draft",
+      createdAt: ts,
+      updatedAt: ts,
+      publishedAt: null,
+      description: "تا زمان انتشار، فوتر پیش‌فرض فروشگاه نمایش داده می‌شود.",
+      blocks: [createBlockInstance("footer")] as unknown as ManagedPage["blocks"],
     },
   ];
 }
@@ -145,6 +186,14 @@ function safeParseList(raw: string | null): ManagedPage[] {
     return seeded;
   }
 
+  // Older storage: add the global layout documents
+  for (const seed of layoutSeeds(nowIso())) {
+    if (!pages.some((p) => p.id === seed.id)) {
+      pages.push(seed);
+      needsRewrite = true;
+    }
+  }
+
   if (needsRewrite) writeAll(pages);
   return pages;
 }
@@ -192,7 +241,9 @@ export class LocalStoragePageRepository implements PageRepository {
   async getPublishedPageBySlug(slug: string): Promise<ManagedPage | null> {
     const target = normalizePath(slug);
     const pages = readAll();
-    const page = pages.find((pg) => normalizePath(pg.slug || "") === target);
+    const page = pages.find(
+      (pg) => !isLayoutPageType(pg.type) && normalizePath(pg.slug || "") === target
+    );
     if (!page) return null;
     if (page.status !== "published") return null;
     if (
@@ -220,6 +271,8 @@ export class LocalStoragePageRepository implements PageRepository {
     next.slug = normalizePath(next.slug || "/");
     if (next.type === "home") {
       next.slug = "/";
+    } else if (isLayoutPageType(next.type)) {
+      next.slug = LAYOUT_SLUGS[next.type];
     } else {
       if (!isValidSlug(next.slug)) {
         throw new Error(`آدرس نامعتبر است: ${next.slug}`);
@@ -243,8 +296,8 @@ export class LocalStoragePageRepository implements PageRepository {
   }
 
   async deletePage(id: string): Promise<void> {
-    if (id === "home") {
-      throw new Error("صفحه خانه قابل حذف نیست");
+    if (id === "home" || id === SITE_HEADER_ID || id === SITE_FOOTER_ID) {
+      throw new Error("صفحات سیستمی قابل حذف نیستند");
     }
     writeAll(readAll().filter((p) => p.id !== id));
   }
@@ -252,6 +305,9 @@ export class LocalStoragePageRepository implements PageRepository {
   async duplicatePage(id: string): Promise<ManagedPage> {
     const source = await this.getPage(id);
     if (!source) throw new Error("صفحه یافت نشد");
+    if (isLayoutPageType(source.type)) {
+      throw new Error("هدر و فوتر سراسری قابل تکرار نیستند");
+    }
 
     const pages = readAll();
     const taken = new Set(pages.map((p) => normalizePath(p.slug || "")));

@@ -16,6 +16,7 @@ import {
 } from "@/builder/registry/block-registry";
 import type { BlockCategory } from "@/builder/schema-types";
 import { useBuilderStore } from "@/builder/store/builder-store";
+import { cancelDrag, startDrag } from "@/builder/dnd/drag-state";
 import { cn } from "@/lib/utils";
 
 const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -57,6 +58,9 @@ export default function BlockLibrary() {
         <h2 className="text-xs font-bold tracking-wide text-muted-foreground">
           کتابخانه بلوک‌ها
         </h2>
+        <p className="text-[10px] text-muted-foreground">
+          بکشید و در بوم رها کنید، یا کلیک کنید تا بعد از بلوک انتخاب‌شده اضافه شود.
+        </p>
         <div className="relative">
           <Search className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
           <input
@@ -92,7 +96,11 @@ export default function BlockLibrary() {
             <button
               key={block.type}
               type="button"
+              draggable
+              onDragStart={(e) => startDrag(e, { kind: "new", type: block.type })}
+              onDragEnd={() => cancelDrag()}
               onClick={() => addBlock(block.type)}
+              title="کلیک: افزودن کنار بلوک انتخاب‌شده · کشیدن: رها کردن در بوم"
               className="w-full flex items-start gap-3 p-2.5 rounded-xl border border-transparent hover:border-border hover:bg-white text-right transition-all group"
             >
               <span className="h-9 w-9 rounded-lg bg-muted flex items-center justify-center shrink-0 group-hover:bg-primary/10">

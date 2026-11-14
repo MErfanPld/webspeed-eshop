@@ -12,7 +12,29 @@ import type { BlockType, PageBlock } from "@/builder/types";
 
 export type PageStatus = "draft" | "published";
 
-export type PageType = "home" | "landing" | "content" | "custom";
+export type PageType =
+  | "home"
+  | "landing"
+  | "content"
+  | "custom"
+  /** Global site header (rendered on every storefront page) */
+  | "header"
+  /** Global site footer (rendered on every storefront page) */
+  | "footer";
+
+/** Fixed ids of the global layout documents */
+export const SITE_HEADER_ID = "site-header";
+export const SITE_FOOTER_ID = "site-footer";
+
+/** Internal (non-routable) slugs for global layout documents */
+export const LAYOUT_SLUGS: Record<"header" | "footer", string> = {
+  header: "/_layout/header",
+  footer: "/_layout/footer",
+};
+
+export function isLayoutPageType(t: PageType): t is "header" | "footer" {
+  return t === "header" || t === "footer";
+}
 
 /** Current schema version for migrations */
 export const CURRENT_SCHEMA_VERSION = 1 as const;
@@ -62,7 +84,12 @@ export function isPageStatus(v: unknown): v is PageStatus {
 
 export function isPageType(v: unknown): v is PageType {
   return (
-    v === "home" || v === "landing" || v === "content" || v === "custom"
+    v === "home" ||
+    v === "landing" ||
+    v === "content" ||
+    v === "custom" ||
+    v === "header" ||
+    v === "footer"
   );
 }
 

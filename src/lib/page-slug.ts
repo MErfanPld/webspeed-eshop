@@ -27,6 +27,7 @@ export function isReservedSlug(slug: string): boolean {
   if (n.startsWith("/admin")) return true;
   if (n.startsWith("/products/")) return true;
   if (n.startsWith("/api/")) return true;
+  if (n.startsWith("/_")) return true;
   return false;
 }
 

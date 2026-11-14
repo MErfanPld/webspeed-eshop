@@ -1,39 +1,67 @@
 "use client";
 
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useBuilderStore } from "@/builder/store/builder-store";
 import type { PageBlock } from "@/builder/types";
-import CanvasBlock from "./CanvasBlock";
+import CanvasBlock, { EmptyDropZone } from "./CanvasBlock";
+import CanvasFrame from "./CanvasFrame";
 import { cn } from "@/lib/utils";
-import { LayoutTemplate } from "lucide-react";
 import { VIEWPORTS, type DeviceKey } from "@/builder/responsive/types";
-import { DeviceProvider } from "@/builder/responsive/device-context";
+import { ChildrenRendererProvider } from "@/builder/rendering/BlockChildren";
+import { PageRenderer } from "@/builder/rendering/PageRenderer";
+import { SiteFooter, SiteHeader } from "@/components/layout/SiteChrome";
+import { useSiteLayout } from "@/builder/hooks/useSiteLayout";
+import { isLayoutPageType } from "@/builder/contracts/page-contract";
+import { cancelDrag } from "@/builder/dnd/drag-state";
+
+/** Children of container blocks get builder chrome too */
+function renderEditableChildren(parent: PageBlock, kids: PageBlock[]) {
+  if (!kids.length) {
+    return <EmptyDropZone parentId={parent.id} label="بلوک را اینجا رها کنید" />;
+  }
+  return kids.map((c, i) => <CanvasBlock key={c.id} block={c} index={i} siblingsCount={kids.length} />);
+}
+
+/** Non-interactive global header/footer so the preview matches the storefront */
+function ChromePreview({ children, label }: { children: React.ReactNode; label: string }) {
+  return (
+    <div className="relative" aria-hidden>
+      <div className="flex items-center justify-center gap-1 bg-[#F1F5F9] py-0.5 text-[9px] font-semibold text-[#64748B] border-y border-dashed border-[#CBD5E1]">
+        {label} · فقط نمایش (از «صفحات» قابل ویرایش است)
+      </div>
+      <div className="pointer-events-none select-none">{children}</div>
+    </div>
+  );
+}
+
+type Props = {
+  onFrameDocument?: (doc: Document | null) => void;
+};
 
 /**
- * Device preview canvas.
- * - Frame has REAL device width (1440 / 768 / 390).
- * - Scale only shrinks the frame to fit the panel.
- * - transform-origin top center (RTL-safe).
+ * Device preview canvas (iframe based).
+ * - The frame has the REAL device width (1280 / 768 / 390), so media
+ *   queries and Tailwind breakpoints behave as on a real device.
+ * - Scale only shrinks the frame visually to fit the panel.
  */
-export default function BuilderCanvas() {
+export default function BuilderCanvas({ onFrameDocument }: Props) {
   const blocks = useBuilderStore((s) => s.blocks);
   const previewDevice = useBuilderStore((s) => s.previewDevice);
   const isPreview = useBuilderStore((s) => s.isPreview);
-  const moveBlock = useBuilderStore((s) => s.moveBlock);
   const clearSelection = useBuilderStore((s) => s.clearSelection);
+  const showSiteChrome = useBuilderStore((s) => s.showSiteChrome);
+  const pageType = useBuilderStore((s) => s.page?.type);
 
-  const dragFrom = useRef<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const pageRef = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(1);
-  const [contentHeight, setContentHeight] = useState(480);
   const [panelWidth, setPanelWidth] = useState(0);
+  const [contentHeight, setContentHeight] = useState(600);
 
   const vp = VIEWPORTS[previewDevice as DeviceKey] || VIEWPORTS.desktop;
   const isDesktop = previewDevice === "desktop";
-  const isMobile = previewDevice === "mobile";
-  const isTablet = previewDevice === "tablet";
   const frameWidth = isDesktop ? Math.min(vp.width, 1280) : vp.width;
+
+  const isLayoutDoc = pageType ? isLayoutPageType(pageType) : false;
+  const chrome = useSiteLayout(showSiteChrome && !isLayoutDoc);
 
   useEffect(() => {
     const el = scrollRef.current;
@@ -46,81 +74,57 @@ export default function BuilderCanvas() {
   }, []);
 
   useEffect(() => {
-    if (panelWidth <= 0) return;
-    const pad = isDesktop ? 32 : 48;
-    const available = Math.max(200, panelWidth - pad);
-    const next = Math.min(1, available / frameWidth);
-    setScale(Number.isFinite(next) && next > 0 ? next : 1);
-  }, [panelWidth, frameWidth, isDesktop, previewDevice]);
-
-  const remeasure = useCallback(() => {
-    const el = pageRef.current;
-    if (!el) return;
-    const h = Math.max(el.scrollHeight, el.offsetHeight, 320);
-    setContentHeight(h);
-  }, []);
-
-  useLayoutEffect(() => {
-    setContentHeight(480);
-    const id = requestAnimationFrame(() => {
-      remeasure();
-      requestAnimationFrame(remeasure);
-    });
-    return () => cancelAnimationFrame(id);
-  }, [blocks, previewDevice, isPreview, scale, remeasure]);
-
-  useEffect(() => {
-    const el = pageRef.current;
-    if (!el) return;
-    const ro = new ResizeObserver(() => remeasure());
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, [remeasure, previewDevice]);
-
-  useEffect(() => {
-    scrollRef.current?.scrollTo({ top: 0, behavior: "auto" });
+    scrollRef.current?.scrollTo({ top: 0 });
   }, [previewDevice]);
 
-  const scaledW = frameWidth * scale;
-  const scaledH = contentHeight * scale;
+  const pad = isDesktop ? 32 : 48;
+  const scale = panelWidth > 0 ? Math.min(1, Math.max(0.2, (panelWidth - pad) / frameWidth)) : 1;
+  const height = Math.max(contentHeight, 320);
 
-  const renderBlocks = () => {
-    if (!blocks.length) {
-      return (
-        <div className="flex flex-col items-center justify-center min-h-[360px] px-6 py-16 text-center bg-white">
-          <div className="h-14 w-14 rounded-2xl bg-[#F0F5F9] flex items-center justify-center mb-4">
-            <LayoutTemplate className="h-6 w-6 text-[#7C8FAC]" />
-          </div>
-          <p className="text-sm font-semibold text-[#2A3547]">بوم خالی است</p>
-          <p className="text-xs text-[#7C8FAC] mt-1.5 max-w-[16rem] leading-relaxed">
-            از پنل بلوک‌ها، هدر، محتوا و فوتر را اضافه کنید.
-          </p>
+  const onHeight = useCallback((h: number) => setContentHeight(h), []);
+
+  const page = (
+    <div
+      className="w-full min-h-[320px] bg-white text-foreground"
+      dir="rtl"
+      data-builder-canvas-page
+      // Never navigate away or submit forms from inside the canvas
+      onClickCapture={(e) => {
+        const t = e.target as HTMLElement;
+        if (t.closest("a")) e.preventDefault();
+      }}
+      onSubmitCapture={(e) => e.preventDefault()}
+      onClick={() => !isPreview && clearSelection()}
+      onDragEnd={() => cancelDrag()}
+    >
+      {showSiteChrome && !isLayoutDoc && (
+        <ChromePreview label={chrome.header ? "هدر سراسری" : "هدر پیش‌فرض"}>
+          <SiteHeader blocks={chrome.header} />
+        </ChromePreview>
+      )}
+
+      {isPreview ? (
+        <PageRenderer blocks={blocks} />
+      ) : blocks.length ? (
+        <ChildrenRendererProvider value={renderEditableChildren}>
+          {blocks.map((block, index) => (
+            <CanvasBlock key={block.id} block={block} index={index} siblingsCount={blocks.length} />
+          ))}
+          <EmptyDropZone parentId={null} label="برای افزودن به انتهای صفحه، بلوک را اینجا رها کنید" />
+        </ChildrenRendererProvider>
+      ) : (
+        <div className="px-6 py-16">
+          <EmptyDropZone parentId={null} label="بوم خالی است — از پنل بلوک‌ها یک بلوک را بکشید یا روی آن کلیک کنید." />
         </div>
-      );
-    }
+      )}
 
-    return (
-      <div className="w-full bg-white text-foreground" data-builder-canvas-page dir="rtl">
-        {blocks.map((block: PageBlock, index: number) => (
-          <CanvasBlock
-            key={block.id}
-            block={block}
-            index={index}
-            onDragStart={(i) => {
-              dragFrom.current = i;
-            }}
-            onDrop={(to) => {
-              const from = dragFrom.current;
-              dragFrom.current = null;
-              if (from == null || from === to) return;
-              moveBlock(from, to);
-            }}
-            onDragOver={() => {}}
-          />
-        ))}
-      </div>
-    );
-  };
+      {showSiteChrome && !isLayoutDoc && (
+        <ChromePreview label={chrome.footer ? "فوتر سراسری" : "فوتر پیش‌فرض"}>
+          <SiteFooter blocks={chrome.footer} />
+        </ChromePreview>
+      )}
+    </div>
+  );
 
   return (
     <div
@@ -128,131 +132,47 @@ export default function BuilderCanvas() {
       className="flex-1 min-h-0 min-w-0 overflow-y-auto overflow-x-hidden"
       style={{ background: "#E8ECF1" }}
       onClick={() => !isPreview && clearSelection()}
+      onDragEnd={() => cancelDrag()}
       data-preview-device={previewDevice}
     >
-      <div
-        className="flex flex-col items-center w-full"
-        style={{
-          paddingTop: 16,
-          paddingBottom: 32,
-          paddingInline: 16,
-          minHeight: "100%",
-        }}
-      >
+      <div className="flex flex-col items-center w-full" style={{ padding: "16px 16px 32px", minHeight: "100%" }}>
         <div className="mb-3 flex flex-wrap items-center justify-center gap-2 rounded-full bg-white border border-[#E5EAEF] px-3 py-1.5 shadow-sm shrink-0">
           <span className="text-[11px] font-semibold text-[#2A3547]">{vp.labelFa}</span>
-          <span className="text-[10px] text-[#7C8FAC] tabular-nums">
-            {frameWidth}×{vp.height}
+          <span className="text-[10px] text-[#7C8FAC] tabular-nums" dir="ltr">
+            {frameWidth}px
           </span>
           {scale < 0.995 && (
-            <span className="text-[10px] text-[#5D87FF] font-medium tabular-nums">
-              {Math.round(scale * 100)}%
-            </span>
+            <span className="text-[10px] text-[#5D87FF] font-medium tabular-nums">{Math.round(scale * 100)}%</span>
           )}
           <span className="text-[10px] text-[#7C8FAC] tabular-nums">{blocks.length} بلوک</span>
         </div>
 
-        <div
-          className="relative shrink-0"
-          style={{
-            width: scaledW,
-            height: scaledH,
-            maxWidth: "100%",
-          }}
-          onClick={(e) => e.stopPropagation()}
-        >
+        <div className="relative shrink-0" style={{ width: frameWidth * scale, height: height * scale }} onClick={(e) => e.stopPropagation()}>
           <div
-            ref={pageRef}
-            className="absolute top-0"
+            className={cn(
+              "absolute top-0 overflow-hidden bg-white",
+              isDesktop ? "rounded-xl border border-[#E5EAEF] shadow-sm" : previewDevice === "tablet" ? "rounded-[1.25rem]" : "rounded-[1.75rem]"
+            )}
             style={{
               width: frameWidth,
+              height,
               left: "50%",
               transform: `translateX(-50%) scale(${scale})`,
               transformOrigin: "top center",
-              willChange: "transform",
+              boxShadow: isDesktop ? undefined : "0 0 0 3px #1e293b, 0 18px 40px rgba(15,23,42,0.2)",
             }}
+            data-builder-device={previewDevice}
           >
-            <DeviceProvider device={previewDevice as DeviceKey}>
-              <div
-                className={cn(
-                  "bg-white w-full overflow-x-hidden",
-                  isDesktop && "rounded-xl border border-[#E5EAEF] shadow-sm",
-                  isTablet && "rounded-[1.25rem]",
-                  isMobile && "rounded-[1.75rem]"
-                )}
-                style={
-                  !isDesktop
-                    ? {
-                        boxShadow:
-                          "0 0 0 3px #1e293b, 0 0 0 5px rgba(255,255,255,0.12), 0 18px 40px rgba(15,23,42,0.2)",
-                      }
-                    : undefined
-                }
-                data-builder-device={previewDevice}
-              >
-                {isMobile && (
-                  <div className="flex justify-center pt-2.5 pb-1.5 pointer-events-none bg-white" aria-hidden>
-                    <div className="h-1.5 w-20 rounded-full bg-[#1e293b]/85" />
-                  </div>
-                )}
-                {isTablet && (
-                  <div className="flex justify-center pt-2 pb-1 pointer-events-none bg-white" aria-hidden>
-                    <div className="h-1 w-12 rounded-full bg-[#1e293b]/50" />
-                  </div>
-                )}
-
-                <div
-                  className={cn(
-                    "builder-device-root w-full",
-                    isMobile && "builder-device-mobile",
-                    isTablet && "builder-device-tablet",
-                    isDesktop && "builder-device-desktop"
-                  )}
-                >
-                  {renderBlocks()}
-                </div>
-              </div>
-            </DeviceProvider>
+            <CanvasFrame width={frameWidth} editMode={!isPreview} onHeightChange={onHeight} onDocument={onFrameDocument}>
+              {page}
+            </CanvasFrame>
           </div>
         </div>
 
         <p className="mt-4 text-[10px] text-[#7C8FAC] text-center leading-relaxed shrink-0">
-          {isDesktop
-            ? "پیش‌نمایش دسکتاپ"
-            : isTablet
-              ? "پیش‌نمایش تبلت — عرض واقعی 768px"
-              : "پیش‌نمایش موبایل — عرض واقعی 390px"}
+          پیش‌نمایش واقعی در عرض {frameWidth}px (iframe) — breakpointها مانند دستگاه واقعی عمل می‌کنند.
         </p>
       </div>
-
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `
-        [data-builder-device="mobile"] .grid {
-          grid-template-columns: 1fr !important;
-        }
-        [data-builder-device="mobile"] [class*="sm:grid-cols"],
-        [data-builder-device="mobile"] [class*="md:grid-cols"],
-        [data-builder-device="mobile"] [class*="lg:grid-cols"] {
-          grid-template-columns: 1fr !important;
-        }
-        [data-builder-device="mobile"] .hidden.lg\\:flex {
-          display: none !important;
-        }
-        [data-builder-device="tablet"] [class*="lg:grid-cols-4"] {
-          grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-        }
-        [data-builder-device="mobile"] img {
-          max-width: 100%;
-          height: auto;
-        }
-        [data-builder-device="mobile"],
-        [data-builder-device="tablet"] {
-          overflow-x: hidden;
-        }
-      `,
-        }}
-      />
     </div>
   );
 }

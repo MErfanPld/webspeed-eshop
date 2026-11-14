@@ -9,6 +9,8 @@ import PropertiesPanel from "./PropertiesPanel";
 import NavigatorPanel from "./NavigatorPanel";
 import { Layers, Settings2, X, ListTree } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { handleBuilderKeyDown } from "@/builder/hooks/shortcuts";
+import { ConfirmHost } from "@/components/ui/ConfirmDialog";
 
 type Props = {
   pageId: string;
@@ -42,21 +44,13 @@ export default function BuilderShell({ pageId }: Props) {
   const isPreview = useBuilderStore((s) => s.isPreview);
   const isDirty = useBuilderStore((s) => s.isDirty);
   const saveDraft = useBuilderStore((s) => s.saveDraft);
-  const undo = useBuilderStore((s) => s.undo);
-  const redo = useBuilderStore((s) => s.redo);
-  const clearSelection = useBuilderStore((s) => s.clearSelection);
   const selectedBlockId = useBuilderStore((s) => s.selectedBlockId);
-  const removeBlock = useBuilderStore((s) => s.removeBlock);
-  const duplicateBlock = useBuilderStore((s) => s.duplicateBlock);
-  const copyBlock = useBuilderStore((s) => s.copyBlock);
-  const pasteBlock = useBuilderStore((s) => s.pasteBlock);
-  const copyStyle = useBuilderStore((s) => s.copyStyle);
-  const pasteStyle = useBuilderStore((s) => s.pasteStyle);
 
   const [mobilePanel, setMobilePanel] = useState<MobilePanel>("none");
   const [leftTab, setLeftTab] = useState<"blocks" | "layers">("blocks");
   const autosaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const layoutMode = useLayoutMode();
+  const [frameDoc, setFrameDoc] = useState<Document | null>(null);
 
   const showSidebars = !isPreview && layoutMode !== "mobile";
 
@@ -97,75 +91,17 @@ export default function BuilderShell({ pageId }: Props) {
     }
   }, [selectedBlockId, layoutMode]);
 
+  // Keyboard shortcuts: main window + canvas iframe document
   useEffect(() => {
-    const isTypingTarget = (t: EventTarget | null) =>
-      t instanceof HTMLInputElement ||
-      t instanceof HTMLTextAreaElement ||
-      t instanceof HTMLSelectElement ||
-      (t instanceof HTMLElement && t.isContentEditable);
-
-    const onKey = (e: KeyboardEvent) => {
-      const mod = e.metaKey || e.ctrlKey;
-      if (mod && e.key.toLowerCase() === "s") {
-        e.preventDefault();
-        saveDraft();
-      }
-      if (mod && e.key.toLowerCase() === "c" && !e.shiftKey && !isTypingTarget(e.target)) {
-        e.preventDefault();
-        copyBlock();
-      }
-      if (mod && e.key.toLowerCase() === "v" && !e.shiftKey && !isTypingTarget(e.target)) {
-        e.preventDefault();
-        pasteBlock();
-      }
-      if (mod && e.shiftKey && e.key.toLowerCase() === "c" && !isTypingTarget(e.target)) {
-        e.preventDefault();
-        copyStyle();
-      }
-      if (mod && e.shiftKey && e.key.toLowerCase() === "v" && !isTypingTarget(e.target)) {
-        e.preventDefault();
-        pasteStyle();
-      }
-      if (mod && e.key.toLowerCase() === "d" && !isTypingTarget(e.target)) {
-        e.preventDefault();
-        if (selectedBlockId) duplicateBlock(selectedBlockId);
-      }
-      if (mod && e.key.toLowerCase() === "z" && !e.shiftKey) {
-        e.preventDefault();
-        undo();
-      }
-      if (mod && (e.key.toLowerCase() === "y" || (e.key.toLowerCase() === "z" && e.shiftKey))) {
-        e.preventDefault();
-        redo();
-      }
-      if (e.key === "Escape") {
-        clearSelection();
-        setMobilePanel("none");
-      }
-      if (
-        (e.key === "Delete" || e.key === "Backspace") &&
-        selectedBlockId &&
-        !isTypingTarget(e.target)
-      ) {
-        e.preventDefault();
-        removeBlock(selectedBlockId);
-      }
-    };
+    const onKey = (e: KeyboardEvent) =>
+      handleBuilderKeyDown(e, { onEscape: () => setMobilePanel("none") });
     window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [
-    saveDraft,
-    undo,
-    redo,
-    clearSelection,
-    selectedBlockId,
-    removeBlock,
-    duplicateBlock,
-    copyBlock,
-    pasteBlock,
-    copyStyle,
-    pasteStyle,
-  ]);
+    frameDoc?.addEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      frameDoc?.removeEventListener("keydown", onKey);
+    };
+  }, [frameDoc]);
 
   const gridColumns = isPreview
     ? "minmax(0, 1fr)"
@@ -248,7 +184,7 @@ export default function BuilderShell({ pageId }: Props) {
           )}
 
           <div className="min-h-0 min-w-0 flex flex-col overflow-hidden">
-            <BuilderCanvas />
+            <BuilderCanvas onFrameDocument={setFrameDoc} />
           </div>
 
           {showSidebars && (
@@ -353,6 +289,7 @@ export default function BuilderShell({ pageId }: Props) {
           </button>
         </div>
       )}
+      <ConfirmHost />
     </div>
   );
 }
