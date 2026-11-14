@@ -35,5 +35,8 @@
     "typescript": "^5.7.2",
     "vitest": "^3.2.4"
   },
-  "description": "WebSpeed E-Shop — Minimal fashion ecommerce template"
+  "description": "WebSpeed — Persian/RTL store builder with a visual page builder (Next.js + SQLite)",
+  "engines": {
+    "node": ">=22.13"
+  }
 }
