@@ -1,8 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import ProductDetailClient from "./ProductDetailClient";
-import { getStorefrontStore } from "@/server/services/stores";
-import { catalogService } from "@/server/services/catalog";
+import { getProductBySlug } from "@/lib/api/storefront";
 
 export const dynamic = "force-dynamic";
 
@@ -12,8 +11,7 @@ type Props = {
 
 async function load(params: Props["params"]) {
   const { slug } = await params;
-  const store = await getStorefrontStore();
-  return catalogService.getProductBySlug(store.id, decodeURIComponent(slug));
+  return getProductBySlug(decodeURIComponent(slug));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -34,7 +32,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ProductPage({ params }: Props) {
   const product = await load(params);
   if (!product) notFound();
-  const { status: _status, createdAt: _c, updatedAt: _u, ...data } = product;
+  const data = product;
 
   // Structured data for search engines
   const jsonLd = {

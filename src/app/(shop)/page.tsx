@@ -3,18 +3,12 @@ import { homePageConfig } from "@/config/home-page";
 import { PageRenderer } from "@/builder/rendering/PageRenderer";
 import { asPageBlocks } from "@/builder/contracts/page-contract";
 import type { PageBlock } from "@/builder/types";
-import { getStorefrontStore } from "@/server/services/stores";
-import { pageService } from "@/server/services/pages";
+import { getPublishedPage, getStoreInfo } from "@/lib/api/storefront";
 
 export const dynamic = "force-dynamic";
 
-async function loadHome() {
-  const store = await getStorefrontStore();
-  return { store, page: pageService.getPublished(store.id, "home") };
-}
-
 export async function generateMetadata(): Promise<Metadata> {
-  const { store, page } = await loadHome();
+  const [store, page] = await Promise.all([getStoreInfo(), getPublishedPage("home")]);
   const title = page?.seo?.title || store.name;
   const description = page?.seo?.description || page?.description || homePageConfig.description;
   return {
@@ -25,11 +19,11 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 /**
- * Server-rendered home: the published `home` document, or the default
- * configuration when the merchant has not published one.
+ * Server-rendered home: the published `home` page from the API, or the
+ * default configuration when the merchant has not published one.
  */
 export default async function HomePage() {
-  const { page } = await loadHome();
+  const page = await getPublishedPage("home");
   const blocks: PageBlock[] = page?.publishedBlocks?.length
     ? asPageBlocks(page.publishedBlocks)
     : (homePageConfig.blocks as PageBlock[]);

@@ -5,6 +5,7 @@ import Container from "@/components/ui/Container";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import { formatNumber, formatPrice } from "@/lib/utils";
+import { api, errorMessage } from "@/lib/api/client";
 
 type Tracked = {
   number: string;
@@ -43,12 +44,13 @@ export default function TrackOrderPage() {
     setError(null);
     setOrder(null);
     try {
-      const res = await fetch(`/api/orders/track?number=${encodeURIComponent(number)}&phone=${encodeURIComponent(phone)}`);
-      const body = (await res.json().catch(() => ({}))) as { order?: Tracked; error?: string };
-      if (!res.ok || !body.order) setError(body.error || "سفارش یافت نشد");
-      else setOrder(body.order);
-    } catch {
-      setError("ارتباط با سرور برقرار نشد");
+      const body = await api<{ order: Tracked }>(
+        `/orders/track?number=${encodeURIComponent(number)}&phone=${encodeURIComponent(phone)}`,
+        { refresh: false, redirectOnExpire: false }
+      );
+      setOrder(body.order);
+    } catch (e) {
+      setError(errorMessage(e, "سفارش یافت نشد"));
     } finally {
       setLoading(false);
     }

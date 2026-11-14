@@ -9,9 +9,9 @@ const PORT = Number(process.env.E2E_PORT || 3100);
 const baseURL = process.env.E2E_BASE_URL || `http://localhost:${PORT}`;
 
 /**
- * E2E tests run against a production build (`next build && next start`).
- * In CI the server is started here; locally an already-running server on the
- * same port is reused.
+ * E2E tests run the frontend production build (`next build && next start`)
+ * against a running Django API (API_INTERNAL_URL). They are API contract
+ * tests: every request goes through the real backend.
  */
 export default defineConfig({
   testDir: "tests/e2e",
@@ -37,12 +37,7 @@ export default defineConfig({
         url: baseURL,
         reuseExistingServer: !process.env.CI,
         timeout: 120_000,
-        env: {
-          DATA_DIR: process.env.DATA_DIR || ".e2e-data",
-          AUTH_SECRET: process.env.AUTH_SECRET || "e2e-only-secret-not-for-production-0123456789",
-          ADMIN_EMAIL: E2E_ADMIN.email,
-          ADMIN_PASSWORD: E2E_ADMIN.password,
-          INSECURE_COOKIES: "1",
-        },
+        // The Django API must already be running (see README "E2E tests")
+        env: { API_INTERNAL_URL: process.env.API_INTERNAL_URL || "http://localhost:8000/api/v1" },
       },
 });

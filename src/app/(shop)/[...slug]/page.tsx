@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { PageRenderer } from "@/builder/rendering/PageRenderer";
 import { asPageBlocks } from "@/builder/contracts/page-contract";
-import { getStorefrontStore } from "@/server/services/stores";
-import { pageService } from "@/server/services/pages";
+import { getPublishedPageBySlug } from "@/lib/api/storefront";
 
 export const dynamic = "force-dynamic";
 
@@ -11,9 +10,7 @@ type Props = { params: Promise<{ slug: string[] }> };
 
 async function load(params: Props["params"]) {
   const { slug } = await params;
-  const path = "/" + slug.map((s) => decodeURIComponent(s)).join("/");
-  const store = await getStorefrontStore();
-  return pageService.getPublishedBySlug(store.id, path);
+  return getPublishedPageBySlug("/" + slug.map((s) => decodeURIComponent(s)).join("/"));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

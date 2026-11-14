@@ -1,10 +1,10 @@
 import OrdersManager from "@/components/admin/orders/OrdersManager";
-import { requireAdmin } from "@/server/http";
-import { orderService } from "@/server/services/orders";
+import { adminApi, getAdminSession } from "@/lib/api/admin";
+import type { Order } from "@/types/api";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminOrdersPage() {
-  const { store, store: { role } } = await requireAdmin();
-  return <OrdersManager orders={orderService.list(store.storeId)} canEdit={role !== "editor"} />;
+  const [{ orders }, session] = await Promise.all([adminApi<{ orders: Order[] }>("/admin/orders"), getAdminSession()]);
+  return <OrdersManager orders={orders} canEdit={session?.store.role !== "editor"} />;
 }

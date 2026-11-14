@@ -12,7 +12,7 @@ async function login(page: Page) {
 
 test.describe("admin & builder", () => {
   test("admin pages and API require login", async ({ page, request }) => {
-    const res = await request.get("/api/admin/pages");
+    const res = await request.get("/api/v1/admin/pages");
     expect(res.status()).toBe(401);
     await page.goto("/admin");
     await expect(page).toHaveURL(/\/admin\/login\?next=/);

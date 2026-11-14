@@ -1,14 +1,15 @@
 import StoresManager from "@/components/admin/stores/StoresManager";
-import { requireAdmin } from "@/server/http";
-import { storeService } from "@/server/services/stores";
+import { adminApi } from "@/lib/api/admin";
+import type { Role, Store } from "@/types/api";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminStoresPage() {
-  const { store, memberships } = await requireAdmin();
-  const stores = memberships.map((m) => {
-    const s = storeService.get(m.storeId);
-    return { id: m.storeId, name: m.storeName, slug: m.storeSlug, role: m.role, domain: s?.domain ?? null };
-  });
-  return <StoresManager stores={stores} currentId={store.storeId} />;
+  const { stores } = await adminApi<{ stores: (Store & { role: Role; current: boolean })[] }>("/admin/stores");
+  return (
+    <StoresManager
+      stores={stores.map((s) => ({ id: s.id, name: s.name, slug: s.slug, role: s.role, domain: s.domain }))}
+      currentId={stores.find((s) => s.current)?.id ?? ""}
+    />
+  );
 }

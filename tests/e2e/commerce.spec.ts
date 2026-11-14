@@ -99,7 +99,7 @@ test.describe("commerce flow", () => {
       }),
       receipt: { name: "r.png", mimeType: "image/png", buffer: PNG },
     };
-    const res = await request.post("/api/orders", { multipart: fd, headers: { Origin: "http://localhost:3100" } });
+    const res = await request.post("/api/v1/orders", { multipart: fd, headers: { Origin: new URL(test.info().project.use.baseURL!).origin } });
     expect(res.status()).toBe(400);
   });
 });

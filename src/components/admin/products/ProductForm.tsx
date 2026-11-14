@@ -5,12 +5,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowRight, Plus, Trash2, X } from "lucide-react";
 import type { Category } from "@/types/product";
-import type { ProductRecord } from "@/server/services/catalog";
+import type { ProductRecord } from "@/types/api";
 import AdminPageHeader from "@/components/admin/ui/AdminPageHeader";
 import AdminButton from "@/components/admin/ui/AdminButton";
 import AdminInput from "@/components/admin/ui/AdminInput";
 import MediaPickerButton from "@/builder/components/MediaPickerButton";
-import { adminFetch } from "@/context/AdminSessionContext";
+import { api, errorMessage } from "@/lib/api/client";
 import { confirmDialog } from "@/components/ui/ConfirmDialog";
 import { slugFromName } from "@/lib/page-slug";
 
@@ -87,14 +87,14 @@ export default function ProductForm({ initial, categories }: { initial: ProductR
         tags: splitList(f.tags),
       };
       const res = initial
-        ? await adminFetch<{ product: ProductRecord }>(`/api/admin/products/${initial.id}`, { method: "PUT", body: JSON.stringify(payload) })
-        : await adminFetch<{ product: ProductRecord }>("/api/admin/products", { method: "POST", body: JSON.stringify(payload) });
+        ? await api<{ product: ProductRecord }>(`/admin/products/${encodeURIComponent(initial.id)}`, { method: "PUT", body: payload })
+        : await api<{ product: ProductRecord }>("/admin/products", { method: "POST", body: payload });
       router.replace(`/admin/products/${res.product.id}`);
       router.refresh();
       if (!initial) return;
       setF(toForm(res.product));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "ذخیره ناموفق بود");
+      setError(errorMessage(err, "ذخیره ناموفق بود"));
     } finally {
       setSaving(false);
     }
@@ -105,11 +105,11 @@ export default function ProductForm({ initial, categories }: { initial: ProductR
     const ok = await confirmDialog({ title: "حذف محصول؟", message: "این عمل قابل بازگشت نیست.", confirmLabel: "حذف", danger: true });
     if (!ok) return;
     try {
-      await adminFetch(`/api/admin/products/${initial.id}`, { method: "DELETE" });
+      await api(`/admin/products/${encodeURIComponent(initial.id)}`, { method: "DELETE" });
       router.replace("/admin/products");
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "حذف ناموفق بود");
+      setError(errorMessage(err, "حذف ناموفق بود"));
     }
   };
 

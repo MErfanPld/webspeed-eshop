@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import AdminButton from "@/components/admin/ui/AdminButton";
 import AdminInput from "@/components/admin/ui/AdminInput";
+import { api, errorMessage } from "@/lib/api/client";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -22,23 +23,14 @@ export default function AdminLoginPage() {
     }
     setLoading(true);
     try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim(), password }),
-      });
-      const body = (await res.json().catch(() => ({}))) as { error?: string };
-      if (!res.ok) {
-        setError(body.error || "ورود ناموفق بود.");
-        return;
-      }
+      await api("/auth/login", { method: "POST", body: { email: email.trim(), password } });
       // Only follow same-site relative paths after login
       const next = new URLSearchParams(window.location.search).get("next") || "/admin";
       const safeNext = next.startsWith("/admin") && !next.startsWith("//") ? next : "/admin";
       router.replace(safeNext);
       router.refresh();
-    } catch {
-      setError("ارتباط با سرور برقرار نشد.");
+    } catch (e) {
+      setError(errorMessage(e, "ورود ناموفق بود."));
     } finally {
       setLoading(false);
     }

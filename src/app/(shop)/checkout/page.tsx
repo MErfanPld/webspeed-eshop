@@ -9,6 +9,7 @@ import PaymentReceiptUpload from "@/components/checkout/PaymentReceiptUpload";
 import { useCart } from "@/context/CartContext";
 import { formatPrice, formatNumber } from "@/lib/utils";
 import { useStoreInfo } from "@/context/StoreInfoContext";
+import { ApiError, api, errorMessage } from "@/lib/api/client";
 import { Copy, Check, CreditCard } from "lucide-react";
 
 type Step = "form" | "payment" | "success";
@@ -111,26 +112,25 @@ export default function CheckoutPage() {
         })
       );
       fd.append("receipt", receipt);
-      const res = await fetch("/api/orders", { method: "POST", body: fd });
-      const body = (await res.json().catch(() => ({}))) as {
-        order?: { number: string; total: number };
-        error?: string;
-        details?: Record<string, string>;
-      };
-      if (!res.ok || !body.order) {
-        if (body.details && typeof body.details === "object") {
-          setErrors(body.details);
-          setStep("form");
-        }
-        setSubmitError(body.error || "ثبت سفارش ناموفق بود");
-        return;
-      }
+      const body = await api<{ order: { number: string; total: number } }>("/orders", {
+        method: "POST",
+        body: fd,
+        refresh: false,
+        redirectOnExpire: false,
+      });
       setOrderId(body.order.number);
       setPlacedTotal(body.order.total);
       clearCart();
       setStep("success");
-    } catch {
-      setSubmitError("ارتباط با سرور برقرار نشد. دوباره تلاش کنید.");
+    } catch (e) {
+      if (e instanceof ApiError && e.details && typeof e.details === "object" && !Array.isArray(e.details)) {
+        const details = e.details as Record<string, unknown>;
+        if (Object.values(details).every((v) => typeof v === "string")) {
+          setErrors(details as Record<string, string>);
+          setStep("form");
+        }
+      }
+      setSubmitError(errorMessage(e, "ثبت سفارش ناموفق بود"));
     } finally {
       setSubmitting(false);
     }

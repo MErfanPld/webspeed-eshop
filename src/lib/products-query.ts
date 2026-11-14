@@ -1,4 +1,3 @@
-import { products } from "@/data/products";
 import type { Product } from "@/types/product";
 
 export type ProductSource = "featured" | "new" | "bestsellers" | "all";
@@ -9,7 +8,7 @@ export function resolveProducts(
     source?: ProductSource;
     limit?: number;
   },
-  catalog: Product[] = products
+  catalog: Product[]
 ): Product[] {
   const { productIds, source = "all", limit = 8 } = options;
   const products_ = catalog;

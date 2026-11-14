@@ -2,25 +2,20 @@
 
 import { createContext, useContext, type ReactNode } from "react";
 import type { Category, Product } from "@/types/product";
-import { products as seedProducts } from "@/data/products";
-import { categories as seedCategories } from "@/data/categories";
 
 export type Catalog = {
   products: Product[];
   categories: Category[];
 };
 
-const DEFAULT_CATALOG: Catalog = {
-  products: seedProducts,
-  categories: seedCategories,
-};
+/** Empty until a provider passes the store's catalog from the API */
+const DEFAULT_CATALOG: Catalog = { products: [], categories: [] };
 
 const CatalogContext = createContext<Catalog>(DEFAULT_CATALOG);
 
 /**
  * Provides the product catalog to client blocks (product sliders, grids…).
- * The server layout passes the store's catalog; without a provider the
- * bundled seed data is used (tests, isolated previews).
+ * The server layouts pass the store's catalog loaded from the Django API.
  */
 export function CatalogProvider({
   value,

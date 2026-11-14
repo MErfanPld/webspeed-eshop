@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useCatalog } from "@/context/CatalogContext";
-import type { ProductRecord } from "@/server/services/catalog";
+import type { ProductRecord } from "@/types/api";
 import { formatPrice, formatNumber } from "@/lib/utils";
 import { Package, Plus, Search } from "lucide-react";
 import AdminPageHeader from "@/components/admin/ui/AdminPageHeader";

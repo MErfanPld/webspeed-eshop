@@ -7,7 +7,7 @@ import AdminPageHeader from "@/components/admin/ui/AdminPageHeader";
 import AdminButton from "@/components/admin/ui/AdminButton";
 import AdminInput from "@/components/admin/ui/AdminInput";
 import AdminBadge from "@/components/admin/ui/AdminBadge";
-import { adminFetch } from "@/context/AdminSessionContext";
+import { api, errorMessage } from "@/lib/api/client";
 
 type Row = { id: string; name: string; slug: string; role: "owner" | "admin" | "editor"; domain: string | null };
 const ROLE_FA = { owner: "مالک", admin: "مدیر", editor: "ویرایشگر" } as const;
@@ -21,11 +21,11 @@ export default function StoresManager({ stores, currentId }: { stores: Row[]; cu
   const switchTo = async (id: string) => {
     setBusy(true);
     try {
-      await adminFetch("/api/admin/store", { method: "POST", body: JSON.stringify({ storeId: id }) });
+      await api("/admin/store", { method: "POST", body: { storeId: id } });
       router.push("/admin");
       router.refresh();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "خطا");
+      setError(errorMessage(e));
     } finally {
       setBusy(false);
     }
@@ -36,15 +36,15 @@ export default function StoresManager({ stores, currentId }: { stores: Row[]; cu
     setBusy(true);
     setError(null);
     try {
-      await adminFetch("/api/admin/store", {
+      await api("/admin/store", {
         method: "POST",
-        body: JSON.stringify({ create: { name: form.name, slug: form.slug, domain: form.domain || undefined } }),
+        body: { create: { name: form.name, slug: form.slug, domain: form.domain || undefined } },
       });
       setForm({ name: "", slug: "", domain: "" });
       router.push("/admin/settings");
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "ساخت فروشگاه ناموفق بود");
+      setError(errorMessage(err, "ساخت فروشگاه ناموفق بود"));
     } finally {
       setBusy(false);
     }

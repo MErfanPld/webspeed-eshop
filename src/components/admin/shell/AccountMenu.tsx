@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Check, LogOut, Plus, Store } from "lucide-react";
-import { adminFetch, useAdminSession } from "@/context/AdminSessionContext";
+import { useAdminSession } from "@/context/AdminSessionContext";
+import { api } from "@/lib/api/client";
 
 const ROLE_FA = { owner: "مالک", admin: "مدیر", editor: "ویرایشگر" } as const;
 
@@ -30,7 +31,7 @@ export default function AccountMenu() {
   const switchStore = async (storeId: string) => {
     setBusy(true);
     try {
-      await adminFetch("/api/admin/store", { method: "POST", body: JSON.stringify({ storeId }) });
+      await api("/admin/store", { method: "POST", body: { storeId } });
       setOpen(false);
       router.refresh();
     } finally {
@@ -40,7 +41,7 @@ export default function AccountMenu() {
 
   const logout = async () => {
     setBusy(true);
-    await fetch("/api/auth/logout", { method: "POST" }).catch(() => null);
+    await api("/auth/logout", { method: "POST" }).catch(() => null);
     router.replace("/admin/login");
     router.refresh();
   };

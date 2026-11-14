@@ -5,11 +5,10 @@ import Link from "next/link";
 import Container from "@/components/ui/Container";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
-import { storeInfo as defaults } from "@/data/store";
 import { useStoreInfo } from "@/context/StoreInfoContext";
 
 export default function ContactPage() {
-  const storeInfo = { ...defaults, ...useStoreInfo() };
+  const storeInfo = useStoreInfo();
   const [status, setStatus] = useState<"idle" | "success">("idle");
   const [form, setForm] = useState({
     name: "",

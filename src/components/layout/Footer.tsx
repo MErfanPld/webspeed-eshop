@@ -1,13 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { storeInfo as defaults } from "@/data/store";
 import { useStoreInfo } from "@/context/StoreInfoContext";
 import { Instagram, Mail, MapPin, Phone, Clock } from "lucide-react";
 
 export default function Footer() {
   const live = useStoreInfo();
-  const storeInfo = { ...defaults, ...live, description: live.tagline || defaults.description };
+  const storeInfo = { ...live, description: live.tagline, social: { instagram: live.instagram } };
   return (
     <footer className="mt-auto bg-foreground text-background">
       <div className="border-b border-background/10">

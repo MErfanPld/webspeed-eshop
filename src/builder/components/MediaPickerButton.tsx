@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { ImagePlus, Upload, X } from "lucide-react";
 import { listMedia, uploadMedia, type MediaItem } from "@/lib/media-client";
+import { errorMessage } from "@/lib/api/client";
 
 /** Small button that opens the media library and returns the chosen URL */
 export default function MediaPickerButton({ onPick }: { onPick: (url: string) => void }) {
@@ -17,7 +18,14 @@ export default function MediaPickerButton({ onPick }: { onPick: (url: string) =>
     if (!open) return;
     let cancelled = false;
     setItems(null);
-    listMedia().then((list) => !cancelled && setItems(list));
+    setError(null);
+    listMedia()
+      .then((list) => !cancelled && setItems(list))
+      .catch((e) => {
+        if (cancelled) return;
+        setError(errorMessage(e, "دریافت کتابخانه رسانه ناموفق بود"));
+        setItems([]);
+      });
     return () => {
       cancelled = true;
     };
@@ -32,7 +40,7 @@ export default function MediaPickerButton({ onPick }: { onPick: (url: string) =>
       onPick(item.url);
       setOpen(false);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "آپلود ناموفق بود");
+      setError(errorMessage(e, "آپلود ناموفق بود"));
     } finally {
       setUploading(false);
     }

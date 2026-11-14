@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import AdminPageHeader from "@/components/admin/ui/AdminPageHeader";
 import AdminButton from "@/components/admin/ui/AdminButton";
 import AdminInput from "@/components/admin/ui/AdminInput";
-import { adminFetch } from "@/context/AdminSessionContext";
-import type { Store } from "@/server/services/stores";
+import { api, errorMessage } from "@/lib/api/client";
+import type { Store } from "@/types/api";
 
 const label = "block text-xs font-semibold text-[#525252] mb-1.5";
 const card = "bg-white border border-[#E8E8E8] rounded-2xl p-5 space-y-4";
@@ -21,6 +21,8 @@ export default function StoreSettingsForm({ store, canEdit }: { store: Store; ca
     phone: s.phone ?? "",
     email: s.email ?? "",
     address: s.address ?? "",
+    workingHours: s.workingHours ?? "",
+    instagram: s.instagram ?? "",
     cardNumber: s.payment?.cardNumber ?? "",
     cardHolder: s.payment?.cardHolder ?? "",
     bank: s.payment?.bank ?? "",
@@ -36,9 +38,9 @@ export default function StoreSettingsForm({ store, canEdit }: { store: Store; ca
     setBusy(true);
     setMsg(null);
     try {
-      await adminFetch("/api/admin/store", {
+      await api("/admin/store", {
         method: "PATCH",
-        body: JSON.stringify({
+        body: {
           name: f.name,
           domain: f.domain || null,
           settings: {
@@ -46,18 +48,20 @@ export default function StoreSettingsForm({ store, canEdit }: { store: Store; ca
             phone: f.phone,
             email: f.email,
             address: f.address,
+            workingHours: f.workingHours,
+            instagram: f.instagram,
             payment: { cardNumber: f.cardNumber, cardHolder: f.cardHolder, bank: f.bank },
             shipping: {
               flatRate: Number(f.flatRate.replace(/[^\d]/g, "") || 0),
               freeOver: Number(f.freeOver.replace(/[^\d]/g, "") || 0),
             },
           },
-        }),
+        },
       });
       setMsg({ ok: true, text: "تنظیمات ذخیره شد" });
       router.refresh();
     } catch (err) {
-      setMsg({ ok: false, text: err instanceof Error ? err.message : "ذخیره ناموفق بود" });
+      setMsg({ ok: false, text: errorMessage(err, "ذخیره ناموفق بود") });
     } finally {
       setBusy(false);
     }
@@ -95,6 +99,10 @@ export default function StoreSettingsForm({ store, canEdit }: { store: Store; ca
           {field("email", "ایمیل", { ltr: true })}
         </div>
         {field("address", "آدرس")}
+        <div className="grid gap-4 sm:grid-cols-2">
+          {field("workingHours", "ساعات کاری")}
+          {field("instagram", "لینک اینستاگرام", { ltr: true, ph: "https://instagram.com/..." })}
+        </div>
       </section>
       <section className={card}>
         <h2 className="text-sm font-bold">پرداخت کارت‌به‌کارت</h2>

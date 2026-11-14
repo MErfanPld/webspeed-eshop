@@ -1,7 +1,6 @@
 "use client";
 
 import { createContext, useContext, type ReactNode } from "react";
-import { storeInfo } from "@/data/store";
 
 export type StoreInfo = {
   id: string;
@@ -10,19 +9,24 @@ export type StoreInfo = {
   phone: string;
   email: string;
   address: string;
+  workingHours: string;
+  instagram: string;
   payment: { cardNumber?: string; cardHolder?: string; bank?: string };
   shipping: { flatRate?: number; freeOver?: number };
 };
 
+/** Empty until the server layout provides the store from the API */
 const FALLBACK: StoreInfo = {
   id: "",
-  name: storeInfo.name,
-  tagline: storeInfo.tagline,
-  phone: storeInfo.phone,
-  email: storeInfo.email,
-  address: storeInfo.address,
-  payment: storeInfo.payment,
-  shipping: { flatRate: 0, freeOver: 2_500_000 },
+  name: "",
+  tagline: "",
+  phone: "",
+  email: "",
+  address: "",
+  workingHours: "",
+  instagram: "",
+  payment: {},
+  shipping: {},
 };
 
 const Ctx = createContext<StoreInfo>(FALLBACK);

@@ -1,15 +1,15 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Receipt, Search, ShoppingBag, X } from "lucide-react";
-import type { Order, OrderStatus } from "@/server/services/orders";
+import type { Order, OrderStatus } from "@/types/api";
 import AdminPageHeader from "@/components/admin/ui/AdminPageHeader";
 import AdminBadge from "@/components/admin/ui/AdminBadge";
 import AdminInput from "@/components/admin/ui/AdminInput";
 import AdminButton from "@/components/admin/ui/AdminButton";
 import AdminEmptyState from "@/components/admin/ui/AdminEmptyState";
-import { adminFetch } from "@/context/AdminSessionContext";
+import { api, errorMessage } from "@/lib/api/client";
 import { confirmDialog } from "@/components/ui/ConfirmDialog";
 import { cn, formatNumber, formatPrice } from "@/lib/utils";
 
@@ -28,6 +28,29 @@ const TONE: Record<OrderStatus, "neutral" | "success" | "warning" | "danger" | "
   delivered: "success",
   cancelled: "danger",
 };
+
+/** Loads a short-lived signed URL for the private receipt from the API */
+function ReceiptImage({ orderId }: { orderId: string }) {
+  const [state, setState] = useState<{ url?: string; error?: string }>({});
+  useEffect(() => {
+    let cancelled = false;
+    setState({});
+    api<{ url: string }>(`/admin/orders/${orderId}/receipt`)
+      .then((r) => !cancelled && setState({ url: r.url }))
+      .catch((e) => !cancelled && setState({ error: errorMessage(e, "دریافت رسید ناموفق بود") }));
+    return () => {
+      cancelled = true;
+    };
+  }, [orderId]);
+  if (state.error) return <p className="text-xs text-red-700 bg-red-50 rounded-lg px-3 py-2">{state.error}</p>;
+  if (!state.url) return <p className="text-xs text-[#A3A3A3]">در حال بارگذاری رسید...</p>;
+  return (
+    <a href={state.url} target="_blank" rel="noreferrer">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={state.url} alt="رسید پرداخت" className="w-full max-h-96 object-contain rounded-xl border border-[#E8E8E8] bg-[#FAFAFA]" />
+    </a>
+  );
+}
 
 function date(iso: string) {
   return new Intl.DateTimeFormat("fa-IR", { dateStyle: "medium", timeStyle: "short" }).format(new Date(iso));
@@ -66,10 +89,10 @@ export default function OrdersManager({ orders, canEdit }: { orders: Order[]; ca
     setBusy(true);
     setError(null);
     try {
-      await adminFetch(`/api/admin/orders/${o.id}`, { method: "PATCH", body: JSON.stringify({ status: next }) });
+      await api(`/admin/orders/${o.id}`, { method: "PATCH", body: { status: next } });
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "تغییر وضعیت ناموفق بود");
+      setError(errorMessage(err, "تغییر وضعیت ناموفق بود"));
     } finally {
       setBusy(false);
     }
@@ -201,10 +224,7 @@ export default function OrdersManager({ orders, canEdit }: { orders: Order[]; ca
             {open.hasReceipt && (
               <section className="space-y-2">
                 <p className="text-xs font-bold text-[#737373] inline-flex items-center gap-1"><Receipt className="h-3.5 w-3.5" /> رسید پرداخت</p>
-                <a href={`/api/admin/orders/${open.id}/receipt`} target="_blank" rel="noreferrer">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={`/api/admin/orders/${open.id}/receipt`} alt="رسید پرداخت" className="w-full max-h-96 object-contain rounded-xl border border-[#E8E8E8] bg-[#FAFAFA]" />
-                </a>
+                <ReceiptImage orderId={open.id} />
               </section>
             )}
             <AdminButton type="button" onClick={() => setOpenId(null)} className="w-full">بستن</AdminButton>

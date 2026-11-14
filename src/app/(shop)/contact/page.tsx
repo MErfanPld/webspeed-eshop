@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import ContactDefault from "./ContactDefault";
-import { overrideMetadata, renderWithOverride } from "@/server/cms-page";
+import { overrideMetadata, renderWithOverride } from "@/lib/api/cms-page";
 
 export const dynamic = "force-dynamic";
 

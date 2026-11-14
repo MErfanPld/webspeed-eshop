@@ -9,7 +9,7 @@ import AdminButton from "@/components/admin/ui/AdminButton";
 import AdminInput from "@/components/admin/ui/AdminInput";
 import AdminEmptyState from "@/components/admin/ui/AdminEmptyState";
 import MediaPickerButton from "@/builder/components/MediaPickerButton";
-import { adminFetch } from "@/context/AdminSessionContext";
+import { api, errorMessage } from "@/lib/api/client";
 import { confirmDialog } from "@/components/ui/ConfirmDialog";
 import { formatNumber } from "@/lib/utils";
 
@@ -27,13 +27,13 @@ export default function CategoriesManager({ categories, counts }: { categories: 
     setBusy(true);
     setError(null);
     try {
-      const body = JSON.stringify({ name: draft.name, slug: draft.slug, image: draft.image });
-      if (draft.id) await adminFetch(`/api/admin/categories/${draft.id}`, { method: "PUT", body });
-      else await adminFetch("/api/admin/categories", { method: "POST", body });
+      const body = { name: draft.name, slug: draft.slug, image: draft.image };
+      if (draft.id) await api(`/admin/categories/${encodeURIComponent(draft.id)}`, { method: "PUT", body });
+      else await api("/admin/categories", { method: "POST", body });
       setDraft(null);
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "ذخیره ناموفق بود");
+      setError(errorMessage(err, "ذخیره ناموفق بود"));
     } finally {
       setBusy(false);
     }
@@ -49,10 +49,10 @@ export default function CategoriesManager({ categories, counts }: { categories: 
     });
     if (!ok) return;
     try {
-      await adminFetch(`/api/admin/categories/${c.id}`, { method: "DELETE" });
+      await api(`/admin/categories/${encodeURIComponent(c.id)}`, { method: "DELETE" });
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "حذف ناموفق بود");
+      setError(errorMessage(err, "حذف ناموفق بود"));
     }
   };
 

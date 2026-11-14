@@ -1,86 +1,67 @@
 import type { PageRepository } from "./page-repository";
 import type { ManagedPage } from "@/builder/contracts/page-contract";
+import { ApiError, api } from "@/lib/api/client";
 
 /**
- * PageRepository over the admin HTTP API (/api/admin/pages).
- * Errors carry the server's Persian message so the builder can show it.
+ * PageRepository over the Django API (`/admin/pages`, public `/pages`).
+ * Paths and payloads are unchanged from the former Next.js API; only the
+ * base URL (NEXT_PUBLIC_API_URL) differs. Errors carry the API's Persian message.
  */
-async function request<T>(url: string, init?: RequestInit): Promise<T> {
-  let res: Response;
-  try {
-    res = await fetch(url, {
-      ...init,
-      credentials: "same-origin",
-      cache: "no-store",
-      headers: { "Content-Type": "application/json", ...(init?.headers || {}) },
-    });
-  } catch {
-    throw new Error("ارتباط با سرور برقرار نشد");
-  }
-  const body = (await res.json().catch(() => ({}))) as T & { error?: string };
-  if (res.status === 401 && typeof window !== "undefined") {
-    const next = encodeURIComponent(window.location.pathname);
-    window.location.href = `/admin/login?next=${next}`;
-  }
-  if (!res.ok) throw new Error(body.error || `خطای سرور (${res.status})`);
-  return body;
-}
-
-const base = "/api/admin/pages";
+const base = "/admin/pages";
+const enc = encodeURIComponent;
 
 export class HttpPageRepository implements PageRepository {
   async listPages() {
-    return (await request<{ pages: ManagedPage[] }>(base)).pages;
+    return (await api<{ pages: ManagedPage[] }>(base)).pages;
   }
 
   async getPage(id: string) {
     try {
-      return (await request<{ page: ManagedPage }>(`${base}/${encodeURIComponent(id)}`)).page;
+      return (await api<{ page: ManagedPage }>(`${base}/${enc(id)}`)).page;
     } catch (e) {
-      if (e instanceof Error && e.message.includes("یافت نشد")) return null;
+      if (e instanceof ApiError && e.status === 404) return null;
       throw e;
     }
   }
 
   async getPublishedPage(id: string) {
-    const res = await fetch(`/api/pages?id=${encodeURIComponent(id)}`, { cache: "no-store" });
-    if (!res.ok) return null;
-    return ((await res.json()) as { page: ManagedPage }).page;
+    try {
+      return (await api<{ page: ManagedPage }>(`/pages?id=${enc(id)}`, { refresh: false })).page;
+    } catch {
+      return null;
+    }
   }
 
   async getPublishedPageBySlug(slug: string) {
-    const res = await fetch(`/api/pages?slug=${encodeURIComponent(slug)}`, { cache: "no-store" });
-    if (!res.ok) return null;
-    return ((await res.json()) as { page: ManagedPage }).page;
+    try {
+      return (await api<{ page: ManagedPage }>(`/pages?slug=${enc(slug)}`, { refresh: false })).page;
+    } catch {
+      return null;
+    }
   }
 
   async createPage(input: { name: string; slug: string }) {
-    return (await request<{ page: ManagedPage }>(base, { method: "POST", body: JSON.stringify(input) })).page;
+    return (await api<{ page: ManagedPage }>(base, { method: "POST", body: input })).page;
   }
 
   async savePage(page: ManagedPage) {
-    return (
-      await request<{ page: ManagedPage }>(`${base}/${encodeURIComponent(page.id)}`, {
-        method: "PUT",
-        body: JSON.stringify({ page }),
-      })
-    ).page;
+    return (await api<{ page: ManagedPage }>(`${base}/${enc(page.id)}`, { method: "PUT", body: { page } })).page;
   }
 
   async deletePage(id: string) {
-    await request(`${base}/${encodeURIComponent(id)}`, { method: "DELETE" });
+    await api(`${base}/${enc(id)}`, { method: "DELETE" });
   }
 
   async duplicatePage(id: string) {
-    return (await request<{ page: ManagedPage }>(`${base}/${encodeURIComponent(id)}/duplicate`, { method: "POST" })).page;
+    return (await api<{ page: ManagedPage }>(`${base}/${enc(id)}/duplicate`, { method: "POST" })).page;
   }
 
   async publishPage(id: string) {
-    return (await request<{ page: ManagedPage }>(`${base}/${encodeURIComponent(id)}/publish`, { method: "POST" })).page;
+    return (await api<{ page: ManagedPage }>(`${base}/${enc(id)}/publish`, { method: "POST" })).page;
   }
 
   async unpublishPage(id: string) {
-    return (await request<{ page: ManagedPage }>(`${base}/${encodeURIComponent(id)}/unpublish`, { method: "POST" })).page;
+    return (await api<{ page: ManagedPage }>(`${base}/${enc(id)}/unpublish`, { method: "POST" })).page;
   }
 }
 

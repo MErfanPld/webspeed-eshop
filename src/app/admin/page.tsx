@@ -2,10 +2,8 @@ import Link from "next/link";
 import { AlertTriangle, ArrowUpRight, Clock, FileText, Package, ShoppingBag, Users, Wallet } from "lucide-react";
 import AdminPageHeader from "@/components/admin/ui/AdminPageHeader";
 import AdminBadge from "@/components/admin/ui/AdminBadge";
-import { requireAdmin } from "@/server/http";
-import { orderService } from "@/server/services/orders";
-import { catalogService } from "@/server/services/catalog";
-import { pageService } from "@/server/services/pages";
+import { adminApi, getAdminSession } from "@/lib/api/admin";
+import type { DashboardStats } from "@/types/api";
 import { formatNumber, formatPrice } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -18,12 +16,9 @@ const STATUS_FA = {
   cancelled: "لغو شده",
 } as const;
 
-/** Real KPIs for the current store (last 30 days) */
+/** Real KPIs for the current store (last 30 days) from /admin/stats */
 export default async function AdminDashboardPage() {
-  const { store, user } = await requireAdmin();
-  const stats = orderService.stats(store.storeId, 30);
-  const productCount = catalogService.listProducts(store.storeId, { includeInactive: true }).length;
-  const pages = pageService.list(store.storeId);
+  const [session, stats] = await Promise.all([getAdminSession(), adminApi<DashboardStats>("/admin/stats?days=30")]);
 
   // Fill missing days so the chart has one bar per day
   const days: { day: string; revenue: number }[] = [];
@@ -42,7 +37,10 @@ export default async function AdminDashboardPage() {
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
-      <AdminPageHeader title={`سلام، ${user.name}`} description={`خلاصه وضعیت «${store.storeName}» در ۳۰ روز گذشته`} />
+      <AdminPageHeader
+        title={`سلام، ${session?.user.name ?? ""}`}
+        description={`خلاصه وضعیت «${session?.store.storeName ?? ""}» در ۳۰ روز گذشته`}
+      />
 
       <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
         {cards.map((c) => (
@@ -75,11 +73,11 @@ export default async function AdminDashboardPage() {
           </Link>
           <Link href="/admin/products" className="flex items-center gap-2 text-sm hover:underline">
             <Package className="h-4 w-4 text-[#737373]" />
-            {formatNumber(productCount)} محصول
+            {formatNumber(stats.products)} محصول
           </Link>
           <Link href="/admin/pages" className="flex items-center gap-2 text-sm hover:underline">
             <FileText className="h-4 w-4 text-[#737373]" />
-            {formatNumber(pages.filter((p) => p.status === "published").length)} صفحه منتشرشده از {formatNumber(pages.length)}
+            {formatNumber(stats.publishedPages)} صفحه منتشرشده از {formatNumber(stats.pages)}
           </Link>
           {stats.lowStock.length > 0 && (
             <div className="pt-2 border-t border-[#F0F0F0] space-y-1.5">

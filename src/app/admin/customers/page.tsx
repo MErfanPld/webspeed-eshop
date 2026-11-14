@@ -1,23 +1,15 @@
 import { Users } from "lucide-react";
 import AdminPageHeader from "@/components/admin/ui/AdminPageHeader";
 import AdminEmptyState from "@/components/admin/ui/AdminEmptyState";
-import { requireAdmin } from "@/server/http";
-import { orderService } from "@/server/services/orders";
+import { adminApi } from "@/lib/api/admin";
+import type { CustomerRow } from "@/types/api";
 import { formatNumber, formatPrice } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
 /** Customers derived from orders (grouped by mobile number) */
 export default async function AdminCustomersPage() {
-  const { store } = await requireAdmin();
-  const customers = orderService.customers(store.storeId) as {
-    phone: string;
-    name: string;
-    email: string | null;
-    orders: number;
-    totalSpent: number;
-    lastOrder: string;
-  }[];
+  const { customers } = await adminApi<{ customers: CustomerRow[] }>("/admin/customers");
   return (
     <div className="max-w-5xl mx-auto space-y-6">
       <AdminPageHeader title="مشتری‌ها" description={`${formatNumber(customers.length)} مشتری (بر اساس شماره موبایل سفارش‌ها)`} />
@@ -46,7 +38,7 @@ export default async function AdminCustomersPage() {
                   <td className="px-3 py-3.5 tabular-nums">{formatNumber(c.orders)}</td>
                   <td className="px-3 py-3.5 tabular-nums">{formatPrice(c.totalSpent)}</td>
                   <td className="px-5 py-3.5 text-xs text-[#525252]">
-                    {new Intl.DateTimeFormat("fa-IR", { dateStyle: "medium" }).format(new Date(c.lastOrder))}
+                    {new Intl.DateTimeFormat("fa-IR", { dateStyle: "medium" }).format(new Date(c.lastOrder ?? c.firstOrder))}
                   </td>
                 </tr>
               ))}

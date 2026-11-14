@@ -6,12 +6,13 @@ import { Copy, Image as ImageIcon, Trash2, Upload } from "lucide-react";
 import AdminPageHeader from "@/components/admin/ui/AdminPageHeader";
 import AdminButton from "@/components/admin/ui/AdminButton";
 import AdminEmptyState from "@/components/admin/ui/AdminEmptyState";
-import { adminFetch } from "@/context/AdminSessionContext";
 import { confirmDialog } from "@/components/ui/ConfirmDialog";
-import { uploadMedia } from "@/lib/media-client";
+import { deleteMedia, uploadMedia } from "@/lib/media-client";
+import { errorMessage } from "@/lib/api/client";
+import type { MediaItem } from "@/types/api";
 import { formatNumber } from "@/lib/utils";
 
-type Item = { id: string; name: string; mime: string; size: number; url: string; createdAt: string };
+type Item = MediaItem;
 
 export default function MediaManager({ items, canDelete }: { items: Item[]; canDelete: boolean }) {
   const router = useRouter();
@@ -28,7 +29,7 @@ export default function MediaManager({ items, canDelete }: { items: Item[]; canD
       for (const f of Array.from(files)) await uploadMedia(f);
       router.refresh();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "آپلود ناموفق بود");
+      setError(errorMessage(e, "آپلود ناموفق بود"));
     } finally {
       setBusy(false);
       if (input.current) input.current.value = "";
@@ -44,10 +45,10 @@ export default function MediaManager({ items, canDelete }: { items: Item[]; canD
     });
     if (!ok) return;
     try {
-      await adminFetch(`/api/admin/media/${m.id}`, { method: "DELETE" });
+      await deleteMedia(m.id);
       router.refresh();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "حذف ناموفق بود");
+      setError(errorMessage(e, "حذف ناموفق بود"));
     }
   };
 

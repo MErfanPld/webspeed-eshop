@@ -1,15 +1,15 @@
 import CategoriesManager from "@/components/admin/catalog/CategoriesManager";
-import { requireAdmin } from "@/server/http";
-import { catalogService } from "@/server/services/catalog";
+import { adminApi } from "@/lib/api/admin";
+import type { Category, ProductRecord } from "@/types/api";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminCategoriesPage() {
-  const { store } = await requireAdmin();
-  const categories = catalogService.listCategories(store.storeId).filter((c) => c.id !== "all");
+  const [{ categories }, { products }] = await Promise.all([
+    adminApi<{ categories: Category[] }>("/admin/categories"),
+    adminApi<{ products: ProductRecord[] }>("/admin/products"),
+  ]);
   const counts: Record<string, number> = {};
-  for (const p of catalogService.listProducts(store.storeId, { includeInactive: true })) {
-    counts[p.category] = (counts[p.category] ?? 0) + 1;
-  }
-  return <CategoriesManager categories={categories} counts={counts} />;
+  for (const p of products) counts[p.category] = (counts[p.category] ?? 0) + 1;
+  return <CategoriesManager categories={categories.filter((c) => c.id !== "all")} counts={counts} />;
 }
