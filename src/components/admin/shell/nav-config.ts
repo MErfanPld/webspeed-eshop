@@ -56,7 +56,7 @@ export const adminNav: NavSection[] = [
     items: [
       { href: "/admin/pages", label: "صفحات", icon: FileText },
       { href: "/admin/pages", label: "صفحه‌ساز", icon: PanelsTopLeft, match: "/admin/builder" },
-      { href: "/admin/media", label: "رسانه", icon: Image, disabled: true },
+      { href: "/admin/media", label: "رسانه", icon: Image },
     ],
   },
   {
@@ -66,9 +66,9 @@ export const adminNav: NavSection[] = [
   {
     title: "تنظیمات",
     items: [
-      { href: "/admin/settings", label: "عمومی", icon: Settings, disabled: true },
-      { href: "/admin/settings/seo", label: "سئو", icon: Search, disabled: true },
-      { href: "/", label: "فروشگاه", icon: Store },
+      { href: "/admin/settings", label: "تنظیمات فروشگاه", icon: Settings },
+      { href: "/admin/stores", label: "فروشگاه‌ها", icon: Store },
+      { href: "/", label: "مشاهده فروشگاه", icon: Search },
     ],
   },
 ];
@@ -82,6 +82,8 @@ export function pageTitleFromPath(pathname: string): string {
   if (pathname.startsWith("/admin/pages")) return "صفحات";
   if (pathname.startsWith("/admin/builder")) return "صفحه‌ساز";
   if (pathname.startsWith("/admin/theme")) return "تم و ظاهر";
-  if (pathname.startsWith("/admin/settings")) return "تنظیمات";
+  if (pathname.startsWith("/admin/settings")) return "تنظیمات فروشگاه";
+  if (pathname.startsWith("/admin/media")) return "رسانه";
+  if (pathname.startsWith("/admin/stores")) return "فروشگاه‌ها";
   return "پنل مدیریت";
 }

@@ -12,6 +12,7 @@ export const dynamic = "force-dynamic";
 export async function generateMetadata(): Promise<Metadata> {
   const store = await getStorefrontStore();
   return {
+    metadataBase: process.env.SITE_URL ? new URL(process.env.SITE_URL) : undefined,
     title: { default: store.name, template: `%s | ${store.name}` },
     description: store.settings.tagline,
     openGraph: { siteName: store.name, locale: "fa_IR", type: "website" },

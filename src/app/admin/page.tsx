@@ -1,215 +1,124 @@
-"use client";
-
-import { useState } from "react";
 import Link from "next/link";
-import {
-  adminStats,
-  revenueByDay,
-  revenueByMonth,
-  mockOrders,
-  statusLabel,
-} from "@/data/admin";
-import { formatPrice, formatNumber } from "@/lib/utils";
-import { products } from "@/data/products";
-import {
-  ArrowUpRight,
-  Package,
-  FileText,
-  ShoppingBag,
-  Users,
-  Wallet,
-  TrendingUp,
-  Sparkles,
-} from "lucide-react";
+import { AlertTriangle, ArrowUpRight, Clock, FileText, Package, ShoppingBag, Users, Wallet } from "lucide-react";
+import AdminPageHeader from "@/components/admin/ui/AdminPageHeader";
+import AdminBadge from "@/components/admin/ui/AdminBadge";
+import { requireAdmin } from "@/server/http";
+import { orderService } from "@/server/services/orders";
+import { catalogService } from "@/server/services/catalog";
+import { pageService } from "@/server/services/pages";
+import { formatNumber, formatPrice } from "@/lib/utils";
 
-type Period = "week" | "month" | "year";
+export const dynamic = "force-dynamic";
 
-export default function AdminDashboardPage() {
-  const [period, setPeriod] = useState<Period>("month");
+const STATUS_FA = {
+  pending: "در انتظار بررسی",
+  confirmed: "تأیید شده",
+  shipped: "ارسال شده",
+  delivered: "تحویل شده",
+  cancelled: "لغو شده",
+} as const;
 
-  const revenue = adminStats.revenue[period];
-  const ordersCount = adminStats.orders[period];
-  const customers = adminStats.customers[period];
-  const chartData = period === "week" ? revenueByDay : revenueByMonth;
-  const maxVal = Math.max(...chartData.map((d) => d.value), 1);
-  const periodLabel =
-    period === "week" ? "هفته" : period === "month" ? "ماه" : "سال";
+/** Real KPIs for the current store (last 30 days) */
+export default async function AdminDashboardPage() {
+  const { store, user } = await requireAdmin();
+  const stats = orderService.stats(store.storeId, 30);
+  const productCount = catalogService.listProducts(store.storeId, { includeInactive: true }).length;
+  const pages = pageService.list(store.storeId);
+
+  // Fill missing days so the chart has one bar per day
+  const days: { day: string; revenue: number }[] = [];
+  for (let i = 13; i >= 0; i--) {
+    const d = new Date(Date.now() - i * 86_400_000).toISOString().slice(0, 10);
+    days.push({ day: d, revenue: stats.byDay.find((x) => x.day === d)?.revenue ?? 0 });
+  }
+  const max = Math.max(...days.map((d) => d.revenue), 1);
 
   const cards = [
-    {
-      label: `فروش ${periodLabel}`,
-      value: formatPrice(revenue),
-      delta: "+۱۲٪",
-      icon: Wallet,
-      iconBg: "bg-[#ECF2FF]",
-      iconColor: "text-[#5D87FF]",
-    },
-    {
-      label: "سفارش‌ها",
-      value: formatNumber(ordersCount),
-      delta: "+۸٪",
-      icon: ShoppingBag,
-      iconBg: "bg-[#E6FFFA]",
-      iconColor: "text-[#13DEB9]",
-    },
-    {
-      label: "مشتری جدید",
-      value: formatNumber(customers),
-      delta: "+۵٪",
-      icon: Users,
-      iconBg: "bg-[#FEF5E5]",
-      iconColor: "text-[#FFAE1F]",
-    },
-    {
-      label: "محصولات",
-      value: formatNumber(products.length),
-      delta: null,
-      icon: Package,
-      iconBg: "bg-[#FDEDE8]",
-      iconColor: "text-[#FA896B]",
-    },
+    { label: "فروش ۳۰ روز", value: formatPrice(stats.revenue), icon: Wallet, href: "/admin/orders" },
+    { label: "سفارش‌ها", value: formatNumber(stats.orders), icon: ShoppingBag, href: "/admin/orders" },
+    { label: "میانگین سفارش", value: formatPrice(stats.avgOrder), icon: ArrowUpRight, href: "/admin/orders" },
+    { label: "مشتری‌ها", value: formatNumber(stats.customers), icon: Users, href: "/admin/customers" },
   ];
 
   return (
-    <div className="max-w-[1200px] mx-auto space-y-6">
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-l from-[#5D87FF] to-[#4570EA] text-white p-6 sm:p-8 shadow-[0_8px_24px_rgba(93,135,255,0.25)]">
-        <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <div className="inline-flex items-center gap-1.5 text-white/80 text-xs font-medium mb-2">
-              <Sparkles className="h-3.5 w-3.5" />
-              پنل مدیریت WebSpeed
-            </div>
-            <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight">خوش آمدید 👋</h1>
-            <p className="text-white/75 text-sm mt-2 max-w-md leading-relaxed">
-              خلاصه فروش، سفارش‌ها و وضعیت فروشگاه در یک نگاه.
-            </p>
-          </div>
-          <div className="flex items-center gap-1 p-1 rounded-xl bg-white/15 backdrop-blur-sm shrink-0">
-            {([["week", "هفته"], ["month", "ماه"], ["year", "سال"]] as const).map(([key, label]) => (
-              <button
-                key={key}
-                type="button"
-                onClick={() => setPeriod(key)}
-                className={`h-9 px-4 rounded-lg text-xs font-semibold transition-colors ${
-                  period === key ? "bg-white text-[#5D87FF]" : "text-white/80 hover:text-white"
-                }`}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className="absolute -left-10 -bottom-10 h-40 w-40 rounded-full bg-white/10" />
-        <div className="absolute left-20 -top-8 h-24 w-24 rounded-full bg-white/10" />
-      </div>
+    <div className="max-w-6xl mx-auto space-y-6">
+      <AdminPageHeader title={`سلام، ${user.name}`} description={`خلاصه وضعیت «${store.storeName}» در ۳۰ روز گذشته`} />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+      <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
         {cards.map((c) => (
-          <div
-            key={c.label}
-            className="bg-white rounded-2xl border border-[#E5EAEF] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-5"
-          >
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <p className="text-sm font-medium text-[#7C8FAC]">{c.label}</p>
-                <p className="text-[22px] font-semibold text-[#2A3547] mt-2 tabular-nums tracking-tight">
-                  {c.value}
-                </p>
-                {c.delta && (
-                  <p className="mt-2 text-xs font-semibold text-[#13DEB9] inline-flex items-center gap-1">
-                    <TrendingUp className="h-3.5 w-3.5" />
-                    {c.delta} نسبت به قبل
-                  </p>
-                )}
-              </div>
-              <div className={`h-12 w-12 rounded-2xl flex items-center justify-center shrink-0 ${c.iconBg}`}>
-                <c.icon className={`h-5 w-5 ${c.iconColor}`} strokeWidth={1.75} />
-              </div>
-            </div>
-          </div>
+          <Link key={c.label} href={c.href} className="rounded-2xl border border-[#E8E8E8] bg-white p-4 hover:shadow-sm transition-shadow">
+            <c.icon className="h-5 w-5 text-[#737373]" />
+            <p className="mt-3 text-xs text-[#737373]">{c.label}</p>
+            <p className="mt-1 text-lg font-bold text-[#111] tabular-nums">{c.value}</p>
+          </Link>
         ))}
       </div>
 
-      <div className="grid lg:grid-cols-5 gap-4">
-        <div className="lg:col-span-3 bg-white rounded-2xl border border-[#E5EAEF] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-5 sm:p-6">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <p className="text-base font-semibold text-[#2A3547]">نمای فروش</p>
-              <p className="text-xs text-[#7C8FAC] mt-0.5">{periodLabel} جاری</p>
-            </div>
-          </div>
-          <div className="flex items-end gap-2 h-44">
-            {chartData.map((d) => (
-              <div key={d.label} className="flex-1 flex flex-col items-center gap-2 min-w-0">
-                <div
-                  className="w-full rounded-t-lg bg-[#5D87FF]"
-                  style={{
-                    height: `${Math.max(10, (d.value / maxVal) * 100)}%`,
-                    minHeight: 6,
-                    opacity: 0.85 + (d.value / maxVal) * 0.15,
-                  }}
-                />
-                <span className="text-[10px] text-[#7C8FAC] truncate w-full text-center">{d.label}</span>
+      <div className="grid gap-6 lg:grid-cols-3">
+        <section className="lg:col-span-2 rounded-2xl border border-[#E8E8E8] bg-white p-5">
+          <h2 className="text-sm font-bold text-[#111] mb-4">فروش ۱۴ روز اخیر</h2>
+          <div className="flex items-end gap-1.5 h-40" role="img" aria-label="نمودار فروش روزانه">
+            {days.map((d) => (
+              <div key={d.day} className="flex-1 flex flex-col items-center gap-1 h-full justify-end" title={`${d.day}: ${formatPrice(d.revenue)}`}>
+                <div className="w-full rounded-t bg-[#111]/80" style={{ height: `${Math.max(2, (d.revenue / max) * 100)}%` }} />
               </div>
             ))}
           </div>
-        </div>
+          {stats.orders === 0 && <p className="mt-3 text-xs text-[#A3A3A3]">هنوز سفارشی در این بازه ثبت نشده است.</p>}
+        </section>
 
-        <div className="lg:col-span-2 bg-white rounded-2xl border border-[#E5EAEF] shadow-[0_4px_20px_rgba(0,0,0,0.03)] p-5 sm:p-6">
-          <p className="text-base font-semibold text-[#2A3547] mb-4">دسترسی سریع</p>
-          <div className="space-y-2.5">
-            {[
-              { href: "/admin/products", label: "مدیریت محصولات", icon: Package, bg: "bg-[#ECF2FF]", color: "text-[#5D87FF]" },
-              { href: "/admin/pages", label: "صفحه‌ساز", icon: FileText, bg: "bg-[#E6FFFA]", color: "text-[#13DEB9]" },
-              { href: "/admin/orders", label: "سفارش‌ها", icon: ArrowUpRight, bg: "bg-[#FEF5E5]", color: "text-[#FFAE1F]" },
-            ].map((a) => (
-              <Link
-                key={a.href}
-                href={a.href}
-                className="flex items-center gap-3 h-12 px-3 rounded-xl border border-[#E5EAEF] hover:border-[#5D87FF]/30 hover:bg-[#F8FAFC] transition-colors"
-              >
-                <span className={`h-9 w-9 rounded-xl inline-flex items-center justify-center ${a.bg}`}>
-                  <a.icon className={`h-4 w-4 ${a.color}`} strokeWidth={1.75} />
-                </span>
-                <span className="text-sm font-medium text-[#2A3547]">{a.label}</span>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-white rounded-2xl border border-[#E5EAEF] shadow-[0_4px_20px_rgba(0,0,0,0.03)] overflow-hidden">
-        <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-[#E5EAEF]">
-          <p className="text-base font-semibold text-[#2A3547]">سفارش‌های اخیر</p>
-          <Link href="/admin/orders" className="text-xs font-semibold text-[#5D87FF] hover:underline">
-            مشاهده همه
+        <section className="rounded-2xl border border-[#E8E8E8] bg-white p-5 space-y-3">
+          <h2 className="text-sm font-bold text-[#111]">کارهای امروز</h2>
+          <Link href="/admin/orders" className="flex items-center gap-2 text-sm hover:underline">
+            <Clock className="h-4 w-4 text-amber-600" />
+            {formatNumber(stats.pending)} سفارش در انتظار بررسی رسید
           </Link>
-        </div>
-        <div className="divide-y divide-[#E5EAEF]">
-          {mockOrders.slice(0, 5).map((order) => (
-            <div key={order.id} className="flex items-center gap-3 px-5 sm:px-6 py-3.5 hover:bg-[#F8FAFC] transition-colors">
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-semibold text-[#2A3547] truncate">{order.customer}</p>
-                <p className="text-xs text-[#7C8FAC] mt-0.5 tabular-nums">{order.id}</p>
-              </div>
-              <span
-                className={`inline-flex px-2.5 py-0.5 rounded-full text-[11px] font-semibold ${
-                  order.status === "delivered"
-                    ? "bg-[#E6FFFA] text-[#13DEB9]"
-                    : order.status === "cancelled"
-                      ? "bg-[#FDEDE8] text-[#FA896B]"
-                      : "bg-[#ECF2FF] text-[#5D87FF]"
-                }`}
-              >
-                {statusLabel[order.status] || order.status}
-              </span>
-              <p className="text-sm font-semibold text-[#2A3547] tabular-nums shrink-0 hidden sm:block">
-                {formatPrice(order.total)}
+          <Link href="/admin/products" className="flex items-center gap-2 text-sm hover:underline">
+            <Package className="h-4 w-4 text-[#737373]" />
+            {formatNumber(productCount)} محصول
+          </Link>
+          <Link href="/admin/pages" className="flex items-center gap-2 text-sm hover:underline">
+            <FileText className="h-4 w-4 text-[#737373]" />
+            {formatNumber(pages.filter((p) => p.status === "published").length)} صفحه منتشرشده از {formatNumber(pages.length)}
+          </Link>
+          {stats.lowStock.length > 0 && (
+            <div className="pt-2 border-t border-[#F0F0F0] space-y-1.5">
+              <p className="text-xs font-semibold text-red-700 inline-flex items-center gap-1">
+                <AlertTriangle className="h-3.5 w-3.5" /> موجودی کم
               </p>
+              {stats.lowStock.map((p) => (
+                <Link key={p.id} href={`/admin/products/${p.id}`} className="flex justify-between text-xs hover:underline">
+                  <span className="truncate">{p.name}</span>
+                  <span className="tabular-nums">{formatNumber(p.stock)}</span>
+                </Link>
+              ))}
             </div>
-          ))}
-        </div>
+          )}
+        </section>
       </div>
+
+      <section className="rounded-2xl border border-[#E8E8E8] bg-white p-5">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-sm font-bold text-[#111]">آخرین سفارش‌ها</h2>
+          <Link href="/admin/orders" className="text-xs text-[#737373] hover:text-[#111]">همه</Link>
+        </div>
+        {stats.recent.length === 0 ? (
+          <p className="text-xs text-[#A3A3A3]">سفارشی وجود ندارد.</p>
+        ) : (
+          <ul className="divide-y divide-[#F0F0F0]">
+            {stats.recent.map((o) => (
+              <li key={o.id} className="flex items-center justify-between gap-3 py-2.5 text-sm">
+                <span className="font-mono text-xs" dir="ltr">{o.number}</span>
+                <span className="flex-1 truncate">{o.customer.fullName}</span>
+                <span className="tabular-nums">{formatPrice(o.total)}</span>
+                <AdminBadge tone={o.status === "pending" ? "warning" : o.status === "cancelled" ? "danger" : "success"}>
+                  {STATUS_FA[o.status]}
+                </AdminBadge>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
     </div>
   );
 }
