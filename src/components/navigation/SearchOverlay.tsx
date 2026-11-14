@@ -6,7 +6,6 @@ import Image from "next/image";
 import { X, Search } from "lucide-react";
 import { products } from "@/data/products";
 import { formatPrice } from "@/lib/utils";
-import { cn } from "@/lib/utils";
 
 type SearchOverlayProps = {
   open: boolean;

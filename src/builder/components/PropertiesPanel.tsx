@@ -73,7 +73,7 @@ export default function PropertiesPanel() {
     }
     map.forEach((fields, name) => ordered.push({ name, fields }));
     return ordered;
-  }, [def?.schema]);
+  }, [def]);
 
   if (block && !def) {
     return (

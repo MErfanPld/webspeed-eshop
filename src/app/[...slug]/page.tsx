@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
+import Link from "next/link";
 import { PageRenderer } from "@/builder/rendering/PageRenderer";
 import type { PageBlock } from "@/builder/types";
 import { asPageBlocks } from "@/builder/contracts/page-contract";
@@ -60,9 +61,9 @@ export default function CmsPage() {
       <div className="min-h-[50vh] flex flex-col items-center justify-center gap-3 px-4 text-center">
         <p className="text-lg font-bold">صفحه یافت نشد</p>
         <p className="text-sm text-muted-foreground font-mono">{path}</p>
-        <a href="/" className="text-sm font-semibold underline underline-offset-4">
+        <Link href="/" className="text-sm font-semibold underline underline-offset-4">
           بازگشت به خانه
-        </a>
+        </Link>
       </div>
     );
   }

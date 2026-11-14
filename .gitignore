@@ -37,3 +37,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# playwright
+/playwright-report/
+/test-results/
+
+# runtime data (SQLite database, uploads)
+/data/
+/.e2e-data/
