@@ -1,7 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { products } from "@/data/products";
+import Link from "next/link";
+import { useCatalog } from "@/context/CatalogContext";
+import type { ProductRecord } from "@/server/services/catalog";
 import { formatPrice, formatNumber } from "@/lib/utils";
 import { Package, Plus, Search } from "lucide-react";
 import AdminPageHeader from "@/components/admin/ui/AdminPageHeader";
@@ -12,6 +14,7 @@ import AdminInput from "@/components/admin/ui/AdminInput";
 
 export default function AdminProductsPage() {
   const [q, setQ] = useState("");
+  const products = useCatalog().products as ProductRecord[];
 
   const filtered = useMemo(() => {
     if (!q.trim()) return products;
@@ -22,7 +25,7 @@ export default function AdminProductsPage() {
         p.slug.toLowerCase().includes(s) ||
         (p.brand || "").toLowerCase().includes(s)
     );
-  }, [q]);
+  }, [q, products]);
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
@@ -30,10 +33,12 @@ export default function AdminProductsPage() {
         title="محصولات"
         description={`${formatNumber(products.length)} محصول در کاتالوگ`}
         actions={
-          <AdminButton variant="primary" disabled title="به‌زودی">
-            <Plus className="h-4 w-4" />
-            افزودن محصول
-          </AdminButton>
+          <Link href="/admin/products/new">
+            <AdminButton variant="primary">
+              <Plus className="h-4 w-4" />
+              افزودن محصول
+            </AdminButton>
+          </Link>
         }
       />
 
@@ -61,7 +66,7 @@ export default function AdminProductsPage() {
         <div className="rounded-2xl border border-[#E8E8E8] bg-white overflow-hidden">
           <div className="md:hidden divide-y divide-[#F0F0F0]">
             {filtered.map((p) => (
-              <div key={p.id} className="p-4 flex gap-3">
+              <Link key={p.id} href={`/admin/products/${p.id}`} className="p-4 flex gap-3 hover:bg-[#FAFAFA]">
                 <div className="h-14 w-12 rounded-lg bg-[#F7F7F7] overflow-hidden shrink-0">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={p.images[0]} alt="" className="h-full w-full object-cover" />
@@ -76,9 +81,10 @@ export default function AdminProductsPage() {
                       <AdminBadge tone="danger">ناموجود</AdminBadge>
                     )}
                     {p.newArrival && <AdminBadge tone="info">جدید</AdminBadge>}
+                    {p.status !== "active" && <AdminBadge tone="warning">{p.status === "draft" ? "پیش‌نویس" : "بایگانی"}</AdminBadge>}
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
 
@@ -106,7 +112,9 @@ export default function AdminProductsPage() {
                           <img src={p.images[0]} alt="" className="h-full w-full object-cover" />
                         </div>
                         <div className="min-w-0">
-                          <p className="font-semibold text-[#111] truncate">{p.name}</p>
+                          <Link href={`/admin/products/${p.id}`} className="font-semibold text-[#111] truncate block hover:underline">
+                            {p.name}
+                          </Link>
                           <p className="text-[11px] text-[#A3A3A3] font-mono truncate">{p.slug}</p>
                         </div>
                       </div>
@@ -122,6 +130,7 @@ export default function AdminProductsPage() {
                           <AdminBadge tone="danger">ناموجود</AdminBadge>
                         )}
                         {p.newArrival && <AdminBadge tone="info">جدید</AdminBadge>}
+                        {p.status !== "active" && <AdminBadge tone="warning">{p.status === "draft" ? "پیش‌نویس" : "بایگانی"}</AdminBadge>}
                       </div>
                     </td>
                   </tr>

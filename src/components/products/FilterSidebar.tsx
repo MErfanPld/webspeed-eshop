@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
-import { categories, genders, allSizes, brands } from "@/data/categories";
+import { genders, allSizes } from "@/data/categories";
+import { useCatalog } from "@/context/CatalogContext";
 import { cn } from "@/lib/utils";
 
 export type FiltersState = {
@@ -54,7 +55,6 @@ function Section({
 
 const genderList = genders ?? [];
 const sizeList = allSizes ?? [];
-const brandList = brands ?? [];
 
 export default function FilterSidebar({
   filters,
@@ -62,6 +62,10 @@ export default function FilterSidebar({
   availableColors,
   className,
 }: FilterSidebarProps) {
+  const { categories, products } = useCatalog();
+  const brandList = Array.from(
+    new Set(products.map((p) => p.brand).filter((b): b is string => Boolean(b)))
+  ).sort();
   const toggleSize = (size: string) => {
     const sizes = filters.sizes.includes(size)
       ? filters.sizes.filter((s) => s !== size)

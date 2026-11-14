@@ -18,6 +18,7 @@ const RESERVED = new Set([
   "/checkout",
   "/products",
   "/profile",
+  "/track",
   "/api",
 ]);
 

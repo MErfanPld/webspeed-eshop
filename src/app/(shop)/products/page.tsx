@@ -10,10 +10,11 @@ import FilterSidebar, {
 } from "@/components/products/FilterSidebar";
 import SortSelect from "@/components/products/SortSelect";
 import Breadcrumb from "@/components/ui/Breadcrumb";
-import { products } from "@/data/products";
+import { useCatalog } from "@/context/CatalogContext";
 import { formatNumber } from "@/lib/utils";
 
 function ProductsContent() {
+  const { products } = useCatalog();
   const searchParams = useSearchParams();
   const [sort, setSort] = useState("featured");
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
@@ -42,7 +43,7 @@ function ProductsContent() {
     const map = new Map<string, string>();
     products.forEach((p) => p.colors.forEach((c) => map.set(c.name, c.hex)));
     return Array.from(map.entries()).map(([name, hex]) => ({ name, hex }));
-  }, []);
+  }, [products]);
 
   const filtered = useMemo(() => {
     let list = [...products];
@@ -101,7 +102,7 @@ function ProductsContent() {
         ];
     }
     return list;
-  }, [filters, sort, query]);
+  }, [filters, sort, query, products]);
 
   return (
     <Container className="py-6 sm:py-10">

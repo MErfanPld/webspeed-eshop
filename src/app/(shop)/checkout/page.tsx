@@ -8,13 +8,21 @@ import Button from "@/components/ui/Button";
 import PaymentReceiptUpload from "@/components/checkout/PaymentReceiptUpload";
 import { useCart } from "@/context/CartContext";
 import { formatPrice, formatNumber } from "@/lib/utils";
-import { storeInfo } from "@/data/store";
+import { useStoreInfo } from "@/context/StoreInfoContext";
 import { Copy, Check, CreditCard } from "lucide-react";
 
 type Step = "form" | "payment" | "success";
 
 export default function CheckoutPage() {
   const { items, subtotal, clearCart, isReady } = useCart();
+  const storeInfo = useStoreInfo();
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [placedTotal, setPlacedTotal] = useState(0);
+  const flatRate = Number(storeInfo.shipping.flatRate ?? 0);
+  const freeOver = Number(storeInfo.shipping.freeOver ?? 0);
+  const shipping = freeOver > 0 && subtotal >= freeOver ? 0 : flatRate;
+  const total = subtotal + shipping;
   const [step, setStep] = useState<Step>("form");
   const [receipt, setReceipt] = useState<File | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -56,12 +64,13 @@ export default function CheckoutPage() {
 
   const validate = () => {
     const e: Record<string, string> = {};
+    const digits = (v: string) => v.replace(/[۰-۹]/g, (d) => String("۰۱۲۳۴۵۶۷۸۹".indexOf(d))).replace(/[\s-]/g, "");
     if (!form.fullName.trim()) e.fullName = "نام الزامی است";
-    if (!form.phone.trim()) e.phone = "شماره تماس الزامی است";
+    if (!/^09\d{9}$/.test(digits(form.phone))) e.phone = "شماره موبایل معتبر نیست (مثال: 09121234567)";
     if (!form.province.trim()) e.province = "استان الزامی است";
     if (!form.city.trim()) e.city = "شهر الزامی است";
     if (!form.address.trim()) e.address = "آدرس الزامی است";
-    if (!form.postalCode.trim()) e.postalCode = "کد پستی الزامی است";
+    if (!/^\d{10}$/.test(digits(form.postalCode))) e.postalCode = "کد پستی باید ۱۰ رقم باشد";
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -74,7 +83,7 @@ export default function CheckoutPage() {
   const copyCard = async () => {
     try {
       await navigator.clipboard.writeText(
-        storeInfo.payment.cardNumber.replace(/-/g, "")
+        (storeInfo.payment.cardNumber || "").replace(/[-\s]/g, "")
       );
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
@@ -83,15 +92,48 @@ export default function CheckoutPage() {
     }
   };
 
-  const handlePaymentSubmit = (e: React.FormEvent) => {
+  const handlePaymentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (submitting) return;
     if (!receipt) {
-      alert("لطفاً تصویر رسید پرداخت را آپلود کنید");
+      setSubmitError("لطفاً تصویر رسید پرداخت را آپلود کنید");
       return;
     }
-    setOrderId(`WS-${Date.now().toString().slice(-8)}`);
-    clearCart();
-    setStep("success");
+    setSubmitting(true);
+    setSubmitError(null);
+    try {
+      const fd = new FormData();
+      fd.append(
+        "data",
+        JSON.stringify({
+          customer: form,
+          items: items.map((i) => ({ productId: i.productId, size: i.size, color: i.color, quantity: i.quantity })),
+        })
+      );
+      fd.append("receipt", receipt);
+      const res = await fetch("/api/orders", { method: "POST", body: fd });
+      const body = (await res.json().catch(() => ({}))) as {
+        order?: { number: string; total: number };
+        error?: string;
+        details?: Record<string, string>;
+      };
+      if (!res.ok || !body.order) {
+        if (body.details && typeof body.details === "object") {
+          setErrors(body.details);
+          setStep("form");
+        }
+        setSubmitError(body.error || "ثبت سفارش ناموفق بود");
+        return;
+      }
+      setOrderId(body.order.number);
+      setPlacedTotal(body.order.total);
+      clearCart();
+      setStep("success");
+    } catch {
+      setSubmitError("ارتباط با سرور برقرار نشد. دوباره تلاش کنید.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (step === "success") {
@@ -108,9 +150,12 @@ export default function CheckoutPage() {
           </span>
         </p>
         <p className="type-body text-muted-foreground mb-10 leading-relaxed">
-          سفارش شما پس از بررسی رسید پرداخت تأیید می‌شود. از طریق پیامک یا ایمیل
-          از وضعیت مطلع می‌شوید.
+          سفارش شما به مبلغ <span className="num">{formatPrice(placedTotal)}</span> ثبت شد و پس از بررسی رسید
+          پرداخت تأیید می‌شود. وضعیت سفارش را با شماره سفارش و موبایل از صفحه «پیگیری سفارش» ببینید.
         </p>
+        <Link href={`/track?number=${encodeURIComponent(orderId)}`} className="block mb-3 text-sm underline underline-offset-4">
+          پیگیری سفارش
+        </Link>
         <Link href="/products">
           <Button size="lg">بازگشت به فروشگاه</Button>
         </Link>
@@ -178,6 +223,7 @@ export default function CheckoutPage() {
                 type="email"
                 value={form.email}
                 onChange={(e) => update("email", e.target.value)}
+                error={errors.email}
                 dir="ltr"
                 className="num"
               />
@@ -229,7 +275,7 @@ export default function CheckoutPage() {
                 <p className="type-body text-muted-foreground leading-relaxed">
                   مبلغ{" "}
                   <strong className="text-foreground num" data-num>
-                    {formatPrice(subtotal)}
+                    {formatPrice(total)}
                   </strong>{" "}
                   را به شماره کارت زیر واریز کنید، سپس تصویر رسید را آپلود نمایید.
                 </p>
@@ -242,7 +288,7 @@ export default function CheckoutPage() {
                       dir="ltr"
                       data-num
                     >
-                      {storeInfo.payment.cardNumber}
+                      {storeInfo.payment.cardNumber || "—"}
                     </p>
                     <button
                       type="button"
@@ -274,9 +320,15 @@ export default function CheckoutPage() {
 
               <PaymentReceiptUpload onFileChange={setReceipt} />
 
+              {submitError && (
+                <p role="alert" className="text-sm text-red-700 bg-red-50 border border-red-100 px-4 py-3">
+                  {submitError}
+                </p>
+              )}
+
               <div className="flex flex-col sm:flex-row gap-3">
-                <Button type="submit" size="lg" className="w-full sm:w-auto">
-                  ثبت سفارش
+                <Button type="submit" size="lg" className="w-full sm:w-auto" disabled={submitting}>
+                  {submitting ? "در حال ثبت..." : "ثبت سفارش"}
                 </Button>
                 <Button
                   type="button"
@@ -310,13 +362,23 @@ export default function CheckoutPage() {
               ))}
             </ul>
             <hr className="rule" />
+            <div className="flex justify-between type-caption">
+              <span>جمع اقلام</span>
+              <span className="num" data-num>{formatPrice(subtotal)}</span>
+            </div>
+            <div className="flex justify-between type-caption">
+              <span>هزینه ارسال</span>
+              <span className="num" data-num>{shipping ? formatPrice(shipping) : "رایگان"}</span>
+            </div>
             <div className="flex justify-between font-semibold">
-              <span>جمع کل</span>
+              <span>مبلغ قابل پرداخت</span>
               <span className="num" data-num>
-                {formatPrice(subtotal)}
+                {formatPrice(total)}
               </span>
             </div>
-            <p className="type-caption">ارسال رایگان · پرداخت کارت‌به‌کارت</p>
+            <p className="type-caption">
+              پرداخت کارت‌به‌کارت · مبلغ نهایی در سرور بر اساس قیمت‌های فعلی محاسبه می‌شود
+            </p>
           </div>
         </div>
       </div>

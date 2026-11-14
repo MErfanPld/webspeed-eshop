@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { X, Search } from "lucide-react";
-import { products } from "@/data/products";
+import { useCatalog } from "@/context/CatalogContext";
 import { formatPrice } from "@/lib/utils";
 
 type SearchOverlayProps = {
@@ -13,6 +13,7 @@ type SearchOverlayProps = {
 };
 
 export default function SearchOverlay({ open, onClose }: SearchOverlayProps) {
+  const { products } = useCatalog();
   const [query, setQuery] = useState("");
 
   useEffect(() => {
@@ -38,7 +39,7 @@ export default function SearchOverlay({ open, onClose }: SearchOverlayProps) {
           p.description.toLowerCase().includes(q)
       )
       .slice(0, 8);
-  }, [query]);
+  }, [query, products]);
 
   if (!open) return null;
 

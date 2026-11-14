@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { categories } from "@/data/categories";
+import { useCatalog } from "@/context/CatalogContext";
 
 type Props = {
   open: boolean;
@@ -10,8 +10,8 @@ type Props = {
 };
 
 export default function MegaMenu({ open, onClose }: Props) {
+  const { categories } = useCatalog();
   if (!open) return null;
-
   const cats = categories.filter((c) => c.id !== "all");
 
   return (

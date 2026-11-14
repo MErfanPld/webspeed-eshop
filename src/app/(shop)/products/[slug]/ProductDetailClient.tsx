@@ -12,7 +12,7 @@ import ReviewSection from "@/components/products/ReviewSection";
 import RelatedSliderBlockView from "@/blocks/related-slider/RelatedSliderBlock";
 import Breadcrumb from "@/components/ui/Breadcrumb";
 import { useCart } from "@/context/CartContext";
-import { products } from "@/data/products";
+import { useCatalog } from "@/context/CatalogContext";
 import {
   Star,
   Truck,
@@ -28,6 +28,7 @@ import Link from "next/link";
 type Props = { product: Product };
 
 export default function ProductDetailClient({ product }: Props) {
+  const { products } = useCatalog();
   const [size, setSize] = useState<string | null>(null);
   const [color, setColor] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
