@@ -72,7 +72,7 @@ test.describe("commerce flow", () => {
     await page.getByText(number).click();
     await expect(page.getByAltText("رسید پرداخت")).toBeVisible();
     await page.getByRole("dialog").getByRole("button", { name: "تأیید شده" }).click();
-    await expect(page.locator("tbody").getByText("تأیید شده")).toBeVisible();
+    await expect(page.locator("tbody tr", { hasText: number }).getByText("تأیید شده")).toBeVisible();
 
     // Customer tracks the order (needs number AND phone)
     await shopper.goto(`/track?number=${encodeURIComponent(number)}`);

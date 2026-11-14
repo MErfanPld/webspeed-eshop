@@ -14,6 +14,8 @@ import {
   Palette,
   Search,
   CircleDot,
+  UsersRound,
+  KeyRound,
 } from "lucide-react";
 
 export type NavItem = {
@@ -67,7 +69,9 @@ export const adminNav: NavSection[] = [
     title: "تنظیمات",
     items: [
       { href: "/admin/settings", label: "تنظیمات فروشگاه", icon: Settings },
+      { href: "/admin/team", label: "اعضای تیم", icon: UsersRound },
       { href: "/admin/stores", label: "فروشگاه‌ها", icon: Store },
+      { href: "/admin/account", label: "حساب و رمز عبور", icon: KeyRound },
       { href: "/", label: "مشاهده فروشگاه", icon: Search },
     ],
   },
@@ -85,5 +89,7 @@ export function pageTitleFromPath(pathname: string): string {
   if (pathname.startsWith("/admin/settings")) return "تنظیمات فروشگاه";
   if (pathname.startsWith("/admin/media")) return "رسانه";
   if (pathname.startsWith("/admin/stores")) return "فروشگاه‌ها";
+  if (pathname.startsWith("/admin/team")) return "اعضای تیم";
+  if (pathname.startsWith("/admin/account")) return "حساب کاربری";
   return "پنل مدیریت";
 }

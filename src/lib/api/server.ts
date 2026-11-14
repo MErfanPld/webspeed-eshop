@@ -17,24 +17,32 @@ export function internalApiBase(): string {
 
 const FORWARDED_COOKIES = ["ws_access", "ws_store"];
 
-async function requestHeaders(auth: boolean): Promise<Record<string, string>> {
+async function requestHeaders(auth: boolean, extraCookies: string[] = []): Promise<Record<string, string>> {
   const h = await headers();
   const out: Record<string, string> = { Accept: "application/json" };
   const host = h.get("x-forwarded-host") || h.get("host");
   if (host) out["X-Store-Host"] = host;
-  if (auth) {
+  const names = [...(auth ? FORWARDED_COOKIES : []), ...extraCookies];
+  if (names.length) {
     const jar = await cookies();
-    const pairs = FORWARDED_COOKIES.map((n) => [n, jar.get(n)?.value] as const).filter(([, v]) => v);
+    const pairs = names.map((n) => [n, jar.get(n)?.value] as const).filter(([, v]) => v);
     if (pairs.length) out.Cookie = pairs.map(([n, v]) => `${n}=${v}`).join("; ");
   }
   return out;
 }
 
-export async function serverApi<T>(path: string, opts: { auth?: boolean } = {}): Promise<T> {
+type ServerApiOptions = {
+  /** Forward the admin JWT + store cookies */
+  auth?: boolean;
+  /** Forward additional cookies by name (e.g. "ws_customer") */
+  cookies?: string[];
+};
+
+export async function serverApi<T>(path: string, opts: ServerApiOptions = {}): Promise<T> {
   let res: Response;
   try {
     res = await fetch(`${internalApiBase()}${path}`, {
-      headers: await requestHeaders(Boolean(opts.auth)),
+      headers: await requestHeaders(Boolean(opts.auth), opts.cookies),
       cache: "no-store",
     });
   } catch {
@@ -48,7 +56,7 @@ export async function serverApi<T>(path: string, opts: { auth?: boolean } = {}):
 }
 
 /** Like serverApi but returns null for 404 */
-export async function serverApiOrNull<T>(path: string, opts: { auth?: boolean } = {}): Promise<T | null> {
+export async function serverApiOrNull<T>(path: string, opts: ServerApiOptions = {}): Promise<T | null> {
   try {
     return await serverApi<T>(path, opts);
   } catch (e) {

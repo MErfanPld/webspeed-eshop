@@ -16,6 +16,9 @@
   --surface: #ffffff;
   --concrete: #f2f2f2;
   --error: #e22120;
+  /* Primary action color (overridable per store via the theme) */
+  --primary: #111111;
+  --primary-hover: #000000;
   --leading-tight: 1.12;
   --leading-snug: 1.3;
   --leading-normal: 1.6;

@@ -1,62 +1,43 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import Container from "@/components/ui/Container";
-import type { Order, Address } from "@/types/order";
-import { formatPrice, formatNumber } from "@/lib/utils";
+import ProfileForm from "@/components/account/ProfileForm";
+import { ApiError } from "@/lib/api/client";
+import { serverApi } from "@/lib/api/server";
+import type { Order, OrderStatus } from "@/types/api";
+import { formatNumber, formatPrice } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "حساب کاربری",
-  description: "مدیریت سفارش‌ها و آدرس‌ها",
+  description: "مدیریت سفارش‌ها و اطلاعات حساب",
 };
 
-const mockOrders: Order[] = [
-  {
-    id: "WS-1404-0012",
-    date: "۱۴۰۴/۰۶/۲۰",
-    status: "delivered",
-    total: 5180000,
-    itemsCount: 2,
-  },
-  {
-    id: "WS-1404-0008",
-    date: "۱۴۰۴/۰۵/۱۲",
-    status: "shipped",
-    total: 2790000,
-    itemsCount: 1,
-  },
-  {
-    id: "WS-1404-0003",
-    date: "۱۴۰۴/۰۴/۰۱",
-    status: "pending",
-    total: 1890000,
-    itemsCount: 1,
-  },
-];
+export const dynamic = "force-dynamic";
 
-const mockAddresses: Address[] = [
-  {
-    id: "1",
-    fullName: "کاربر نمونه",
-    phone: "۰۹۱۲۱۲۳۴۵۶۷",
-    province: "تهران",
-    city: "تهران",
-    address: "خیابان ولیعصر، پلاک ۱۲۳، واحد ۴",
-    postalCode: "۱۲۳۴۵۶۷۸۹۰",
-    isDefault: true,
-  },
-];
-
-const statusLabels: Record<Order["status"], string> = {
-  pending: "در انتظار تأیید",
+const statusLabels: Record<OrderStatus, string> = {
+  pending: "در انتظار بررسی",
   confirmed: "تأیید شده",
   shipped: "ارسال شده",
   delivered: "تحویل شده",
   cancelled: "لغو شده",
 };
 
-export default function ProfilePage() {
+type Me = { customer: { phone: string; name: string; email: string }; orders: Order[] };
+
+export default async function ProfilePage() {
+  let me: Me;
+  try {
+    me = await serverApi<Me>("/customer/me", { cookies: ["ws_customer"] });
+  } catch (e) {
+    if (e instanceof ApiError && e.status === 401) redirect("/login");
+    throw e;
+  }
+  const { customer, orders } = me;
+  const lastAddress = orders.find((o) => o.customer?.address)?.customer;
+
   return (
-    <Container className="py-8 sm:py-12">
+    <Container className="py-10 sm:py-14">
       <nav className="text-sm text-muted-foreground mb-6">
         <Link href="/" className="hover:text-foreground">
           خانه
@@ -65,98 +46,78 @@ export default function ProfilePage() {
         <span className="text-foreground">حساب کاربری</span>
       </nav>
 
-      <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight mb-10">
-        حساب کاربری
-      </h1>
+      <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight mb-10">حساب کاربری</h1>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-        {/* Sidebar info */}
         <div className="space-y-6">
           <div className="border border-border rounded-sm p-6">
             <h2 className="text-sm font-semibold mb-4">اطلاعات حساب</h2>
-            <dl className="space-y-3 text-sm">
-              <div>
-                <dt className="text-muted-foreground">نام</dt>
-                <dd className="font-medium">کاربر نمونه</dd>
-              </div>
-              <div>
-                <dt className="text-muted-foreground">ایمیل</dt>
-                <dd className="font-medium">user@example.com</dd>
-              </div>
-              <div>
-                <dt className="text-muted-foreground">تلفن</dt>
-                <dd className="font-medium" dir="ltr">
-                  ۰۹۱۲۱۲۳۴۵۶۷
-                </dd>
-              </div>
-            </dl>
+            <ProfileForm customer={customer} />
           </div>
 
           <div className="border border-border rounded-sm p-6">
-            <h2 className="text-sm font-semibold mb-4">آدرس‌های ذخیره شده</h2>
-            {mockAddresses.map((addr) => (
-              <div key={addr.id} className="text-sm space-y-1">
-                {addr.isDefault && (
-                  <span className="text-xs text-muted-foreground">
-                    پیش‌فرض
-                  </span>
-                )}
-                <p className="font-medium">{addr.fullName}</p>
+            <h2 className="text-sm font-semibold mb-4">آخرین آدرس ارسال</h2>
+            {lastAddress ? (
+              <div className="text-sm space-y-1">
+                <p className="font-medium">{lastAddress.fullName}</p>
                 <p className="text-muted-foreground">
-                  {addr.province}، {addr.city}
+                  {lastAddress.province}، {lastAddress.city}
                 </p>
-                <p className="text-muted-foreground">{addr.address}</p>
+                <p className="text-muted-foreground">{lastAddress.address}</p>
                 <p className="text-muted-foreground" dir="ltr">
-                  {addr.phone}
+                  {lastAddress.postalCode}
                 </p>
               </div>
-            ))}
+            ) : (
+              <p className="text-sm text-muted-foreground">پس از اولین خرید، آدرس ارسال اینجا نمایش داده می‌شود.</p>
+            )}
           </div>
         </div>
 
-        {/* Orders */}
         <div className="lg:col-span-2">
           <h2 className="text-lg font-semibold mb-4">تاریخچه سفارش‌ها</h2>
-          <div className="border border-border rounded-sm overflow-hidden">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-border bg-muted/40 text-right">
-                  <th className="px-4 py-3 font-medium">شماره</th>
-                  <th className="px-4 py-3 font-medium hidden sm:table-cell">
-                    تاریخ
-                  </th>
-                  <th className="px-4 py-3 font-medium">وضعیت</th>
-                  <th className="px-4 py-3 font-medium">مبلغ</th>
-                </tr>
-              </thead>
-              <tbody>
-                {mockOrders.map((order) => (
-                  <tr
-                    key={order.id}
-                    className="border-b border-border last:border-0"
-                  >
-                    <td className="px-4 py-3 font-medium">{order.id}</td>
-                    <td className="px-4 py-3 text-muted-foreground hidden sm:table-cell">
-                      {order.date}
-                    </td>
-                    <td className="px-4 py-3">
-                      {statusLabels[order.status]}
-                    </td>
-                    <td className="px-4 py-3">
-                      {formatPrice(order.total)}
-                      <span className="text-xs text-muted-foreground block sm:inline sm:mr-1">
-                        ({formatNumber(order.itemsCount)} کالا)
-                      </span>
-                    </td>
+          {orders.length === 0 ? (
+            <div className="border border-dashed border-border rounded-sm p-8 text-center text-sm text-muted-foreground">
+              هنوز سفارشی ثبت نکرده‌اید.{" "}
+              <Link href="/products" className="underline underline-offset-4">
+                مشاهده محصولات
+              </Link>
+            </div>
+          ) : (
+            <div className="border border-border rounded-sm overflow-hidden">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border bg-muted/40 text-right">
+                    <th className="px-4 py-3 font-medium">شماره</th>
+                    <th className="px-4 py-3 font-medium hidden sm:table-cell">تاریخ</th>
+                    <th className="px-4 py-3 font-medium">وضعیت</th>
+                    <th className="px-4 py-3 font-medium">مبلغ</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <p className="mt-4 text-xs text-muted-foreground">
-            این صفحه فقط رابط کاربری است. احراز هویت واقعی در فاز بعدی اضافه
-            می‌شود.
-          </p>
+                </thead>
+                <tbody>
+                  {orders.map((order) => (
+                    <tr key={order.id} className="border-b border-border last:border-0">
+                      <td className="px-4 py-3 font-medium">
+                        <Link href={`/track?number=${encodeURIComponent(order.number)}`} className="hover:underline" dir="ltr">
+                          {order.number}
+                        </Link>
+                      </td>
+                      <td className="px-4 py-3 text-muted-foreground hidden sm:table-cell">
+                        {new Intl.DateTimeFormat("fa-IR", { dateStyle: "medium" }).format(new Date(order.createdAt))}
+                      </td>
+                      <td className="px-4 py-3">{statusLabels[order.status]}</td>
+                      <td className="px-4 py-3">
+                        {formatPrice(order.total)}
+                        <span className="text-xs text-muted-foreground block sm:inline sm:mr-1">
+                          ({formatNumber(order.items.reduce((n, i) => n + i.quantity, 0))} کالا)
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       </div>
     </Container>

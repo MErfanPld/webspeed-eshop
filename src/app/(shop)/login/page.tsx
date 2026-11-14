@@ -4,6 +4,9 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowRight, Smartphone } from "lucide-react";
+import { api, errorMessage } from "@/lib/api/client";
+
+const CODE_LENGTH = 6;
 
 type Step = "phone" | "otp";
 
@@ -11,7 +14,8 @@ export default function LoginPage() {
   const router = useRouter();
   const [step, setStep] = useState<Step>("phone");
   const [phone, setPhone] = useState("");
-  const [otp, setOtp] = useState(["", "", "", ""]);
+  const [otp, setOtp] = useState<string[]>(Array(CODE_LENGTH).fill(""));
+  const [devCode, setDevCode] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [isNew, setIsNew] = useState(false);
@@ -27,30 +31,46 @@ export default function LoginPage() {
       return;
     }
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 800));
-    setLoading(false);
-    setIsNew(Number(p.slice(-1)) % 2 === 1);
-    setStep("otp");
+    try {
+      const res = await api<{ isNew: boolean; devCode?: string }>("/customer/otp/request", {
+        method: "POST",
+        body: { phone: p },
+        refresh: false,
+        redirectOnExpire: false,
+      });
+      setIsNew(res.isNew);
+      setDevCode(res.devCode ?? null);
+      setOtp(Array(CODE_LENGTH).fill(""));
+      setStep("otp");
+    } catch (err) {
+      setError(errorMessage(err, "ارسال کد ناموفق بود"));
+    } finally {
+      setLoading(false);
+    }
   };
 
   const verifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     const code = otp.join("");
-    if (code.length !== 4) {
-      setError("کد ۴ رقمی را کامل وارد کنید");
+    if (code.length !== CODE_LENGTH) {
+      setError("کد ۶ رقمی را کامل وارد کنید");
       return;
     }
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 700));
-    setLoading(false);
-    if (typeof window !== "undefined") {
-      localStorage.setItem(
-        "ws_user",
-        JSON.stringify({ phone: normalizePhone(phone), loggedIn: true })
-      );
+    try {
+      await api("/customer/otp/verify", {
+        method: "POST",
+        body: { phone: normalizePhone(phone), code },
+        refresh: false,
+        redirectOnExpire: false,
+      });
+      router.push("/profile");
+      router.refresh();
+    } catch (err) {
+      setError(errorMessage(err, "کد واردشده اشتباه است"));
+      setLoading(false);
     }
-    router.push("/profile");
   };
 
   const handleOtpChange = (index: number, value: string) => {
@@ -58,7 +78,7 @@ export default function LoginPage() {
     const next = [...otp];
     next[index] = digit;
     setOtp(next);
-    if (digit && index < 3) {
+    if (digit && index < CODE_LENGTH - 1) {
       document.getElementById(`otp-${index + 1}`)?.focus();
     }
   };
@@ -129,9 +149,14 @@ export default function LoginPage() {
             </form>
           ) : (
             <form onSubmit={verifyOtp} className="space-y-5">
+              {devCode && (
+                <p className="text-xs text-center text-muted-foreground" data-dev-code>
+                  محیط توسعه — کد: <span className="num font-semibold" dir="ltr">{devCode}</span>
+                </p>
+              )}
               <div>
                 <label className="block text-xs font-medium text-muted-foreground mb-3 text-center">
-                  کد ۴ رقمی
+                  کد ۶ رقمی
                 </label>
                 <div className="flex justify-center gap-2.5" dir="ltr">
                   {otp.map((d, i) => (
@@ -144,7 +169,7 @@ export default function LoginPage() {
                       value={d}
                       onChange={(e) => handleOtpChange(i, e.target.value)}
                       onKeyDown={(e) => handleOtpKey(i, e)}
-                      className="h-14 w-12 sm:w-14 text-center text-lg font-semibold rounded-xl border border-border bg-transparent num focus:outline-none focus:border-foreground focus:ring-2 focus:ring-foreground/10"
+                      className="h-12 w-10 sm:h-14 sm:w-12 text-center text-lg font-semibold rounded-xl border border-border bg-transparent num focus:outline-none focus:border-foreground focus:ring-2 focus:ring-foreground/10"
                       autoFocus={i === 0}
                     />
                   ))}

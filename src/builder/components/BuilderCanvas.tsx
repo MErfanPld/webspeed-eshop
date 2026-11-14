@@ -13,6 +13,8 @@ import { SiteFooter, SiteHeader } from "@/components/layout/SiteChrome";
 import { useSiteLayout } from "@/builder/hooks/useSiteLayout";
 import { isLayoutPageType } from "@/builder/contracts/page-contract";
 import { cancelDrag } from "@/builder/dnd/drag-state";
+import { api } from "@/lib/api/client";
+import { normalizeTheme, themeCss } from "@/lib/theme/theme";
 
 /** Children of container blocks get builder chrome too */
 function renderEditableChildren(parent: PageBlock, kids: PageBlock[]) {
@@ -61,6 +63,18 @@ export default function BuilderCanvas({ onFrameDocument }: Props) {
   const frameWidth = isDesktop ? Math.min(vp.width, 1280) : vp.width;
 
   const isLayoutDoc = pageType ? isLayoutPageType(pageType) : false;
+
+  // Preview with the store's theme (same CSS variables as the storefront)
+  const [themeStyle, setThemeStyle] = useState("");
+  useEffect(() => {
+    let cancelled = false;
+    api<{ store: { settings: { theme?: unknown } } }>("/admin/store")
+      .then((r) => !cancelled && setThemeStyle(themeCss(normalizeTheme(r.store.settings.theme))))
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, []);
   const chrome = useSiteLayout(showSiteChrome && !isLayoutDoc);
 
   useEffect(() => {
@@ -97,6 +111,7 @@ export default function BuilderCanvas({ onFrameDocument }: Props) {
       onClick={() => !isPreview && clearSelection()}
       onDragEnd={() => cancelDrag()}
     >
+      {themeStyle && <style dangerouslySetInnerHTML={{ __html: themeStyle }} />}
       {showSiteChrome && !isLayoutDoc && (
         <ChromePreview label={chrome.header ? "هدر سراسری" : "هدر پیش‌فرض"}>
           <SiteHeader blocks={chrome.header} />

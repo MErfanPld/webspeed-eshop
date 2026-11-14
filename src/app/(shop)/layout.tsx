@@ -4,6 +4,7 @@ import { CatalogProvider } from "@/context/CatalogContext";
 import { StoreInfoProvider } from "@/context/StoreInfoContext";
 import { SITE_FOOTER_ID, SITE_HEADER_ID, asPageBlocks } from "@/builder/contracts/page-contract";
 import { getCatalog, getPublishedPage, getStoreInfo } from "@/lib/api/storefront";
+import { normalizeTheme, themeCss } from "@/lib/theme/theme";
 
 export const dynamic = "force-dynamic";
 
@@ -29,6 +30,8 @@ export default async function ShopLayout({ children }: { children: React.ReactNo
     getCatalog(),
   ]);
 
+  const css = themeCss(normalizeTheme(store.theme));
+
   return (
     <StoreInfoProvider
       value={{
@@ -44,6 +47,8 @@ export default async function ShopLayout({ children }: { children: React.ReactNo
         shipping: store.shipping ?? {},
       }}
     >
+      {/* Store theme: only validated #rrggbb colors and numeric sizes */}
+      {css && <style data-store-theme dangerouslySetInnerHTML={{ __html: css }} />}
       <CatalogProvider value={catalog}>
         <ShopChrome
           header={header?.publishedBlocks?.length ? asPageBlocks(header.publishedBlocks) : null}

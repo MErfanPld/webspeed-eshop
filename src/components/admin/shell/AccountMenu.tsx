@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Check, LogOut, Plus, Store } from "lucide-react";
+import { Check, KeyRound, LogOut, Plus, Store } from "lucide-react";
 import { useAdminSession } from "@/context/AdminSessionContext";
 import { api } from "@/lib/api/client";
 
@@ -97,6 +97,18 @@ export default function AccountMenu() {
             مدیریت فروشگاه‌ها
           </button>
           <div className="border-t border-[#F0F0F0] mt-1 pt-1">
+            <button
+              type="button"
+              onClick={() => {
+                setOpen(false);
+                router.push("/admin/account");
+              }}
+              className="w-full flex items-center gap-2 rounded-xl px-3 py-2 hover:bg-[#F7F7F7] text-right text-[#525252]"
+              role="menuitem"
+            >
+              <KeyRound className="h-4 w-4" />
+              تغییر رمز عبور
+            </button>
             <button
               type="button"
               onClick={logout}
