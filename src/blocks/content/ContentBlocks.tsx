@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { safeEmbedUrl } from "@/lib/safe-url";
 import type { PageBlock } from "@/builder/types";
 import { useState, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
@@ -106,7 +107,7 @@ export function QuoteBlock({ block }: Props) {
 
 export function VideoBlock({ block }: Props) {
   const data = d(block);
-  const url = String(data.url ?? "");
+  const url = safeEmbedUrl(data.url);
   return (
     <div className="w-full px-4 sm:px-6 py-4">
       <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-muted">

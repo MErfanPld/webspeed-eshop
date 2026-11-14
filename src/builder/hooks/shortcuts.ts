@@ -44,6 +44,12 @@ export function handleBuilderKeyDown(e: KeyboardEvent, extra?: { onEscape?: () =
     void a.saveDraft();
     return;
   }
+  if (e.key === "Escape") {
+    if (typing) (e.target as HTMLElement).blur();
+    a.clearSelection();
+    extra?.onEscape?.();
+    return;
+  }
   // Inside inputs keep native text editing (undo, copy, paste…)
   if (typing) return;
 
@@ -70,9 +76,6 @@ export function handleBuilderKeyDown(e: KeyboardEvent, extra?: { onEscape?: () =
   } else if (mod && key === "d") {
     e.preventDefault();
     if (s.selectedBlockId) a.duplicateBlock(s.selectedBlockId);
-  } else if (e.key === "Escape") {
-    a.clearSelection();
-    extra?.onEscape?.();
   } else if ((e.key === "Delete" || e.key === "Backspace") && s.selectedBlockId) {
     e.preventDefault();
     void confirmAndRemove(s.selectedBlockId);

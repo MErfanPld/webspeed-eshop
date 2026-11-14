@@ -1,5 +1,10 @@
 import { defineConfig, devices } from "@playwright/test";
 
+export const E2E_ADMIN = {
+  email: process.env.E2E_ADMIN_EMAIL || "admin@webspeed.local",
+  password: process.env.E2E_ADMIN_PASSWORD || "admin12345",
+};
+
 const PORT = Number(process.env.E2E_PORT || 3100);
 const baseURL = process.env.E2E_BASE_URL || `http://localhost:${PORT}`;
 
@@ -32,6 +37,12 @@ export default defineConfig({
         url: baseURL,
         reuseExistingServer: !process.env.CI,
         timeout: 120_000,
-        env: { DATA_DIR: process.env.DATA_DIR || ".e2e-data" },
+        env: {
+          DATA_DIR: process.env.DATA_DIR || ".e2e-data",
+          AUTH_SECRET: process.env.AUTH_SECRET || "e2e-only-secret-not-for-production-0123456789",
+          ADMIN_EMAIL: E2E_ADMIN.email,
+          ADMIN_PASSWORD: E2E_ADMIN.password,
+          INSECURE_COOKIES: "1",
+        },
       },
 });

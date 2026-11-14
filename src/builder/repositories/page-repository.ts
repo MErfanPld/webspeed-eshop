@@ -11,6 +11,8 @@ export interface PageRepository {
   getPublishedPage(id: string): Promise<ManagedPage | null>;
   /** Published page by public URL slug */
   getPublishedPageBySlug(slug: string): Promise<ManagedPage | null>;
+  /** Create a new custom page (server assigns id, validates slug) */
+  createPage(input: { name: string; slug: string }): Promise<ManagedPage>;
   savePage(page: ManagedPage): Promise<ManagedPage>;
   deletePage(id: string): Promise<void>;
   duplicatePage(id: string): Promise<ManagedPage>;

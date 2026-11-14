@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Menu, Search, Bell, ExternalLink } from "lucide-react";
 import { pageTitleFromPath } from "./nav-config";
+import AccountMenu from "./AccountMenu";
 
 export default function AdminTopbar({ onMenuClick }: { onMenuClick?: () => void }) {
   const pathname = usePathname() || "/admin";
@@ -57,13 +58,7 @@ export default function AdminTopbar({ onMenuClick }: { onMenuClick?: () => void 
             <Bell className="h-4 w-4" />
           </button>
 
-          <Link
-            href="/admin/login"
-            className="h-8 w-8 rounded-full bg-[#111] text-white text-xs font-bold flex items-center justify-center shrink-0"
-            title="حساب"
-          >
-            W
-          </Link>
+          <AccountMenu />
         </div>
       </header>
 

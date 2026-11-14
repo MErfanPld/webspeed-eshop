@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { pageRepository } from "@/builder/repositories/local-storage-repository";
+import { pageRepository } from "@/builder/repositories";
+import { confirmDialog } from "@/components/ui/ConfirmDialog";
 import type { ManagedPage } from "@/builder/contracts/page-contract";
 import {
   normalizeSlug,
@@ -54,10 +55,18 @@ export default function AdminPagesPage() {
   const [slugTouched, setSlugTouched] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
+  const [listError, setListError] = useState<string | null>(null);
+
   const reload = async () => {
     setLoading(true);
-    setPages(await pageRepository.listPages());
-    setLoading(false);
+    try {
+      setPages(await pageRepository.listPages());
+      setListError(null);
+    } catch (e) {
+      setListError(e instanceof Error ? e.message : "خطا در دریافت صفحات");
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -101,23 +110,10 @@ export default function AdminPagesPage() {
     setCreating(true);
     setFormError(null);
     try {
-      const id = `page-${Date.now()}`;
-      const ts = new Date().toISOString();
       const finalSlug = normalizeSlug(slug || slugFromName(name));
-      await pageRepository.savePage({
-        schemaVersion: 1,
-        id,
-        name: name.trim(),
-        slug: finalSlug,
-        type: "custom",
-        status: "draft",
-        createdAt: ts,
-        updatedAt: ts,
-        blocks: [],
-        description: "",
-      });
+      const created = await pageRepository.createPage({ name: name.trim(), slug: finalSlug });
       setModalOpen(false);
-      router.push(`/admin/builder/${id}`);
+      router.push(`/admin/builder/${created.id}`);
     } catch (e) {
       setFormError(e instanceof Error ? e.message : "خطا در ساخت صفحه");
       setCreating(false);
@@ -125,22 +121,28 @@ export default function AdminPagesPage() {
   };
 
   const handleDuplicate = async (id: string) => {
-    const copy = await pageRepository.duplicatePage(id);
-    await reload();
-    router.push(`/admin/builder/${copy.id}`);
+    try {
+      const copy = await pageRepository.duplicatePage(id);
+      router.push(`/admin/builder/${copy.id}`);
+    } catch (e) {
+      setListError(e instanceof Error ? e.message : "خطا در تکرار صفحه");
+    }
   };
 
   const handleDelete = async (id: string) => {
-    if (SYSTEM_IDS.has(id) || id === "home") {
-      alert("صفحات سیستمی قابل حذف نیستند");
-      return;
-    }
-    if (!confirm("حذف این صفحه؟")) return;
+    if (SYSTEM_IDS.has(id)) return;
+    const ok = await confirmDialog({
+      title: "حذف صفحه؟",
+      message: "این عمل قابل بازگشت نیست و صفحه از فروشگاه هم حذف می‌شود.",
+      confirmLabel: "حذف",
+      danger: true,
+    });
+    if (!ok) return;
     try {
       await pageRepository.deletePage(id);
       await reload();
     } catch (e) {
-      alert(e instanceof Error ? e.message : "خطا");
+      setListError(e instanceof Error ? e.message : "خطا در حذف صفحه");
     }
   };
 
@@ -162,6 +164,12 @@ export default function AdminPagesPage() {
           صفحه جدید
         </button>
       </div>
+
+      {listError && (
+        <p role="alert" className="text-xs text-red-700 bg-red-50 border border-red-100 rounded-xl px-3 py-2">
+          {listError}
+        </p>
+      )}
 
       <div className="border border-[#E8E8E8] rounded-2xl overflow-hidden bg-white">
         <div className="hidden md:block overflow-x-auto">
@@ -217,7 +225,7 @@ export default function AdminPagesPage() {
                           <Pencil className="h-3.5 w-3.5" />
                           ویرایش
                         </Link>
-                        {p.status === "published" && p.slug && (
+                        {p.status === "published" && p.slug && p.type !== "header" && p.type !== "footer" && (
                           <Link
                             href={p.slug === "/" ? "/" : p.slug}
                             className="h-8 w-8 rounded-lg border border-[#E8E8E8] inline-flex items-center justify-center"
@@ -226,15 +234,17 @@ export default function AdminPagesPage() {
                             <ExternalLink className="h-3.5 w-3.5" />
                           </Link>
                         )}
-                        <button
-                          type="button"
-                          onClick={() => handleDuplicate(p.id)}
-                          className="h-8 w-8 rounded-lg border border-[#E8E8E8] inline-flex items-center justify-center"
-                          title="تکرار"
-                        >
-                          <Copy className="h-3.5 w-3.5" />
-                        </button>
-                        {!SYSTEM_IDS.has(p.id) && p.id !== "home" && (
+                        {p.type !== "header" && p.type !== "footer" && (
+                          <button
+                            type="button"
+                            onClick={() => handleDuplicate(p.id)}
+                            className="h-8 w-8 rounded-lg border border-[#E8E8E8] inline-flex items-center justify-center"
+                            title="تکرار"
+                          >
+                            <Copy className="h-3.5 w-3.5" />
+                          </button>
+                        )}
+                        {!SYSTEM_IDS.has(p.id) && (
                           <button
                             type="button"
                             onClick={() => handleDelete(p.id)}

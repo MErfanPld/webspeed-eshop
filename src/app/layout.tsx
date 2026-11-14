@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from "next";
 import "./fonts.css";
 import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
-import ShopChrome from "@/components/layout/ShopChrome";
 
 export const metadata: Metadata = {
   title: {
@@ -15,9 +14,6 @@ export const metadata: Metadata = {
     type: "website",
     locale: "fa_IR",
     siteName: "WebSpeed",
-    title: "WebSpeed | فروشگاه اینترنتی",
-    description:
-      "خرید آنلاین با ارسال سریع، ضمانت اصالت کالا و بهترین قیمت.",
   },
 };
 
@@ -40,9 +36,7 @@ export default function RootLayout({
         className="min-h-screen flex flex-col no-x-scroll font-sans antialiased bg-background text-foreground"
         suppressHydrationWarning
       >
-        <CartProvider>
-          <ShopChrome>{children}</ShopChrome>
-        </CartProvider>
+        <CartProvider>{children}</CartProvider>
       </body>
     </html>
   );

@@ -1,7 +1,7 @@
 /**
  * The PageRepository used by the builder and admin UI.
- * Swap the implementation here (e.g. LocalStorage → HTTP API) without
+ * Backed by the admin HTTP API. Swap the implementation here without
  * touching any UI code.
  */
-export { pageRepository } from "./local-storage-repository";
+export { httpPageRepository as pageRepository } from "./http-repository";
 export type { PageRepository } from "./page-repository";

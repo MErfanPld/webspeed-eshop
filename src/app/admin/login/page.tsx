@@ -21,9 +21,27 @@ export default function AdminLoginPage() {
       return;
     }
     setLoading(true);
-    await new Promise((r) => setTimeout(r, 400));
-    setLoading(false);
-    router.push("/admin");
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email.trim(), password }),
+      });
+      const body = (await res.json().catch(() => ({}))) as { error?: string };
+      if (!res.ok) {
+        setError(body.error || "ورود ناموفق بود.");
+        return;
+      }
+      // Only follow same-site relative paths after login
+      const next = new URLSearchParams(window.location.search).get("next") || "/admin";
+      const safeNext = next.startsWith("/admin") && !next.startsWith("//") ? next : "/admin";
+      router.replace(safeNext);
+      router.refresh();
+    } catch {
+      setError("ارتباط با سرور برقرار نشد.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
