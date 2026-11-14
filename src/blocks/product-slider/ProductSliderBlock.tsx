@@ -10,6 +10,7 @@ import type {
 import Container from "@/components/ui/Container";
 import ProductCard from "@/components/products/ProductCard";
 import { resolveProducts } from "@/lib/products-query";
+import { useCatalog } from "@/context/CatalogContext";
 
 export default function ProductSliderBlockView({
   block,
@@ -17,11 +18,12 @@ export default function ProductSliderBlockView({
   block: PageBlock;
 }) {
   const data = (block as ProductSliderBlockType).data;
+  const { products: catalogProducts } = useCatalog();
   const list = resolveProducts({
     productIds: data.productIds,
     source: data.source,
     limit: data.limit ?? 8,
-  });
+  }, catalogProducts);
   const scroller = useRef<HTMLDivElement>(null);
 
   const scrollBy = (dir: 1 | -1) => {

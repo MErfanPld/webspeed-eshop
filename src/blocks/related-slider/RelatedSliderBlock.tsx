@@ -9,6 +9,7 @@ import type {
 import Container from "@/components/ui/Container";
 import ProductCard from "@/components/products/ProductCard";
 import { resolveProducts } from "@/lib/products-query";
+import { useCatalog } from "@/context/CatalogContext";
 
 export default function RelatedSliderBlockView({
   block,
@@ -16,10 +17,11 @@ export default function RelatedSliderBlockView({
   block: PageBlock;
 }) {
   const data = (block as RelatedSliderBlockType).data;
+  const { products: catalogProducts } = useCatalog();
   const list = resolveProducts({
     productIds: data.productIds,
     limit: 12,
-  });
+  }, catalogProducts);
   const scroller = useRef<HTMLDivElement>(null);
 
   const scrollBy = (dir: 1 | -1) => {

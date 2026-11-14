@@ -2,9 +2,11 @@
 
 /**
  * Shared page renderer for Builder Preview and Storefront.
- * Uses the same BlockRenderer + existing block views — no duplicates.
+ * A failing block is isolated (rendered as nothing) so one bad block
+ * never takes the whole page down.
  */
 import { BlockRenderer } from "@/builder/BlockRenderer";
+import BlockErrorBoundary from "@/builder/components/BlockErrorBoundary";
 import type { PageBlock } from "@/builder/types";
 
 export function PageRenderer({ blocks }: { blocks: PageBlock[] }) {
@@ -13,7 +15,9 @@ export function PageRenderer({ blocks }: { blocks: PageBlock[] }) {
   return (
     <div className="flex flex-col gap-0">
       {blocks.map((block) => (
-        <BlockRenderer key={block.id} block={block} />
+        <BlockErrorBoundary key={block.id} blockId={block.id} blockType={block.type} silent>
+          <BlockRenderer block={block} />
+        </BlockErrorBoundary>
       ))}
     </div>
   );

@@ -5,7 +5,10 @@ import type { PageBlock } from "@/builder/types";
 import type { ManagedPage } from "@/builder/contracts/page-contract";
 import { homePageConfig } from "@/config/home-page";
 import { pageRepository } from "@/builder/repositories/local-storage-repository";
-import { createBlockInstance } from "@/builder/registry/block-registry";
+import {
+  createBlockInstance,
+  regenerateIds,
+} from "@/builder/registry/block-registry";
 import {
   mergeStyleIntoData,
   pickStyleData,
@@ -143,10 +146,9 @@ function errorMessage(e: unknown): string {
   return e instanceof Error && e.message ? e.message : "ذخیره ناموفق بود";
 }
 
+/** Deep copy with fresh ids for the block and every nested item/child */
 function reId(block: PageBlock): PageBlock {
-  const copy = structuredClone(block) as PageBlock;
-  copy.id = `${copy.type}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
-  return copy;
+  return regenerateIds(structuredClone(block)) as PageBlock;
 }
 
 const actions: BuilderActions = {

@@ -3,22 +3,26 @@ import type { Product } from "@/types/product";
 
 export type ProductSource = "featured" | "new" | "bestsellers" | "all";
 
-export function resolveProducts(options: {
-  productIds?: string[];
-  source?: ProductSource;
-  limit?: number;
-}): Product[] {
+export function resolveProducts(
+  options: {
+    productIds?: string[];
+    source?: ProductSource;
+    limit?: number;
+  },
+  catalog: Product[] = products
+): Product[] {
   const { productIds, source = "all", limit = 8 } = options;
+  const products_ = catalog;
 
   if (productIds?.length) {
-    const map = new Map(products.map((p) => [p.id, p]));
+    const map = new Map(products_.map((p) => [p.id, p]));
     return productIds
       .map((id) => map.get(id))
       .filter(Boolean)
       .slice(0, limit) as Product[];
   }
 
-  let list = [...products];
+  let list = [...products_];
   switch (source) {
     case "featured":
       list = list.filter((p) => p.featured);

@@ -2,41 +2,30 @@
 
 import { useMemo, useState } from "react";
 import {
-  Search,
-  Image,
-  Megaphone,
-  Timer,
-  LayoutList,
-  LayoutGrid,
-  GitBranch,
-  FolderTree,
-  Award,
-  Shield,
-  HelpCircle,
-  MessageSquareQuote,
-  Mail,
-  Plus,
+  Search, Megaphone, PanelTop, PanelBottom, RectangleHorizontal, Square, Columns3, Rows3,
+  LayoutGrid, Columns2, MoveVertical, Minus, GalleryHorizontal, Timer, MousePointerClick,
+  Hourglass, ShoppingCart, GalleryHorizontalEnd, Star, TrendingUp, Sparkles, GitBranch,
+  FolderTree, Award, Cloud, Heading, Pilcrow, FileText, RectangleEllipsis, Image, Video,
+  BadgeCheck, Quote, ChartNoAxesColumn, HelpCircle, ListCollapse, PanelsTopLeft,
+  ChevronsLeft, FileX, Shield, ShieldCheck, ListChecks, MessageSquareQuote, Mail, MailPlus,
+  Send, LogIn, Plus,
 } from "lucide-react";
 import {
   blockRegistry,
   categoryLabels,
 } from "@/builder/registry/block-registry";
+import type { BlockCategory } from "@/builder/schema-types";
 import { useBuilderStore } from "@/builder/store/builder-store";
 import { cn } from "@/lib/utils";
 
 const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
-  Image,
-  Megaphone,
-  Timer,
-  LayoutList,
-  LayoutGrid,
-  GitBranch,
-  FolderTree,
-  Award,
-  Shield,
-  HelpCircle,
-  MessageSquareQuote,
-  Mail,
+  Search, Megaphone, PanelTop, PanelBottom, RectangleHorizontal, Square, Columns3, Rows3,
+  LayoutGrid, Columns2, MoveVertical, Minus, GalleryHorizontal, Timer, MousePointerClick,
+  Hourglass, ShoppingCart, GalleryHorizontalEnd, Star, TrendingUp, Sparkles, GitBranch,
+  FolderTree, Award, Cloud, Heading, Pilcrow, FileText, RectangleEllipsis, Image, Video,
+  BadgeCheck, Quote, ChartNoAxesColumn, HelpCircle, ListCollapse, PanelsTopLeft,
+  ChevronsLeft, FileX, Shield, ShieldCheck, ListChecks, MessageSquareQuote, Mail, MailPlus,
+  Send, LogIn,
 };
 
 export default function BlockLibrary() {
@@ -90,7 +79,7 @@ export default function BlockLibrary() {
                   : "bg-muted text-muted-foreground hover:text-foreground"
               )}
             >
-              {c === "all" ? "همه" : categoryLabels[c] || c}
+              {c === "all" ? "همه" : categoryLabels[c as BlockCategory] || c}
             </button>
           ))}
         </div>

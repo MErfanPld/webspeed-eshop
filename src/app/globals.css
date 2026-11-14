@@ -234,3 +234,59 @@
     max-width: 100vw;
   }
 }
+
+/* ------------------------------------------------------------------ */
+/* Responsive block values (see src/builder/responsive/css.ts)          */
+/* desktop ≥1024 · tablet 768–1023 · mobile ≤767                        */
+/* Each value falls back mobile → tablet → desktop.                     */
+/* ------------------------------------------------------------------ */
+.ws-r-mt { margin-top: var(--ws-mt-d, 0px); }
+.ws-r-mb { margin-bottom: var(--ws-mb-d, 0px); }
+.ws-r-py { padding-top: var(--ws-py-d, 0px); padding-bottom: var(--ws-py-d, 0px); }
+.ws-r-maxw { max-width: var(--ws-maxw-d, none); }
+.ws-r-cols { grid-template-columns: repeat(var(--ws-cols-d, 1), minmax(0, 1fr)); }
+.ws-r-gap { gap: var(--ws-gap-d, 0px); }
+.ws-r-h { height: var(--ws-h-d, 0px); }
+
+@media (max-width: 1023px) {
+  .ws-r-mt { margin-top: var(--ws-mt-t, var(--ws-mt-d, 0px)); }
+  .ws-r-mb { margin-bottom: var(--ws-mb-t, var(--ws-mb-d, 0px)); }
+  .ws-r-py {
+    padding-top: var(--ws-py-t, var(--ws-py-d, 0px));
+    padding-bottom: var(--ws-py-t, var(--ws-py-d, 0px));
+  }
+  .ws-r-maxw { max-width: var(--ws-maxw-t, var(--ws-maxw-d, none)); }
+  .ws-r-cols { grid-template-columns: repeat(var(--ws-cols-t, var(--ws-cols-d, 1)), minmax(0, 1fr)); }
+  .ws-r-gap { gap: var(--ws-gap-t, var(--ws-gap-d, 0px)); }
+  .ws-r-h { height: var(--ws-h-t, var(--ws-h-d, 0px)); }
+}
+
+@media (max-width: 767px) {
+  .ws-r-mt { margin-top: var(--ws-mt-m, var(--ws-mt-t, var(--ws-mt-d, 0px))); }
+  .ws-r-mb { margin-bottom: var(--ws-mb-m, var(--ws-mb-t, var(--ws-mb-d, 0px))); }
+  .ws-r-py {
+    padding-top: var(--ws-py-m, var(--ws-py-t, var(--ws-py-d, 0px)));
+    padding-bottom: var(--ws-py-m, var(--ws-py-t, var(--ws-py-d, 0px)));
+  }
+  .ws-r-maxw { max-width: var(--ws-maxw-m, var(--ws-maxw-t, var(--ws-maxw-d, none))); }
+  .ws-r-cols { grid-template-columns: repeat(var(--ws-cols-m, var(--ws-cols-t, var(--ws-cols-d, 1))), minmax(0, 1fr)); }
+  .ws-r-gap { gap: var(--ws-gap-m, var(--ws-gap-t, var(--ws-gap-d, 0px))); }
+  .ws-r-h { height: var(--ws-h-m, var(--ws-h-t, var(--ws-h-d, 0px))); }
+}
+
+/* Per-device visibility */
+@media (min-width: 1024px) { .ws-hide-d { display: none !important; } }
+@media (min-width: 768px) and (max-width: 1023px) { .ws-hide-t { display: none !important; } }
+@media (max-width: 767px) { .ws-hide-m { display: none !important; } }
+
+/* Builder (edit mode, inside the canvas iframe): keep hidden blocks
+   selectable but visibly faded instead of removing them. */
+@media (min-width: 1024px) {
+  html.ws-builder-edit .ws-hide-d { display: block !important; opacity: 0.35; outline: 1px dashed #94a3b8; }
+}
+@media (min-width: 768px) and (max-width: 1023px) {
+  html.ws-builder-edit .ws-hide-t { display: block !important; opacity: 0.35; outline: 1px dashed #94a3b8; }
+}
+@media (max-width: 767px) {
+  html.ws-builder-edit .ws-hide-m { display: block !important; opacity: 0.35; outline: 1px dashed #94a3b8; }
+}

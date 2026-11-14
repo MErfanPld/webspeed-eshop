@@ -1,3 +1,5 @@
+"use client";
+
 import type {
   ProductGridBlock as ProductGridBlockType,
   PageBlock,
@@ -5,6 +7,7 @@ import type {
 import Container from "@/components/ui/Container";
 import ProductGrid from "@/components/products/ProductGrid";
 import { resolveProducts } from "@/lib/products-query";
+import { useCatalog } from "@/context/CatalogContext";
 
 export default function ProductGridBlockView({
   block,
@@ -12,11 +15,12 @@ export default function ProductGridBlockView({
   block: PageBlock;
 }) {
   const data = (block as ProductGridBlockType).data;
+  const { products: catalogProducts } = useCatalog();
   const list = resolveProducts({
     productIds: data.productIds,
     source: data.source,
     limit: data.limit ?? 8,
-  });
+  }, catalogProducts);
 
   if (!list.length) return null;
 

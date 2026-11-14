@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import type { PageBlock } from "@/builder/types";
-import { BlockRenderer } from "@/builder/BlockRenderer";
 import { useState, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
 
@@ -13,10 +12,6 @@ function d(block: PageBlock): Data {
   return ((block as { data?: Data }).data || {}) as Data;
 }
 
-function childrenOf(block: PageBlock): PageBlock[] {
-  const c = d(block).children;
-  return Array.isArray(c) ? (c as PageBlock[]) : [];
-}
 
 export function HeadingBlock({ block }: Props) {
   const data = d(block);
@@ -299,9 +294,13 @@ export function TabsBlock({ block }: Props) {
 
 export function LogoCloudBlock({ block }: Props) {
   const data = d(block);
+  // Accept legacy string[] and the registry's { name }[] shape
   const logos = (Array.isArray(data.logos)
     ? data.logos
-    : ["Brand A", "Brand B", "Brand C", "Brand D"]) as string[];
+    : ["Brand A", "Brand B", "Brand C", "Brand D"]
+  ).map((l) =>
+    typeof l === "string" ? l : String((l as { name?: unknown })?.name ?? "")
+  );
   return (
     <section className="w-full px-4 sm:px-6 py-10 border-y border-border bg-[#fafafa]">
       {data.title ? (
@@ -317,43 +316,6 @@ export function LogoCloudBlock({ block }: Props) {
         ))}
       </div>
     </section>
-  );
-}
-
-export function GridBlock({ block }: Props) {
-  const data = d(block);
-  const cols = Number(data.columns ?? 3);
-  const gap = Number(data.gap ?? 16);
-  return (
-    <div
-      className="w-full px-4 sm:px-6 py-4 grid"
-      style={{
-        gridTemplateColumns: `repeat(${Math.min(Math.max(cols, 1), 6)}, minmax(0, 1fr))`,
-        gap,
-      }}
-    >
-      {childrenOf(block).map((c) => (
-        <BlockRenderer key={c.id} block={c} />
-      ))}
-    </div>
-  );
-}
-
-export function FlexBlock({ block }: Props) {
-  const data = d(block);
-  return (
-    <div
-      className="w-full px-4 sm:px-6 py-4 flex flex-wrap"
-      style={{
-        gap: Number(data.gap ?? 16),
-        justifyContent: String(data.justify ?? "flex-start"),
-        alignItems: String(data.align ?? "center"),
-      }}
-    >
-      {childrenOf(block).map((c) => (
-        <BlockRenderer key={c.id} block={c} />
-      ))}
-    </div>
   );
 }
 

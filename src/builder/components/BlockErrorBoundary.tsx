@@ -6,6 +6,8 @@ type Props = {
   blockId?: string;
   blockType?: string;
   onRemove?: () => void;
+  /** Storefront mode: render nothing instead of the error card */
+  silent?: boolean;
   children: React.ReactNode;
 };
 
@@ -24,6 +26,7 @@ export default class BlockErrorBoundary extends React.Component<Props, State> {
 
   render() {
     if (this.state.hasError) {
+      if (this.props.silent) return null;
       return (
         <div className="mx-4 my-3 rounded-xl border border-red-200 bg-red-50 px-4 py-6 text-center">
           <p className="text-sm font-semibold text-red-700">

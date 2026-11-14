@@ -8,9 +8,9 @@ export type FieldType =
   | "image"
   | "url"
   | "array"
-  | "visibility"
-  | "spacing"
-  | "responsiveNumber";
+  | "responsiveNumber"
+  | "datetime"
+  | "productIds";
 
 export type SelectOption = {
   label: string;

@@ -2,7 +2,10 @@
 
 import { useMemo } from "react";
 import { useBuilderStore } from "@/builder/store/builder-store";
-import { getBlockDefinition } from "@/builder/registry/block-registry";
+import {
+  getBlockDefinition,
+  COMMON_FIELDS,
+} from "@/builder/registry/block-registry";
 import FieldRenderer from "./FieldRenderer";
 import { Settings2, Monitor, Tablet, Smartphone, FileText } from "lucide-react";
 import type { FieldSchema } from "@/builder/schema-types";
@@ -28,6 +31,14 @@ const GROUP_ORDER = [
   "حاشیه",
   "جلوه‌ها",
   "رفتار",
+  "داده",
+  "زمان",
+  "منو",
+  "لینک‌ها",
+  "تماس",
+  "خبرنامه",
+  "فیلدها",
+  "ظاهر",
   "پیشرفته",
 ];
 
@@ -46,7 +57,7 @@ export default function PropertiesPanel() {
 
   // Hooks must run unconditionally (before any early return)
   const groups = useMemo(() => {
-    const schema = def?.schema ?? [];
+    const schema = def ? [...def.schema, ...COMMON_FIELDS] : [];
     const map = new Map<string, FieldSchema[]>();
     for (const field of schema) {
       const g = field.group || "محتوا";
@@ -63,6 +74,18 @@ export default function PropertiesPanel() {
     map.forEach((fields, name) => ordered.push({ name, fields }));
     return ordered;
   }, [def?.schema]);
+
+  if (block && !def) {
+    return (
+      <div className="p-4 space-y-2 text-xs">
+        <p className="font-bold text-red-700">بلوک ناشناخته</p>
+        <p className="text-muted-foreground">
+          نوع <code className="font-mono">{block.type}</code> در رجیستری تعریف نشده و قابل ویرایش نیست.
+          می‌توانید آن را حذف کنید.
+        </p>
+      </div>
+    );
+  }
 
   if (!block || !def) {
     return (
@@ -246,11 +269,7 @@ export default function PropertiesPanel() {
             ))}
           </div>
         ))}
-        {!def.schema.length && (
-          <p className="text-xs text-muted-foreground">
-            فیلد قابل ویرایشی تعریف نشده است.
-          </p>
-        )}
+
       </div>
     </div>
   );

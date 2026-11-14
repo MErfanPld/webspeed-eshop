@@ -8,6 +8,7 @@ import type {
 import Container from "@/components/ui/Container";
 import ProductCard from "@/components/products/ProductCard";
 import { resolveProducts } from "@/lib/products-query";
+import { useCatalog } from "@/context/CatalogContext";
 import { formatNumber } from "@/lib/utils";
 
 /**
@@ -53,11 +54,12 @@ function useCountdown(endsAt: string | undefined, recurring?: string) {
 
 export default function FlashSaleBlockView({ block }: { block: PageBlock }) {
   const data = (block as FlashSaleBlockType).data;
+  const { products: catalogProducts } = useCatalog();
   const list = resolveProducts({
     productIds: data.productIds,
     source: "featured",
     limit: data.limit ?? 6,
-  });
+  }, catalogProducts);
   const t = useCountdown(data.endsAt, data.recurring);
 
   if (!list.length) return null;
