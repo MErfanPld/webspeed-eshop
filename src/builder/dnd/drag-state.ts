@@ -32,6 +32,11 @@ export function startDrag(e: DragEvent | React.DragEvent, payload: DragPayload) 
   }
 }
 
+/** Start a drag without an HTML5 DragEvent (touch / pen, see touch-drag.ts) */
+export function beginDrag(payload: DragPayload) {
+  current = payload;
+}
+
 export function getDrag(): DragPayload | null {
   return current;
 }

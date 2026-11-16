@@ -17,6 +17,8 @@ import {
 import type { BlockCategory } from "@/builder/schema-types";
 import { useBuilderStore } from "@/builder/store/builder-store";
 import { cancelDrag, startDrag } from "@/builder/dnd/drag-state";
+import { touchDragStart } from "@/builder/dnd/touch-drag";
+import SavedBlocksSection from "./SavedBlocksSection";
 import { cn } from "@/lib/utils";
 
 const ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -59,7 +61,7 @@ export default function BlockLibrary() {
           کتابخانه بلوک‌ها
         </h2>
         <p className="text-[10px] text-muted-foreground">
-          بکشید و در بوم رها کنید، یا کلیک کنید تا بعد از بلوک انتخاب‌شده اضافه شود.
+          بکشید و در بوم رها کنید (لمسی: کمی نگه دارید و بکشید)، یا کلیک کنید تا بعد از بلوک انتخاب‌شده اضافه شود.
         </p>
         <div className="relative">
           <Search className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
@@ -89,6 +91,7 @@ export default function BlockLibrary() {
         </div>
       </div>
 
+      <SavedBlocksSection />
       <div className="flex-1 overflow-y-auto p-2 space-y-1">
         {filtered.map((block) => {
           const Icon = ICONS[block.icon] || LayoutGrid;
@@ -99,6 +102,8 @@ export default function BlockLibrary() {
               draggable
               onDragStart={(e) => startDrag(e, { kind: "new", type: block.type })}
               onDragEnd={() => cancelDrag()}
+              onPointerDown={(e) => touchDragStart(e, { kind: "new", type: block.type }, block.nameFa)}
+              onContextMenu={(e) => e.preventDefault()}
               onClick={() => addBlock(block.type)}
               title="کلیک: افزودن کنار بلوک انتخاب‌شده · کشیدن: رها کردن در بوم"
               className="w-full flex items-start gap-3 p-2.5 rounded-xl border border-transparent hover:border-border hover:bg-white text-right transition-all group"

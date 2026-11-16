@@ -7,6 +7,7 @@ import { isLocked, useBuilderStore } from "@/builder/store/builder-store";
 import { cn } from "@/lib/utils";
 import { Copy, Trash2, ChevronUp, ChevronDown, GripVertical, Lock, LockOpen, EyeOff } from "lucide-react";
 import { getBlockDefinition } from "@/builder/registry/block-registry";
+import { touchDragStart } from "@/builder/dnd/touch-drag";
 import {
   cancelDrag,
   commitDrop,
@@ -53,6 +54,7 @@ export function EmptyDropZone({ parentId, label }: { parentId: string | null; la
   const active = dropTarget?.position === "inside" && dropTarget.anchorId === parentId && dropTarget.parentId === parentId;
   return (
     <div
+      data-drop-zone={parentId ?? ""}
       className={cn(
         "m-2 flex min-h-[72px] items-center justify-center rounded-lg border-2 border-dashed px-3 text-center text-[11px] transition-colors",
         active ? "border-[#5D87FF] bg-[#5D87FF]/5 text-[#5D87FF]" : "border-[#CBD5E1] text-[#94A3B8]"
@@ -110,6 +112,11 @@ export default function CanvasBlock({ block, index, siblingsCount }: Props) {
       onDragEnd={(e) => {
         e.stopPropagation();
         cancelDrag();
+      }}
+      onPointerDown={(e) => {
+        if (locked || e.pointerType === "mouse") return;
+        e.stopPropagation();
+        touchDragStart(e, { kind: "move", id: block.id, type: block.type }, block.type);
       }}
       onDragOver={(e) => {
         if (!getDrag()) return;
