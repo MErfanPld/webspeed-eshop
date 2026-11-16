@@ -56,7 +56,7 @@ export default function CategoryGridBlockView({
                       src={cat.image}
                       alt={cat.name}
                       fill
-                      className="object-cover transition-transform duration-400 group-hover:scale-105"
+                      className="object-cover object-left transition-transform duration-400 group-hover:scale-105"
                       sizes="96px"
                     />
                   )}

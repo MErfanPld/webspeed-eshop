@@ -46,7 +46,7 @@ export default function MegaMenu({ open, onClose }: Props) {
                         }
                         alt=""
                         fill
-                        className="object-cover"
+                        className="object-cover object-left"
                         sizes="36px"
                       />
                     </span>
