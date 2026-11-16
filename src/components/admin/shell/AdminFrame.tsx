@@ -6,6 +6,7 @@ import AdminShell from "./AdminShell";
 import { AdminSessionProvider, type AdminSession } from "@/context/AdminSessionContext";
 import { CatalogProvider, type Catalog } from "@/context/CatalogContext";
 import { ConfirmHost } from "@/components/ui/ConfirmDialog";
+import { isPublicAdminPath } from "@/lib/admin-paths";
 
 export default function AdminFrame({
   session,
@@ -19,7 +20,7 @@ export default function AdminFrame({
   const pathname = usePathname();
   const router = useRouter();
   const isBuilder = pathname?.startsWith("/admin/builder");
-  const isLogin = pathname === "/admin/login";
+  const isLogin = isPublicAdminPath(pathname);
 
   // Stale cookie (session revoked): send to login
   useEffect(() => {

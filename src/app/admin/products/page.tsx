@@ -12,20 +12,25 @@ import AdminBadge from "@/components/admin/ui/AdminBadge";
 import AdminEmptyState from "@/components/admin/ui/AdminEmptyState";
 import AdminInput from "@/components/admin/ui/AdminInput";
 
+const PAGE_SIZE = 25;
+
 export default function AdminProductsPage() {
   const [q, setQ] = useState("");
+  const [status, setStatus] = useState<"" | ProductRecord["status"] | "out">("");
+  const [page, setPage] = useState(1);
   const products = useCatalog().products as ProductRecord[];
 
-  const filtered = useMemo(() => {
-    if (!q.trim()) return products;
+  const all = useMemo(() => {
     const s = q.trim().toLowerCase();
     return products.filter(
       (p) =>
-        p.name.toLowerCase().includes(s) ||
-        p.slug.toLowerCase().includes(s) ||
-        (p.brand || "").toLowerCase().includes(s)
+        (!s || p.name.toLowerCase().includes(s) || p.slug.toLowerCase().includes(s) || (p.brand || "").toLowerCase().includes(s)) &&
+        (!status || (status === "out" ? p.stock <= 0 : p.status === status))
     );
-  }, [q, products]);
+  }, [q, status, products]);
+  const pages = Math.max(1, Math.ceil(all.length / PAGE_SIZE));
+  const current = Math.min(page, pages);
+  const filtered = all.slice((current - 1) * PAGE_SIZE, current * PAGE_SIZE);
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
@@ -42,14 +47,34 @@ export default function AdminProductsPage() {
         }
       />
 
-      <div className="relative max-w-sm">
-        <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#A3A3A3]" />
-        <AdminInput
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder="جستجوی نام، برند یا اسلاگ..."
-          className="pr-9"
-        />
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="relative max-w-sm flex-1">
+          <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#A3A3A3]" />
+          <AdminInput
+            value={q}
+            onChange={(e) => {
+              setQ(e.target.value);
+              setPage(1);
+            }}
+            placeholder="جستجوی نام، برند یا اسلاگ..."
+            className="pr-9"
+          />
+        </div>
+        <select
+          aria-label="فیلتر وضعیت"
+          value={status}
+          onChange={(e) => {
+            setStatus(e.target.value as typeof status);
+            setPage(1);
+          }}
+          className="h-10 rounded-xl border border-[#E8E8E8] bg-white px-3 text-sm"
+        >
+          <option value="">همه وضعیت‌ها</option>
+          <option value="active">فعال</option>
+          <option value="draft">پیش‌نویس</option>
+          <option value="archived">بایگانی</option>
+          <option value="out">ناموجود</option>
+        </select>
       </div>
 
       {!filtered.length ? (
@@ -139,6 +164,21 @@ export default function AdminProductsPage() {
             </table>
           </div>
         </div>
+      )}
+      {pages > 1 && (
+        <nav className="flex items-center justify-between gap-3" aria-label="صفحه‌بندی">
+          <span className="text-xs text-[#737373]">
+            صفحه {formatNumber(current)} از {formatNumber(pages)} · {formatNumber(all.length)} محصول
+          </span>
+          <div className="flex gap-2">
+            <AdminButton size="sm" disabled={current <= 1} onClick={() => setPage(current - 1)}>
+              قبلی
+            </AdminButton>
+            <AdminButton size="sm" disabled={current >= pages} onClick={() => setPage(current + 1)}>
+              بعدی
+            </AdminButton>
+          </div>
+        </nav>
       )}
     </div>
   );

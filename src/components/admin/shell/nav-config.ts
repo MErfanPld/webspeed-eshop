@@ -16,6 +16,9 @@ import {
   CircleDot,
   UsersRound,
   KeyRound,
+  MessageSquare,
+  History,
+  GraduationCap,
 } from "lucide-react";
 
 export type NavItem = {
@@ -42,7 +45,8 @@ export const adminNav: NavSection[] = [
     items: [
       { href: "/admin/products", label: "محصولات", icon: Package },
       { href: "/admin/categories", label: "دسته‌بندی‌ها", icon: Tags },
-      { href: "/admin/brands", label: "برندها", icon: CircleDot, disabled: true },
+      { href: "/admin/brands", label: "برندها", icon: CircleDot },
+      { href: "/admin/reviews", label: "نظرات", icon: MessageSquare },
     ],
   },
   {
@@ -50,7 +54,7 @@ export const adminNav: NavSection[] = [
     items: [
       { href: "/admin/orders", label: "سفارش‌ها", icon: ShoppingBag },
       { href: "/admin/customers", label: "مشتری‌ها", icon: Users },
-      { href: "/admin/discounts", label: "تخفیف‌ها", icon: Percent, disabled: true },
+      { href: "/admin/coupons", label: "تخفیف‌ها", icon: Percent },
     ],
   },
   {
@@ -72,6 +76,8 @@ export const adminNav: NavSection[] = [
       { href: "/admin/team", label: "اعضای تیم", icon: UsersRound },
       { href: "/admin/stores", label: "فروشگاه‌ها", icon: Store },
       { href: "/admin/account", label: "حساب و رمز عبور", icon: KeyRound },
+      { href: "/admin/audit", label: "گزارش فعالیت", icon: History },
+      { href: "/admin/help", label: "آموزش و راهنما", icon: GraduationCap },
       { href: "/", label: "مشاهده فروشگاه", icon: Search },
     ],
   },
@@ -91,5 +97,10 @@ export function pageTitleFromPath(pathname: string): string {
   if (pathname.startsWith("/admin/stores")) return "فروشگاه‌ها";
   if (pathname.startsWith("/admin/team")) return "اعضای تیم";
   if (pathname.startsWith("/admin/account")) return "حساب کاربری";
+  if (pathname.startsWith("/admin/brands")) return "برندها";
+  if (pathname.startsWith("/admin/coupons")) return "کدهای تخفیف";
+  if (pathname.startsWith("/admin/reviews")) return "نظرات";
+  if (pathname.startsWith("/admin/audit")) return "گزارش فعالیت";
+  if (pathname.startsWith("/admin/help")) return "آموزش و راهنما";
   return "پنل مدیریت";
 }

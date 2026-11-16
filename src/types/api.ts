@@ -38,6 +38,11 @@ export type Order = {
   shipping: number;
   total: number;
   hasReceipt: boolean;
+  discount?: number;
+  couponCode?: string | null;
+  paymentMethod?: "card" | "online";
+  paid?: boolean;
+  paidAt?: string | null;
   note: string | null;
   createdAt: string;
   updatedAt: string;
@@ -108,6 +113,68 @@ export type DashboardStats = {
   publishedPages: number;
 };
 
-export type Pagination = { page: number; pageSize: number; total: number; pages: number };
 
 export type { Category, Product };
+
+export type Brand = { id: number; slug: string; name: string; logo: string; products?: number };
+
+export type CouponKind = "percent" | "fixed";
+export type Coupon = {
+  id: number;
+  code: string;
+  kind: CouponKind;
+  value: number;
+  maxDiscount: number | null;
+  minOrder: number;
+  usageLimit: number | null;
+  perCustomerLimit: number | null;
+  usedCount: number;
+  startsAt: string | null;
+  endsAt: string | null;
+  active: boolean;
+  createdAt: string;
+};
+
+export type ReviewStatus = "pending" | "approved" | "rejected";
+export type AdminReview = {
+  id: number;
+  user: string;
+  rating: number;
+  comment: string;
+  date: string;
+  status: ReviewStatus;
+  productId: string;
+  productName: string;
+};
+
+export type Address = {
+  id: number;
+  title: string;
+  fullName: string;
+  phone: string;
+  province: string;
+  city: string;
+  address: string;
+  postalCode: string;
+  isDefault: boolean;
+};
+
+export type AuditEntry = {
+  id: number;
+  action: string;
+  target: string;
+  meta: Record<string, unknown>;
+  user: string | null;
+  createdAt: string;
+};
+
+export type Pagination = { page: number; pageSize: number; total: number; pages: number };
+
+export type SavedBlockItem = {
+  id: number;
+  kind: "block" | "template";
+  name: string;
+  description: string;
+  blocks: unknown[];
+  createdAt: string;
+};

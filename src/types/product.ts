@@ -4,7 +4,7 @@ export type ProductColor = {
 };
 
 export type ProductReview = {
-  id: string;
+  id: string | number;
   user: string;
   rating: number;
   comment: string;
@@ -21,6 +21,7 @@ export type Product = {
   category: string;
   gender: "men" | "women" | "unisex";
   brand?: string;
+  brandSlug?: string;
   images: string[];
   sizes: string[];
   colors: ProductColor[];

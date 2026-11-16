@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Receipt, Search, ShoppingBag, X } from "lucide-react";
-import type { Order, OrderStatus } from "@/types/api";
+import type { Order, OrderStatus, Pagination } from "@/types/api";
+import Pager from "@/components/admin/ui/Pager";
 import AdminPageHeader from "@/components/admin/ui/AdminPageHeader";
 import AdminBadge from "@/components/admin/ui/AdminBadge";
 import AdminInput from "@/components/admin/ui/AdminInput";
@@ -56,10 +57,42 @@ function date(iso: string) {
   return new Intl.DateTimeFormat("fa-IR", { dateStyle: "medium", timeStyle: "short" }).format(new Date(iso));
 }
 
-export default function OrdersManager({ orders, canEdit }: { orders: Order[]; canEdit: boolean }) {
+export type OrderFilters = { status?: string; q?: string; payment?: string };
+
+export default function OrdersManager({
+  orders,
+  canEdit,
+  pagination,
+  filters = {},
+}: {
+  orders: Order[];
+  canEdit: boolean;
+  pagination?: Pagination;
+  filters?: OrderFilters;
+}) {
   const router = useRouter();
-  const [status, setStatus] = useState<OrderStatus | "all">("all");
-  const [q, setQ] = useState("");
+  const [status, setStatusState] = useState<OrderStatus | "all">((filters.status as OrderStatus) || "all");
+  const [q, setQ] = useState(filters.q ?? "");
+
+  /** Filters live in the URL so they apply to every page on the server. */
+  const navigate = (next: OrderFilters & { page?: number }) => {
+    const merged = { status: status === "all" ? "" : status, q: filters.q ?? "", payment: filters.payment ?? "", ...next };
+    const sp = new URLSearchParams();
+    for (const [k, v] of Object.entries(merged)) if (v && !(k === "page" && v === 1)) sp.set(k, String(v));
+    router.push(`/admin/orders${sp.size ? `?${sp}` : ""}`);
+  };
+  const setStatus = (s: OrderStatus | "all") => {
+    setStatusState(s);
+    navigate({ status: s === "all" ? "" : s, page: 1 });
+  };
+  const hrefFor = (page: number) => {
+    const sp = new URLSearchParams();
+    if (filters.status) sp.set("status", filters.status);
+    if (filters.q) sp.set("q", filters.q);
+    if (filters.payment) sp.set("payment", filters.payment);
+    if (page > 1) sp.set("page", String(page));
+    return `/admin/orders${sp.size ? `?${sp}` : ""}`;
+  };
   const [openId, setOpenId] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -74,6 +107,14 @@ export default function OrdersManager({ orders, canEdit }: { orders: Order[]; ca
   }, [orders, status, q]);
 
   const open = orders.find((o) => o.id === openId) || null;
+
+  // Modal a11y: Escape closes the drawer
+  useEffect(() => {
+    if (!openId) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpenId(null);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [openId]);
 
   const changeStatus = async (o: Order, next: OrderStatus) => {
     if (next === o.status) return;
@@ -100,14 +141,31 @@ export default function OrdersManager({ orders, canEdit }: { orders: Order[]; ca
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
-      <AdminPageHeader title="سفارش‌ها" description={`${formatNumber(orders.length)} سفارش`} />
+      <AdminPageHeader title="سفارش‌ها" description={`${formatNumber(pagination?.total ?? orders.length)} سفارش`} />
       {error && <p role="alert" className="text-sm text-red-700 bg-red-50 rounded-xl px-4 py-3">{error}</p>}
 
       <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative sm:max-w-xs flex-1">
           <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#A3A3A3]" />
-          <AdminInput value={q} onChange={(e) => setQ(e.target.value)} placeholder="شماره، نام یا موبایل..." className="pr-9" />
+          <AdminInput
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && navigate({ q: q.trim(), page: 1 })}
+            placeholder="شماره، نام یا موبایل... (Enter برای جستجو در همه)"
+            className="pr-9"
+            aria-label="جستجوی سفارش"
+          />
         </div>
+        <select
+          aria-label="روش پرداخت"
+          value={filters.payment ?? ""}
+          onChange={(e) => navigate({ payment: e.target.value, page: 1 })}
+          className="h-9 rounded-lg border border-[#E8E8E8] bg-white px-2 text-xs"
+        >
+          <option value="">همه روش‌های پرداخت</option>
+          <option value="card">کارت به کارت</option>
+          <option value="online">پرداخت آنلاین</option>
+        </select>
         <div className="flex flex-wrap gap-1.5">
           {(["all", "pending", "confirmed", "shipped", "delivered", "cancelled"] as const).map((s) => (
             <button
@@ -216,6 +274,16 @@ export default function OrdersManager({ orders, canEdit }: { orders: Order[]; ca
                 </div>
               ))}
               <div className="border-t border-[#F0F0F0] pt-2 text-sm space-y-1">
+                {!!open.discount && (
+                  <div className="flex justify-between text-emerald-700">
+                    <span>تخفیف {open.couponCode ? `(${open.couponCode})` : ""}</span>
+                    <span>−{formatPrice(open.discount)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between text-[#737373]">
+                  <span>پرداخت</span>
+                  <span>{open.paymentMethod === "online" ? (open.paid ? "آنلاین — پرداخت شد" : "آنلاین — پرداخت نشده") : "کارت به کارت"}</span>
+                </div>
                 <div className="flex justify-between text-[#737373]"><span>ارسال</span><span>{open.shipping ? formatPrice(open.shipping) : "رایگان"}</span></div>
                 <div className="flex justify-between font-bold"><span>جمع کل</span><span>{formatPrice(open.total)}</span></div>
               </div>
@@ -231,6 +299,7 @@ export default function OrdersManager({ orders, canEdit }: { orders: Order[]; ca
           </aside>
         </div>
       )}
+      {pagination && <Pager pagination={pagination} hrefFor={hrefFor} />}
     </div>
   );
 }

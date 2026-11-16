@@ -1,18 +1,32 @@
 import { Users } from "lucide-react";
 import AdminPageHeader from "@/components/admin/ui/AdminPageHeader";
 import AdminEmptyState from "@/components/admin/ui/AdminEmptyState";
+import Pager from "@/components/admin/ui/Pager";
 import { adminApi } from "@/lib/api/admin";
-import type { CustomerRow } from "@/types/api";
+import type { CustomerRow, Pagination } from "@/types/api";
 import { formatNumber, formatPrice } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
 /** Customers derived from orders (grouped by mobile number) */
-export default async function AdminCustomersPage() {
-  const { customers } = await adminApi<{ customers: CustomerRow[] }>("/admin/customers");
+export default async function AdminCustomersPage({ searchParams }: { searchParams: Promise<{ page?: string; q?: string }> }) {
+  const sp = await searchParams;
+  const qs = new URLSearchParams({ page: String(Math.max(1, Number(sp.page) || 1)), pageSize: "50" });
+  if (sp.q) qs.set("q", sp.q);
+  const { customers, pagination } = await adminApi<{ customers: CustomerRow[]; pagination: Pagination }>(`/admin/customers?${qs}`);
+  const hrefFor = (p: number) => `/admin/customers?${new URLSearchParams({ ...(sp.q ? { q: sp.q } : {}), page: String(p) })}`;
   return (
     <div className="max-w-5xl mx-auto space-y-6">
-      <AdminPageHeader title="مشتری‌ها" description={`${formatNumber(customers.length)} مشتری (بر اساس شماره موبایل سفارش‌ها)`} />
+      <AdminPageHeader title="مشتری‌ها" description={`${formatNumber(pagination.total)} مشتری (بر اساس شماره موبایل سفارش‌ها)`} />
+      <form className="max-w-sm" action="/admin/customers">
+        <input
+          name="q"
+          defaultValue={sp.q ?? ""}
+          placeholder="جستجوی نام یا موبایل + Enter"
+          aria-label="جستجوی مشتری"
+          className="w-full h-10 rounded-xl border border-[#E8E8E8] bg-white px-3 text-sm"
+        />
+      </form>
       {!customers.length ? (
         <AdminEmptyState icon={<Users className="h-5 w-5" />} title="هنوز مشتری‌ای ندارید" description="با ثبت اولین سفارش، مشتری‌ها اینجا نمایش داده می‌شوند." />
       ) : (
@@ -46,6 +60,7 @@ export default async function AdminCustomersPage() {
           </table>
         </div>
       )}
+      <Pager pagination={pagination} hrefFor={hrefFor} />
     </div>
   );
 }
