@@ -5,8 +5,10 @@ import BlockErrorBoundary from "@/builder/components/BlockErrorBoundary";
 import type { PageBlock } from "@/builder/types";
 import { isLocked, useBuilderStore } from "@/builder/store/builder-store";
 import { cn } from "@/lib/utils";
-import { Copy, Trash2, ChevronUp, ChevronDown, GripVertical, Lock, LockOpen, EyeOff } from "lucide-react";
+import { Copy, Trash2, ChevronUp, ChevronDown, GripVertical, Lock, LockOpen, EyeOff, Plus } from "lucide-react";
+import { openQuickAdd } from "./CommandPalette";
 import { getBlockDefinition } from "@/builder/registry/block-registry";
+import * as tree from "@/builder/store/tree";
 import { touchDragStart } from "@/builder/dnd/touch-drag";
 import {
   cancelDrag,
@@ -97,7 +99,7 @@ export default function CanvasBlock({ block, index, siblingsCount }: Props) {
   const vis = (data._visibility as Record<string, boolean> | undefined) || {};
   const hiddenSomewhere = vis.desktop === false || vis.tablet === false || vis.mobile === false;
 
-  const btn = "h-7 w-7 flex items-center justify-center hover:bg-[#F0F5F9] disabled:opacity-30";
+  const btn = "h-8 w-8 flex items-center justify-center hover:bg-[#F0F5F9] disabled:opacity-30";
 
   return (
     <div
@@ -146,7 +148,11 @@ export default function CanvasBlock({ block, index, siblingsCount }: Props) {
       {indicator && <DropIndicator position={indicator} />}
 
       {(selected || locked || hiddenSomewhere || block.enabled === false) && (
-        <div className="absolute top-1 right-1 z-20 flex items-center gap-1" dir="rtl">
+        <div
+          className="absolute top-1 right-1 z-20 flex items-center gap-1"
+          dir="rtl"
+          style={{ transform: "scale(var(--ws-ui, 1))", transformOrigin: "top right" }}
+        >
           <span
             className={cn(
               "text-[10px] font-bold px-2 py-1 rounded-md shadow-sm inline-flex items-center gap-1",
@@ -182,6 +188,26 @@ export default function CanvasBlock({ block, index, siblingsCount }: Props) {
             </div>
           )}
         </div>
+      )}
+
+      {!locked && (
+        <button
+          type="button"
+          aria-label={`افزودن بلوک بعد از ${labelOf(block)}`}
+          title="افزودن بلوک در این نقطه"
+          onClick={(e) => {
+            e.stopPropagation();
+            const loc = tree.findBlock(blocks, block.id);
+            openQuickAdd(loc ? { parentId: loc.parentId, index: loc.index + 1 } : undefined);
+          }}
+          className={cn(
+            "absolute left-1/2 -bottom-3 z-30 h-6 w-6 rounded-full bg-[#111] text-white shadow-md items-center justify-center",
+            selected ? "flex" : "hidden group-hover/ws:flex"
+          )}
+          style={{ transform: "translateX(-50%) scale(var(--ws-ui, 1))" }}
+        >
+          <Plus className="h-3.5 w-3.5" />
+        </button>
       )}
 
       <BlockErrorBoundary blockId={block.id} blockType={block.type} onRemove={() => void confirmAndRemove(block.id)}>

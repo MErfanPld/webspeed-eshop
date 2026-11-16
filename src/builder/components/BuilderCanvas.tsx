@@ -102,6 +102,8 @@ export default function BuilderCanvas({ onFrameDocument }: Props) {
       className="w-full min-h-[320px] bg-white text-foreground"
       dir="rtl"
       data-builder-canvas-page
+      // Builder UI inside the zoomed frame is counter-scaled to stay readable
+      style={{ ["--ws-ui" as string]: String(Math.min(2.2, 1 / scale)) }}
       // Never navigate away or submit forms from inside the canvas
       onClickCapture={(e) => {
         const t = e.target as HTMLElement;

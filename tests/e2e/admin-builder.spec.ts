@@ -72,4 +72,49 @@ test.describe("admin & builder", () => {
       .evaluate(() => window.innerWidth);
     expect(width).toBe(390);
   });
+
+  test("nested blocks are editable; palette (Ctrl+K) and the + button add blocks", async ({ page }) => {
+    const slug = `e2e-nest-${Date.now().toString(36)}`;
+    await login(page);
+    const created = await page.request.post("/api/v1/admin/pages", {
+      data: { name: "تو در تو", slug: `/${slug}` },
+      headers: { Origin: new URL(page.url()).origin },
+    });
+    const { page: pg } = await created.json();
+    await page.goto(`/admin/builder/${pg.id}`);
+    const frame = page.frameLocator("iframe[data-builder-frame]");
+    const props = page.getByTestId("properties-panel");
+
+    // columns block, then a heading inside it (adding with a container selected nests the block)
+    await page.locator('aside button[data-block-type="columns"]').click();
+    await page.locator('aside button[data-block-type="heading"]').click();
+    const nested = frame.locator('[data-block-type="columns"] [data-block-type="heading"]');
+    await expect(nested).toHaveCount(1);
+
+    // select the nested heading: the properties panel must show it (regression: top-level only)
+    await nested.click({ position: { x: 40, y: 12 } });
+    await expect(props.getByRole("textbox", { name: "نام بلوک" })).toHaveAttribute("placeholder", "عنوان");
+    await expect(props.getByRole("navigation", { name: "مسیر بلوک" })).toContainText("ستون‌ها");
+    await props.locator('input[type="text"]').first().fill("تیتر داخل ستون");
+    await expect(nested).toContainText("تیتر داخل ستون");
+
+    // Ctrl+K → type → Enter adds a block after the selection
+    await page.keyboard.press("Escape");
+    await page.keyboard.press("Control+k");
+    await page.getByRole("combobox", { name: "جستجو" }).fill("جداکننده");
+    await page.keyboard.press("Enter");
+    await expect(frame.locator('[data-block-type="divider"]')).toHaveCount(1);
+
+    // "+" under the columns block inserts right after it (not inside)
+    await frame.locator('[data-block-type="columns"]').first().click({ position: { x: 5, y: 5 } });
+    await frame.getByRole("button", { name: /افزودن بلوک بعد از ستون‌ها/ }).click();
+    await page.getByRole("combobox", { name: "جستجو" }).fill("فاصله");
+    await page.keyboard.press("Enter");
+    const order = await frame.locator("[data-builder-canvas-page] > [data-block-id]").evaluateAll((els) =>
+      els.map((e) => e.getAttribute("data-block-type"))
+    );
+    expect(order.slice(0, 2)).toEqual(["columns", "spacer"]);
+
+    await page.request.delete(`/api/v1/admin/pages/${pg.id}`, { headers: { Origin: new URL(page.url()).origin } });
+  });
 });

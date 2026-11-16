@@ -11,6 +11,7 @@ import { Layers, Settings2, X, ListTree } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { handleBuilderKeyDown } from "@/builder/hooks/shortcuts";
 import { ConfirmHost } from "@/components/ui/ConfirmDialog";
+import CommandPalette, { openCommandPalette } from "./CommandPalette";
 
 type Props = {
   pageId: string;
@@ -93,8 +94,14 @@ export default function BuilderShell({ pageId }: Props) {
 
   // Keyboard shortcuts: main window + canvas iframe document
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) =>
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        openCommandPalette();
+        return;
+      }
       handleBuilderKeyDown(e, { onEscape: () => setMobilePanel("none") });
+    };
     window.addEventListener("keydown", onKey);
     frameDoc?.addEventListener("keydown", onKey);
     return () => {
@@ -108,8 +115,8 @@ export default function BuilderShell({ pageId }: Props) {
     : layoutMode === "mobile"
       ? "minmax(0, 1fr)"
       : layoutMode === "tablet"
-        ? "minmax(180px, 200px) minmax(0, 1fr) minmax(200px, 220px)"
-        : "minmax(240px, 260px) minmax(0, 1fr) minmax(260px, 300px)";
+        ? "minmax(200px, 220px) minmax(0, 1fr) minmax(250px, 270px)"
+        : "minmax(250px, 270px) minmax(0, 1fr) minmax(290px, 320px)";
 
   return (
     <div
@@ -207,7 +214,7 @@ export default function BuilderShell({ pageId }: Props) {
             onClick={() => setMobilePanel("none")}
           />
           <aside
-            className="absolute top-0 bottom-0 bg-white shadow-2xl flex flex-col z-10 w-[min(18.5rem,90vw)]"
+            className="absolute top-0 bottom-0 bg-white shadow-2xl flex flex-col z-10 w-[min(24rem,92vw)]"
             style={
               mobilePanel === "props"
                 ? { left: 0, borderRight: "1px solid #E5EAEF" }
@@ -289,6 +296,7 @@ export default function BuilderShell({ pageId }: Props) {
           </button>
         </div>
       )}
+      <CommandPalette />
       <ConfirmHost />
     </div>
   );
