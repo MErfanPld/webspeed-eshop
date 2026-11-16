@@ -1,67 +1,31 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
+import { api, ApiError, errorMessage } from "@/lib/api/client";
 import { Star } from "lucide-react";
 import type { ProductReview } from "@/types/product";
 import { formatNumber, cn } from "@/lib/utils";
 
 type Props = {
+  slug: string;
   rating: number;
   reviewCount: number;
   reviews: ProductReview[];
 };
 
-const defaultReviews: ProductReview[] = [
-  {
-    id: "r1",
-    user: "علی م.",
-    rating: 5,
-    comment: "کیفیت پارچه عالی بود، سایز هم دقیق بود. پیشنهاد می‌کنم.",
-    date: "۱۴۰۴/۰۶/۱۲",
-  },
-  {
-    id: "r2",
-    user: "سارا ا.",
-    rating: 4,
-    comment: "رنگ کمی با عکس فرق داشت ولی کلی راضی‌ام.",
-    date: "۱۴۰۴/۰۵/۲۸",
-  },
-  {
-    id: "r3",
-    user: "رضا ک.",
-    rating: 5,
-    comment: "ارسال سریع و بسته‌بندی مرتب. خرید بعدی هم از همینجا.",
-    date: "۱۴۰۴/۰۵/۱۰",
-  },
-  {
-    id: "r4",
-    user: "مریم ح.",
-    rating: 3,
-    comment: "قیمت مناسب است ولی دوخت می‌توانست بهتر باشد.",
-    date: "۱۴۰۴/۰۴/۲۲",
-  },
-  {
-    id: "r5",
-    user: "حسین ن.",
-    rating: 5,
-    comment: "از خریدم خیلی راضی‌ام. سایزبندی دقیق و کیفیت عالی.",
-    date: "۱۴۰۴/۰۳/۱۸",
-  },
-];
-
 export default function ReviewSection({
+  slug,
   rating,
   reviewCount,
   reviews,
 }: Props) {
-  const [list, setList] = useState<ProductReview[]>(
-    reviews.length ? reviews : defaultReviews
-  );
+  const list = reviews;
   const [filter, setFilter] = useState<number | "all">("all");
   const [comment, setComment] = useState("");
   const [myRating, setMyRating] = useState(5);
-  const [name, setName] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState<{ ok: boolean; text: string; login?: boolean } | null>(null);
 
   const distribution = useMemo(() => {
     const dist = [0, 0, 0, 0, 0];
@@ -75,22 +39,28 @@ export default function ReviewSection({
   const filtered =
     filter === "all" ? list : list.filter((r) => r.rating === filter);
 
-  const submitReview = (e: React.FormEvent) => {
+  // Reviews are moderated: a submitted review appears after the store approves it
+  const submitReview = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!comment.trim()) return;
-    const entry: ProductReview = {
-      id: `local-${Date.now()}`,
-      user: name.trim() || "کاربر",
-      rating: myRating,
-      comment: comment.trim(),
-      date: new Date().toLocaleDateString("fa-IR"),
-    };
-    setList((prev) => [entry, ...prev]);
-    setComment("");
-    setName("");
-    setMyRating(5);
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 2500);
+    if (!comment.trim() || busy) return;
+    setBusy(true);
+    setMessage(null);
+    try {
+      await api(`/products/${encodeURIComponent(slug)}/reviews`, {
+        method: "POST",
+        body: { rating: myRating, text: comment.trim() },
+        refresh: false,
+        redirectOnExpire: false,
+      });
+      setComment("");
+      setMyRating(5);
+      setMessage({ ok: true, text: "نظر شما ثبت شد و پس از تأیید نمایش داده می‌شود." });
+    } catch (err) {
+      const login = err instanceof ApiError && err.status === 401;
+      setMessage({ ok: false, text: login ? "برای ثبت نظر وارد حساب کاربری شوید." : errorMessage(err, "ثبت نظر ناموفق بود"), login });
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
@@ -98,7 +68,7 @@ export default function ReviewSection({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 p-5 sm:p-6 rounded-2xl border border-border bg-surface">
         <div className="text-center md:text-right space-y-2">
           <p className="text-4xl font-bold num" data-num>
-            {(rating || 4.5).toFixed(1)}
+            {list.length || reviewCount ? (rating || 0).toFixed(1) : "—"}
           </p>
           <div className="flex items-center justify-center md:justify-start gap-0.5">
             {Array.from({ length: 5 }).map((_, i) => (
@@ -106,7 +76,7 @@ export default function ReviewSection({
                 key={i}
                 className={cn(
                   "h-4 w-4",
-                  i < Math.round(rating || 4.5)
+                  i < Math.round(rating || 0)
                     ? "fill-amber-400 text-amber-400"
                     : "text-border"
                 )}
@@ -170,25 +140,33 @@ export default function ReviewSection({
             </button>
           ))}
         </div>
-        <input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="نام شما (اختیاری)"
-          className="w-full h-11 rounded-xl border border-border px-3.5 text-sm bg-transparent focus:outline-none focus:border-foreground/40"
-        />
+        <p className="text-xs text-muted-foreground">فقط خریداران این محصول می‌توانند نظر ثبت کنند.</p>
         <textarea
           value={comment}
           onChange={(e) => setComment(e.target.value)}
           placeholder="نظر خود را بنویسید..."
           rows={3}
           required
+          aria-label="متن نظر"
+          maxLength={2000}
           className="w-full rounded-xl border border-border px-3.5 py-2.5 text-sm bg-transparent resize-none focus:outline-none focus:border-foreground/40"
         />
+        {message && (
+          <p role={message.ok ? "status" : "alert"} className={cn("text-sm", message.ok ? "text-emerald-700" : "text-red-700")}>
+            {message.text}{" "}
+            {message.login && (
+              <Link href={`/login?next=${encodeURIComponent(`/products/${slug}`)}`} className="underline">
+                ورود
+              </Link>
+            )}
+          </p>
+        )}
         <button
           type="submit"
-          className="h-11 px-5 rounded-xl bg-foreground text-background text-sm font-semibold"
+          disabled={busy}
+          className="h-11 px-5 rounded-xl bg-foreground text-background text-sm font-semibold disabled:opacity-60"
         >
-          {submitted ? "ثبت شد ✓" : "ارسال نظر"}
+          {busy ? "در حال ارسال..." : "ارسال نظر"}
         </button>
       </form>
 
@@ -259,7 +237,7 @@ export default function ReviewSection({
         ))}
         {filtered.length === 0 && (
           <p className="text-sm text-muted-foreground text-center py-8">
-            نظری با این امتیاز نیست.
+            {list.length ? "نظری با این امتیاز نیست." : "هنوز نظری ثبت نشده؛ اولین نفر باشید."}
           </p>
         )}
       </ul>

@@ -3,9 +3,10 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import Container from "@/components/ui/Container";
 import ProfileForm from "@/components/account/ProfileForm";
+import AddressBook from "@/components/account/AddressBook";
 import { ApiError } from "@/lib/api/client";
 import { serverApi } from "@/lib/api/server";
-import type { Order, OrderStatus } from "@/types/api";
+import type { Address, Order, OrderStatus } from "@/types/api";
 import { formatNumber, formatPrice } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -34,6 +35,9 @@ export default async function ProfilePage() {
     throw e;
   }
   const { customer, orders } = me;
+  const { addresses } = await serverApi<{ addresses: Address[] }>("/customer/addresses", { cookies: ["ws_customer"] }).catch(
+    () => ({ addresses: [] as Address[] })
+  );
   const lastAddress = orders.find((o) => o.customer?.address)?.customer;
 
   return (
@@ -56,21 +60,11 @@ export default async function ProfilePage() {
           </div>
 
           <div className="border border-border rounded-sm p-6">
-            <h2 className="text-sm font-semibold mb-4">آخرین آدرس ارسال</h2>
-            {lastAddress ? (
-              <div className="text-sm space-y-1">
-                <p className="font-medium">{lastAddress.fullName}</p>
-                <p className="text-muted-foreground">
-                  {lastAddress.province}، {lastAddress.city}
-                </p>
-                <p className="text-muted-foreground">{lastAddress.address}</p>
-                <p className="text-muted-foreground" dir="ltr">
-                  {lastAddress.postalCode}
-                </p>
-              </div>
-            ) : (
-              <p className="text-sm text-muted-foreground">پس از اولین خرید، آدرس ارسال اینجا نمایش داده می‌شود.</p>
-            )}
+            <h2 className="text-sm font-semibold mb-4">آدرس‌های من</h2>
+            <AddressBook
+              initial={addresses}
+              suggestion={lastAddress ? { ...lastAddress, title: "آخرین آدرس" } : undefined}
+            />
           </div>
         </div>
 

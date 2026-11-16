@@ -32,10 +32,13 @@ function ProductsContent() {
     const cat = searchParams.get("category");
     const gender = searchParams.get("gender");
     const sortParam = searchParams.get("sort");
+    const brandSlug = searchParams.get("brand");
+    const brandName = brandSlug && products.find((p) => p.brandSlug === brandSlug)?.brand;
+    if (brandName) setFilters((f) => ({ ...f, brands: [brandName] }));
     if (cat) setFilters((f) => ({ ...f, category: cat }));
     if (gender) setFilters((f) => ({ ...f, gender }));
     if (sortParam) setSort(sortParam);
-  }, [searchParams]);
+  }, [searchParams, products]);
 
   const query = searchParams.get("q")?.trim().toLowerCase() || "";
 

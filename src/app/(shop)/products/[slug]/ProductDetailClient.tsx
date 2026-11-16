@@ -327,7 +327,8 @@ export default function ProductDetailClient({ product }: Props) {
         <div className="mx-auto max-w-content px-3 sm:px-4 lg:px-6 pb-4">
           <div className="bg-white rounded-2xl border border-border p-5 sm:p-6">
             <ReviewSection
-              rating={product.rating ?? 4.5}
+              slug={product.slug}
+              rating={product.rating ?? 0}
               reviewCount={product.reviewCount ?? 0}
               reviews={product.reviews || []}
             />

@@ -65,7 +65,9 @@ export default function LoginPage() {
         refresh: false,
         redirectOnExpire: false,
       });
-      router.push("/profile");
+      // Return to the page that sent the customer here (same-site paths only)
+      const next = new URLSearchParams(window.location.search).get("next") || "";
+      router.push(next.startsWith("/") && !next.startsWith("//") ? next : "/profile");
       router.refresh();
     } catch (err) {
       setError(errorMessage(err, "کد واردشده اشتباه است"));
