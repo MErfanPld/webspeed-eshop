@@ -3,7 +3,8 @@ import { expect, test } from "@playwright/test";
 test.describe("storefront", () => {
   test("home renders builder blocks with working images", async ({ page }) => {
     await page.goto("/");
-    await expect(page.locator('[data-ws-block="hero"]')).toBeVisible();
+    // While streaming replaces the loading skeleton, a hidden copy can exist briefly: count visible only
+    await expect(page.locator('[data-ws-block="hero"]:visible')).toHaveCount(1);
     await expect(page.locator('[data-ws-block="product-slider"]').first()).toBeVisible();
     const broken = await page.$$eval("img", (imgs) =>
       imgs.filter((i) => i.complete && i.naturalWidth === 0 && i.loading !== "lazy").length
