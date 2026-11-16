@@ -293,3 +293,40 @@
 @media (max-width: 767px) {
   html.ws-builder-edit .ws-hide-m { display: block !important; opacity: 0.35; outline: 1px dashed #94a3b8; }
 }
+
+/* --- Loading skeletons & smooth navigation -------------------------------- */
+.ws-skeleton {
+  position: relative;
+  overflow: hidden;
+}
+.ws-skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(100%);
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.55), transparent);
+  animation: ws-shimmer 1.4s ease-in-out infinite;
+}
+@keyframes ws-shimmer {
+  to {
+    transform: translateX(-100%);
+  }
+}
+.ws-fade-in {
+  animation: ws-fade-in 0.25s ease-out both;
+}
+@keyframes ws-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ws-skeleton::after,
+  .ws-fade-in {
+    animation: none;
+  }
+  html {
+    scroll-behavior: auto !important;
+  }
+}

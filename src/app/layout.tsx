@@ -3,7 +3,10 @@ import "./fonts.css";
 import "./globals.css";
 import { CartProvider } from "@/context/CartContext";
 
+const SITE_URL = (process.env.SITE_URL || "http://localhost:3000").replace(/\/+$/, "");
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "WebSpeed | فروشگاه اینترنتی",
     template: "%s | WebSpeed",
@@ -32,6 +35,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fa" dir="rtl" suppressHydrationWarning>
+      <head>
+        {/* Most text uses these two weights: fetch them before CSS is parsed */}
+        <link rel="preload" href="/fonts/Vazirmatn-Regular.woff2" as="font" type="font/woff2" crossOrigin="" />
+        <link rel="preload" href="/fonts/Vazirmatn-SemiBold.woff2" as="font" type="font/woff2" crossOrigin="" />
+      </head>
       <body
         className="min-h-screen flex flex-col no-x-scroll font-sans antialiased bg-background text-foreground"
         suppressHydrationWarning

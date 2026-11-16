@@ -25,7 +25,29 @@ const mediaPatterns = (process.env.MEDIA_PUBLIC_URLS || "")
   });
 
 const nextConfig: NextConfig = {
+  // Docker image (see Dockerfile) builds a minimal self-contained server
+  output: process.env.NEXT_OUTPUT === "standalone" ? "standalone" : undefined,
+  poweredByHeader: false,
+  compress: true,
+  experimental: {
+    // Tree-shake icon/utility imports so each page ships only what it uses
+    optimizePackageImports: ["lucide-react", "clsx"],
+  },
+  async headers() {
+    return [
+      {
+        // Self-hosted fonts and static images never change for a given name
+        source: "/fonts/:file*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
+      },
+      {
+        source: "/placeholders/:file*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" }],
+      },
+    ];
+  },
   images: {
+    formats: ["image/avif", "image/webp"],
     dangerouslyAllowSVG: true,
     contentDispositionType: "attachment",
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
