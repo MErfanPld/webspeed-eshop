@@ -11,6 +11,7 @@
  *
  * Server components use `serverApi` (src/lib/api/server.ts) instead.
  */
+import { isPublicAdminPath } from "@/lib/admin-paths";
 
 export class ApiError extends Error {
   constructor(
@@ -110,7 +111,7 @@ export function refreshSession(): Promise<boolean> {
 function onSessionExpired() {
   if (typeof window === "undefined") return;
   const path = window.location.pathname;
-  if (path.startsWith("/admin") && path !== "/admin/login") {
+  if (path.startsWith("/admin") && !isPublicAdminPath(path)) {
     window.location.href = `/admin/login?next=${encodeURIComponent(path + window.location.search)}`;
   }
 }

@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { isPublicAdminPath } from "@/lib/admin-paths";
 
 /**
  * Admin session guard (runs before /admin pages render).
@@ -60,7 +61,7 @@ function pass(req: NextRequest, headers = new Headers(req.headers)) {
 }
 
 export async function middleware(req: NextRequest) {
-  if (req.nextUrl.pathname === "/admin/login") return pass(req);
+  if (isPublicAdminPath(req.nextUrl.pathname)) return pass(req);
 
   const access = req.cookies.get(ACCESS)?.value;
   if (tokenExpiry(access) > Date.now() / 1000 + SKEW_SECONDS) return pass(req);

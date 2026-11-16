@@ -1,4 +1,5 @@
 import { headers } from "next/headers";
+import { isPublicAdminPath } from "@/lib/admin-paths";
 import AdminFrame from "@/components/admin/shell/AdminFrame";
 import { getAdminSession } from "@/lib/api/admin";
 import { serverApi } from "@/lib/api/server";
@@ -12,7 +13,7 @@ export const dynamic = "force-dynamic";
  * Route protection: middleware (token refresh) + every API call (JWT + role).
  */
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const isLogin = (await headers()).get("x-ws-pathname") === "/admin/login";
+  const isLogin = isPublicAdminPath((await headers()).get("x-ws-pathname"));
   const session = isLogin ? null : await getAdminSession();
   let catalog = null;
   if (session) {

@@ -83,6 +83,11 @@ export default function AdminLoginPage() {
           <AdminButton type="submit" variant="primary" className="w-full" loading={loading}>
             ورود
           </AdminButton>
+          <p className="text-center">
+            <Link href="/admin/forgot-password" className="text-xs text-[#737373] hover:text-[#111] hover:underline">
+              رمز عبور را فراموش کرده‌اید؟
+            </Link>
+          </p>
         </form>
 
         <p className="text-center text-xs text-[#A3A3A3] mt-6">
