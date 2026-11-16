@@ -54,15 +54,52 @@ npm run dev
 | `npm test` | تست‌های واحد (Vitest) |
 | `npm run test:e2e` | تست‌های E2E روی بیلد production و **API واقعی** (اول `npm run build`، API باید روی `API_INTERNAL_URL` بالا باشد) |
 
+## امکانات
+
+| بخش | مسیر |
+|---|---|
+| داشبورد، محصولات (فیلتر و صفحه‌بندی)، دسته‌ها، برندها | `/admin`، `/admin/products`، `/admin/categories`، `/admin/brands` |
+| سفارش‌ها (فیلتر وضعیت/روش پرداخت، جستجو، صفحه‌بندی)، مشتری‌ها | `/admin/orders`، `/admin/customers` |
+| کدهای تخفیف، نظرات (تأیید/رد) | `/admin/coupons`، `/admin/reviews` |
+| صفحه‌ساز (کشیدن‌ورهاکردن با ماوس و **لمسی**، بلوک‌ها و قالب‌های ذخیره‌شده) | `/admin/pages` → `/admin/builder/<id>` |
+| تیم، گزارش فعالیت (فقط مالک)، حساب، بازیابی رمز | `/admin/team`، `/admin/audit`، `/admin/account`، `/admin/forgot-password` |
+| **آموزش و راهنما** | `/admin/help` |
+| فروشگاه: کد تخفیف، پرداخت کارت‌به‌کارت یا آنلاین، آدرس‌های ذخیره‌شده، نظر خریداران | `/checkout`، `/checkout/result`، `/profile` |
+| SEO | `/sitemap.xml`، `/robots.txt`، JSON-LD محصول |
+
+### سرویس‌های پولی در حالت آزمایشی
+
+پیامک، درگاه پرداخت و ایمیل تا زمان خرید در **ترمینال API** نمایش داده می‌شوند (`[SMS → …]`، `[PAYMENT] …`، متن ایمیل). در حالت آزمایشی پرداخت آنلاین به صفحه «درگاه پرداخت آزمایشی» API می‌رود که دو دکمه موفق/ناموفق دارد. فعال‌سازی واقعی فقط با `.env` API است (`SMS_BACKEND=kavenegar`، `PAYMENT_PROVIDER=zarinpal`، SMTP).
+
+### سرعت
+
+- هر داده فروشگاه در یک درخواست فقط یک بار از API خوانده می‌شود (React `cache`) و صفحات کاتالوگ موازی گرفته می‌شوند.
+- اسکلت بارگذاری (`loading.tsx`) برای فروشگاه، صفحه محصول و پنل؛ ناوبری بدون صفحه سفید.
+- فونت وزیرمتن محلی (`public/fonts`) با preload و کش یک‌ساله؛ تصاویر AVIF/WebP؛ tree-shaking آیکون‌ها.
+
+## Docker
+
+```bash
+docker build -t webspeed-web --build-arg API_INTERNAL_URL=http://api:8000/api/v1 .
+```
+
+```bash
+docker run -p 3000:3000 -e API_INTERNAL_URL=http://api:8000/api/v1 -e SITE_URL=https://shop.example.com webspeed-web
+```
+
+بیلد standalone است (`NEXT_OUTPUT=standalone`)؛ چون rewriteهای `/api/v1` هنگام بیلد ثبت می‌شوند، `API_INTERNAL_URL` را به‌عنوان build-arg هم بدهید.
+
 ## تست E2E
 
-API را با تنظیمات توسعه اجرا کنید (برای دیدن کد OTP در پاسخ، `OTP_DEV_RETURN_CODE=True` پیش‌فرض development است)، origin تست (`http://localhost:3100`) را در `CORS_ALLOWED_ORIGINS` و `CSRF_TRUSTED_ORIGINS` API بگذارید، سپس:
+API را با تنظیمات توسعه اجرا کنید (برای دیدن کد OTP در پاسخ، `OTP_DEV_RETURN_CODE=True` پیش‌فرض development است)، origin تست (`http://localhost:3100`) را در `CORS_ALLOWED_ORIGINS` و `CSRF_TRUSTED_ORIGINS` API بگذارید و برای تست پرداخت `PAYMENT_PROVIDER=mock` و `FRONTEND_URL=http://localhost:3100` را تنظیم کنید، سپس:
 
 ```bash
 npm run build && npm run test:e2e
 ```
 
 حساب ادمین تست با `E2E_ADMIN_EMAIL` / `E2E_ADMIN_PASSWORD` (پیش‌فرض `admin@webspeed.local` / `admin12345`).
+
+در CI، job ‏E2E ریپوی API را checkout می‌کند و به secret ‏`API_REPO_TOKEN` (توکن fine-grained با دسترسی خواندن `webspeed-eshop-api`) نیاز دارد.
 
 ## ساختار
 

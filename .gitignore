@@ -43,3 +43,6 @@ next-env.d.ts
 /playwright-report/
 /test-results/
 
+
+# local redis snapshots
+dump.rdb

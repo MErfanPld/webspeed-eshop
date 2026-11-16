@@ -81,6 +81,11 @@ jobs:
           CSRF_TRUSTED_ORIGINS: http://localhost:3100
           ADMIN_EMAIL: admin@webspeed.local
           ADMIN_PASSWORD: admin12345
+          # paid services run in test mode (output in /tmp/api.log)
+          SMS_BACKEND: console
+          PAYMENT_PROVIDER: mock
+          FRONTEND_URL: http://localhost:3100
+          API_PUBLIC_URL: http://localhost:8000
         run: |
           pip install -r requirements/development.txt
           python manage.py migrate --noinput
