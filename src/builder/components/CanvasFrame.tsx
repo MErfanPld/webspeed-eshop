@@ -59,23 +59,48 @@ export default function CanvasFrame({
     doc.close();
     doc.body.className = document.body.className;
 
+    // Mirror the parent's stylesheets incrementally. Removing and re-adding all
+    // of them on every change left the canvas unstyled for a frame (content
+    // collapsed and the page "shook" whenever Next.js injected CSS — often in dev).
+    const clones = new Map<Node, HTMLElement>();
     let raf = 0;
     const syncStyles = () => {
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(() => {
-        doc.head.querySelectorAll(`[${CLONED_ATTR}]`).forEach((n) => n.remove());
-        document.head
-          .querySelectorAll('style, link[rel="stylesheet"]')
-          .forEach((node) => {
-            const clone = node.cloneNode(true) as HTMLElement;
+        const current = Array.from(document.head.querySelectorAll<HTMLElement>('style, link[rel="stylesheet"]'));
+        const alive = new Set<Node>(current);
+        clones.forEach((clone, original) => {
+          if (!alive.has(original)) {
+            clone.remove();
+            clones.delete(original);
+          }
+        });
+        let prev: HTMLElement | null = null;
+        for (const node of current) {
+          let clone = clones.get(node);
+          if (!clone) {
+            clone = node.cloneNode(true) as HTMLElement;
             clone.setAttribute(CLONED_ATTR, "");
-            doc.head.appendChild(clone);
-          });
+            clones.set(node, clone);
+          } else if (node.tagName === "STYLE" && clone.textContent !== node.textContent) {
+            clone.textContent = node.textContent; // dev: style text updated in place
+          } else if (node.tagName === "LINK" && clone.getAttribute("href") !== node.getAttribute("href")) {
+            clone.setAttribute("href", node.getAttribute("href") || "");
+          }
+          // keep cascade order without detaching existing sheets
+          // (clones stay after the frame's own base styles, as before)
+          const want: ChildNode | null = prev ? prev.nextSibling : doc.head.querySelector(`[${CLONED_ATTR}]`);
+          if (clone !== want) {
+            if (want) doc.head.insertBefore(clone, want);
+            else doc.head.appendChild(clone);
+          }
+          prev = clone;
+        }
       });
     };
     syncStyles();
     const mo = new MutationObserver(syncStyles);
-    mo.observe(document.head, { childList: true, subtree: true, characterData: true });
+    mo.observe(document.head, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ["href"] });
 
     const root = doc.getElementById("ws-canvas-root")!;
     const win = iframe.contentWindow as (Window & typeof globalThis) | null;

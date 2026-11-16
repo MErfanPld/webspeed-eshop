@@ -147,7 +147,9 @@ export default function BuilderCanvas({ onFrameDocument }: Props) {
     <div
       ref={scrollRef}
       className="flex-1 min-h-0 min-w-0 overflow-y-auto overflow-x-hidden"
-      style={{ background: "#E8ECF1" }}
+      // Reserve the scrollbar space: a scrollbar appearing/disappearing would change
+      // the zoom, which changes the height, which toggles the scrollbar again (jitter)
+      style={{ background: "#E8ECF1", scrollbarGutter: "stable" }}
       onClick={() => !isPreview && clearSelection()}
       onDragEnd={() => cancelDrag()}
       data-preview-device={previewDevice}
