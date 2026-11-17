@@ -178,3 +178,39 @@ export type SavedBlockItem = {
   blocks: unknown[];
   createdAt: string;
 };
+
+export type PlanInfo = {
+  slug: string;
+  name: string;
+  tagline: string;
+  priceMonthly: number;
+  priceYearly: number;
+  features: string[];
+  maxProducts: number | null;
+  maxMembers: number | null;
+  customDomain: boolean;
+  highlighted: boolean;
+};
+
+export type SubscriptionInfo = {
+  plan: PlanInfo;
+  status: "trial" | "active" | "suspended";
+  active: boolean;
+  trialEndsAt: string | null;
+  paidUntil: string | null;
+  endsAt: string | null;
+  daysLeft: number | null;
+};
+
+export type PlatformStoreRow = {
+  id: string;
+  name: string;
+  slug: string;
+  domain: string | null;
+  createdAt: string;
+  orders: number;
+  products: number;
+  subscription: SubscriptionInfo | null;
+  url: string | null;
+  adminUrl: string | null;
+};

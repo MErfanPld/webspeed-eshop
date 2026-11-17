@@ -5,7 +5,7 @@ import { createContext, useContext, type ReactNode } from "react";
 export type AdminRole = "owner" | "admin" | "editor";
 
 export type AdminSession = {
-  user: { id: string; email: string; name: string };
+  user: { id: string; email: string; name: string; isPlatformAdmin?: boolean };
   store: { storeId: string; storeName: string; storeSlug: string; role: AdminRole };
   memberships: { storeId: string; storeName: string; storeSlug: string; role: AdminRole }[];
 };

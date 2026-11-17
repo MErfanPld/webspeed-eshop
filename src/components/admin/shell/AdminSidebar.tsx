@@ -6,6 +6,7 @@ import { PanelLeftClose, PanelLeftOpen, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { adminNav } from "./nav-config";
+import { useAdminSession } from "@/context/AdminSessionContext";
 
 const COLLAPSE_KEY = "webspeed-admin-sidebar-collapsed";
 
@@ -17,6 +18,7 @@ export default function AdminSidebar({
   onMobileClose?: () => void;
 }) {
   const pathname = usePathname();
+  const isPlatformAdmin = Boolean(useAdminSession()?.user.isPlatformAdmin);
   const [collapsed, setCollapsed] = useState(false);
 
   useEffect(() => {
@@ -87,7 +89,7 @@ export default function AdminSidebar({
               </p>
             )}
             <ul className="space-y-0.5">
-              {section.items.map((item) => {
+              {section.items.filter((item) => !item.platformAdmin || isPlatformAdmin).map((item) => {
                 const active = isActive(item.href, item.match, item.label);
                 const Icon = item.icon;
                 if (item.disabled) {

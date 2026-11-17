@@ -77,6 +77,22 @@ npm run dev
 - اسکلت بارگذاری (`loading.tsx`) برای فروشگاه، صفحه محصول و پنل؛ ناوبری بدون صفحه سفید.
 - فونت وزیرمتن محلی (`public/fonts`) با preload و کش یک‌ساله؛ تصاویر AVIF/WebP؛ tree-shaking آیکون‌ها.
 
+## چندفروشگاهی (زیردامنه‌ها)
+
+با `PLATFORM_DOMAIN=webspeed.ir` (در فرانت و API):
+
+| آدرس | محتوا |
+|---|---|
+| `webspeed.ir` | سایت معرفی، تعرفه‌ها، ثبت‌نام (`src/app/platform`) |
+| `panel.webspeed.ir/admin` | پنل مرکزی؛ برای superuser بخش «مدیریت پلتفرم» (`/admin/platform`) هم دارد |
+| `<shop>.webspeed.ir` و `/admin` آن | فروشگاه و پنل قفل‌شده به همان فروشگاه |
+
+مسیریابی بر اساس نام دامنه در `src/middleware.ts` انجام می‌شود. در حالت توسعه (بدون `PLATFORM_DOMAIN`) سایت معرفی در `/platform` در دسترس است.
+
+برای تست محلی زیردامنه‌ها از `PLATFORM_DOMAIN=ws.localhost` استفاده کنید؛ مرورگرها `*.localhost` را به سیستم خودتان وصل می‌کنند (مثلاً `http://shop1.ws.localhost:3000`). تست E2E این بخش با `E2E_PLATFORM_DOMAIN=ws.localhost` اجرا می‌شود.
+
+راهنمای کامل نصب روی سرور: `deploy/DEPLOY.md` در ریپوی API.
+
 ## Docker
 
 ```bash

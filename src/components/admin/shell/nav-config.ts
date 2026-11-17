@@ -19,6 +19,8 @@ import {
   MessageSquare,
   History,
   GraduationCap,
+  CreditCard,
+  Globe,
 } from "lucide-react";
 
 export type NavItem = {
@@ -28,6 +30,8 @@ export type NavItem = {
   match?: string;
   disabled?: boolean;
   badge?: string;
+  /** only for platform admins (superusers) */
+  platformAdmin?: boolean;
 };
 
 export type NavSection = {
@@ -75,9 +79,11 @@ export const adminNav: NavSection[] = [
       { href: "/admin/settings", label: "تنظیمات فروشگاه", icon: Settings },
       { href: "/admin/team", label: "اعضای تیم", icon: UsersRound },
       { href: "/admin/stores", label: "فروشگاه‌ها", icon: Store },
+      { href: "/admin/billing", label: "اشتراک و پلن", icon: CreditCard },
       { href: "/admin/account", label: "حساب و رمز عبور", icon: KeyRound },
       { href: "/admin/audit", label: "گزارش فعالیت", icon: History },
       { href: "/admin/help", label: "آموزش و راهنما", icon: GraduationCap },
+      { href: "/admin/platform", label: "مدیریت پلتفرم", icon: Globe, platformAdmin: true },
       { href: "/", label: "مشاهده فروشگاه", icon: Search },
     ],
   },
@@ -102,5 +108,7 @@ export function pageTitleFromPath(pathname: string): string {
   if (pathname.startsWith("/admin/reviews")) return "نظرات";
   if (pathname.startsWith("/admin/audit")) return "گزارش فعالیت";
   if (pathname.startsWith("/admin/help")) return "آموزش و راهنما";
+  if (pathname.startsWith("/admin/billing")) return "اشتراک و پلن";
+  if (pathname.startsWith("/admin/platform")) return "مدیریت پلتفرم";
   return "پنل مدیریت";
 }
