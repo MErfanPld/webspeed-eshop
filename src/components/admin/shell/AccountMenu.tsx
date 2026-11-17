@@ -59,7 +59,7 @@ export default function AccountMenu() {
         {initial}
       </button>
       {open && (
-        <div role="menu" className="absolute left-0 top-10 z-50 w-64 rounded-2xl border border-[#E8E8E8] bg-white shadow-xl p-2 text-sm">
+        <div role="menu" className="absolute left-0 top-10 z-50 w-64 max-h-[calc(100dvh-4rem)] overflow-y-auto rounded-2xl border border-[#E8E8E8] bg-white shadow-xl p-2 text-sm">
           <div className="px-3 py-2 border-b border-[#F0F0F0] mb-1">
             <p className="font-semibold text-[#111] truncate">{session.user.name}</p>
             <p className="text-xs text-[#737373] truncate" dir="ltr">
@@ -67,6 +67,8 @@ export default function AccountMenu() {
             </p>
           </div>
           <p className="px-3 pt-1 pb-1 text-[10px] font-bold text-[#A3A3A3]">فروشگاه‌ها</p>
+          {/* Long store lists scroll so the actions below stay on screen */}
+          <div className="max-h-[min(40vh,18rem)] overflow-y-auto overscroll-contain">
           {session.memberships.map((m) => (
             <button
               key={m.storeId}
@@ -84,6 +86,7 @@ export default function AccountMenu() {
               {m.storeId === session.store.storeId && <Check className="h-4 w-4 text-emerald-600" />}
             </button>
           ))}
+          </div>
           <button
             type="button"
             onClick={() => {
