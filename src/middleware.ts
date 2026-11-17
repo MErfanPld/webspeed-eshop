@@ -60,8 +60,58 @@ function pass(req: NextRequest, headers = new Headers(req.headers)) {
   return NextResponse.next({ request: { headers } });
 }
 
+/**
+ * Platform host routing (PLATFORM_DOMAIN, e.g. webspeed.ir):
+ *   webspeed.ir, www.webspeed.ir → landing site (app/platform), /admin → central panel
+ *   panel.webspeed.ir            → only /admin (central panel)
+ *   <slug>.webspeed.ir, custom   → the store (the API resolves which one)
+ * Without PLATFORM_DOMAIN (development) every host is a store and the landing
+ * site is reachable at /platform.
+ */
+const PLATFORM_DOMAIN = (process.env.PLATFORM_DOMAIN || "").trim().toLowerCase().replace(/^\.+|\.+$/g, "");
+const PANEL_HOST = PLATFORM_DOMAIN ? `${process.env.PANEL_SUBDOMAIN || "panel"}.${PLATFORM_DOMAIN}` : "";
+const SHARED_FILES = new Set(["/robots.txt", "/sitemap.xml", "/favicon.ico"]);
+
+function requestHost(req: NextRequest): string {
+  return (req.headers.get("x-forwarded-host") || req.headers.get("host") || "").split(":")[0].trim().toLowerCase();
+}
+
+function redirectTo(req: NextRequest, host: string, pathname: string) {
+  const url = new URL(req.nextUrl.toString());
+  url.hostname = host; // keeps the port (development)
+  url.pathname = pathname;
+  return NextResponse.redirect(url);
+}
+
+/** null = continue with the normal (store / admin) handling */
+function routeByHost(req: NextRequest): NextResponse | null {
+  if (!PLATFORM_DOMAIN) return null;
+  const host = requestHost(req);
+  const path = req.nextUrl.pathname;
+  if (host === PLATFORM_DOMAIN || host === `www.${PLATFORM_DOMAIN}`) {
+    if (path === "/admin" || path.startsWith("/admin/")) return redirectTo(req, PANEL_HOST, path);
+    if (path.startsWith("/platform") || SHARED_FILES.has(path)) return pass(req);
+    const url = req.nextUrl.clone();
+    url.pathname = `/platform${path === "/" ? "" : path}`;
+    const headers = new Headers(req.headers);
+    headers.set("x-ws-pathname", url.pathname);
+    return NextResponse.rewrite(url, { request: { headers } });
+  }
+  if (host === PANEL_HOST) {
+    if (path !== "/admin" && !path.startsWith("/admin/")) return redirectTo(req, PANEL_HOST, "/admin");
+    return null;
+  }
+  // A store host never serves the landing site
+  if (path === "/platform" || path.startsWith("/platform/")) return redirectTo(req, PLATFORM_DOMAIN, path.slice("/platform".length) || "/");
+  return null;
+}
+
 export async function middleware(req: NextRequest) {
-  if (isPublicAdminPath(req.nextUrl.pathname)) return pass(req);
+  const routed = routeByHost(req);
+  if (routed) return routed;
+  const path = req.nextUrl.pathname;
+  if (path !== "/admin" && !path.startsWith("/admin/")) return pass(req);
+  if (isPublicAdminPath(path)) return pass(req);
 
   const access = req.cookies.get(ACCESS)?.value;
   if (tokenExpiry(access) > Date.now() / 1000 + SKEW_SECONDS) return pass(req);
@@ -111,5 +161,6 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  // Everything except Next internals, the API/media proxy and static files
+  matcher: ["/((?!_next/|api/|media/|files/|fonts/|banners/|placeholders/).*)"],
 };
