@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import ShopChrome from "@/components/layout/ShopChrome";
 import { CatalogProvider } from "@/context/CatalogContext";
 import { StoreInfoProvider } from "@/context/StoreInfoContext";
@@ -13,7 +14,14 @@ async function storeOrReason() {
   try {
     return { store: await getStoreInfo() };
   } catch (e) {
-    if (e instanceof ApiError && e.status === 404) return { reason: "not-found" as const };
+    if (e instanceof ApiError && e.status === 404) {
+      // The API knows the platform domain: send its main host to the landing site and
+      // the panel host to /admin, even if this app's PLATFORM_DOMAIN isn't set
+      const reason = (e.details as { reason?: string } | null)?.reason;
+      if (reason === "platform-host") redirect("/platform");
+      if (reason === "panel-host") redirect("/admin");
+      return { reason: "not-found" as const };
+    }
     if (e instanceof ApiError && e.status === 403) return { reason: "inactive" as const };
     throw e;
   }
