@@ -37,12 +37,12 @@ export default function Pricing({ plans, base, trialDays }: { plans: PlatformPla
               key={p.slug}
               data-plan={p.slug}
               className={cn(
-                "relative rounded-3xl border p-7 flex flex-col",
-                p.highlighted ? "border-[#0f172a] bg-[#0f172a] text-white shadow-2xl md:-translate-y-3" : "border-[#e2e8f0] bg-white"
+                "relative rounded-[1.75rem] border p-7 flex flex-col",
+                p.highlighted ? "border-transparent bg-gradient-to-b from-[#6d28d9] to-[#db2777] text-white shadow-2xl shadow-[#7c3aed]/30 md:-translate-y-4" : "border-[#f1f0fb] bg-white hover:shadow-xl hover:shadow-[#7c3aed]/5 transition"
               )}
             >
               {p.highlighted && (
-                <span className="absolute -top-3 right-7 text-xs font-bold px-3 py-1 rounded-full bg-gradient-to-l from-[#e31b23] to-[#ff7a59] text-white">
+                <span className="absolute -top-3 right-7 text-xs font-bold px-3 py-1 rounded-full bg-gradient-to-l from-[#ff9f43] to-[#facc15] text-[#422006]">
                   پیشنهاد ما
                 </span>
               )}
@@ -57,7 +57,7 @@ export default function Pricing({ plans, base, trialDays }: { plans: PlatformPla
               <ul className="mt-6 space-y-3 text-sm flex-1">
                 {p.features.map((f) => (
                   <li key={f} className="flex gap-2">
-                    <Check className={cn("h-4 w-4 shrink-0 mt-0.5", p.highlighted ? "text-[#ff9d84]" : "text-emerald-600")} />
+                    <Check className={cn("h-4 w-4 shrink-0 mt-0.5", p.highlighted ? "text-[#fde68a]" : "text-emerald-500")} />
                     {f}
                   </li>
                 ))}
@@ -66,7 +66,7 @@ export default function Pricing({ plans, base, trialDays }: { plans: PlatformPla
                 href={`${base}/signup?plan=${p.slug}`}
                 className={cn(
                   "mt-8 h-12 rounded-xl text-sm font-bold inline-flex items-center justify-center transition",
-                  p.highlighted ? "bg-white text-[#0f172a] hover:bg-[#f1f5f9]" : "bg-[#0f172a] text-white hover:bg-[#1e293b]"
+                  p.highlighted ? "bg-white text-[#6d28d9] hover:bg-[#faf5ff]" : "bg-gradient-to-l from-[#7c3aed] to-[#db2777] text-white hover:opacity-95"
                 )}
               >
                 {formatNumber(trialDays)} روز رایگان امتحان کنید

@@ -174,7 +174,7 @@ export default function SignupForm({
               key={p.slug}
               className={cn(
                 "rounded-xl border p-3 cursor-pointer transition",
-                form.plan === p.slug ? "border-[#0f172a] bg-[#f8fafc] ring-2 ring-[#0f172a]/10" : "border-[#e2e8f0] hover:bg-[#f8fafc]"
+                form.plan === p.slug ? "border-[#7c3aed] bg-[#faf5ff] ring-2 ring-[#7c3aed]/15" : "border-[#e2e8f0] hover:bg-[#f8fafc]"
               )}
             >
               <input type="radio" name="plan" value={p.slug} checked={form.plan === p.slug} onChange={() => set("plan", p.slug)} className="sr-only" />
@@ -188,7 +188,7 @@ export default function SignupForm({
 
       {error && <p role="alert" className="text-sm text-red-700 bg-red-50 rounded-xl px-4 py-3">{error}</p>}
 
-      <button type="submit" disabled={busy || check.state === "bad"} className="w-full h-13 py-3.5 rounded-xl bg-[#0f172a] text-white font-bold hover:bg-[#1e293b] disabled:opacity-60">
+      <button type="submit" disabled={busy || check.state === "bad"} className="w-full h-13 py-3.5 rounded-xl bg-gradient-to-l from-[#7c3aed] to-[#db2777] text-white font-bold shadow-lg shadow-[#7c3aed]/25 hover:opacity-95 disabled:opacity-60">
         {busy ? "در حال ساخت فروشگاه..." : `ساخت فروشگاه و شروع ${formatNumber(trialDays)} روز رایگان`}
       </button>
       <p className="text-center text-sm text-[#64748b]">
