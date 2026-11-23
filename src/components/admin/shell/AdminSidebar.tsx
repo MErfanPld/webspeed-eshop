@@ -39,7 +39,7 @@ export default function AdminSidebar({
 
   const isActive = (href: string, match?: string, label?: string) => {
     if (label === "صفحه‌ساز") return pathname.startsWith("/admin/builder");
-    if (href === "/admin") return pathname === "/admin";
+    if (href === "/admin" || href === "/admin/platform") return pathname === href;
     if (match) return pathname.startsWith(match);
     if (href === "/") return false;
     return pathname.startsWith(href);
@@ -53,7 +53,7 @@ export default function AdminSidebar({
           collapsed ? "justify-center px-2" : "px-4 gap-2.5"
         )}
       >
-        <div className="h-8 w-8 rounded-lg bg-[#111] text-white text-xs font-bold flex items-center justify-center shrink-0">
+        <div className="h-8 w-8 rounded-lg bg-gradient-to-l from-[#7c3aed] to-[#db2777] text-white shadow-md shadow-[#7c3aed]/20 text-xs font-bold flex items-center justify-center shrink-0">
           W
         </div>
         {!collapsed && (
@@ -81,7 +81,9 @@ export default function AdminSidebar({
       </div>
 
       <nav className="flex-1 overflow-y-auto py-3 px-2 space-y-4">
-        {adminNav.map((section) => (
+        {adminNav
+          .filter((section) => section.items.some((item) => !item.platformAdmin || isPlatformAdmin))
+          .map((section) => (
           <div key={section.title}>
             {!collapsed && (
               <p className="px-2.5 mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-[#A3A3A3]">
@@ -118,7 +120,7 @@ export default function AdminSidebar({
                         "flex items-center gap-2.5 rounded-xl text-[13px] font-medium transition-colors",
                         collapsed ? "justify-center h-10 w-10 mx-auto" : "px-2.5 h-10",
                         active
-                          ? "bg-[#111] text-white"
+                          ? "bg-gradient-to-l from-[#7c3aed] to-[#a855f7] text-white shadow-md shadow-[#7c3aed]/25"
                           : "text-[#525252] hover:bg-[#F7F7F7] hover:text-[#111]"
                       )}
                     >

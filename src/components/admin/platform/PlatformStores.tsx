@@ -40,7 +40,7 @@ export default function PlatformStores({ stores, stats, plans }: Props) {
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
-      <AdminPageHeader title="مدیریت پلتفرم" description="همه فروشگاه‌ها، پلن، وضعیت اشتراک و میزان استفاده" />
+      <AdminPageHeader title="فروشگاه‌ها و اشتراک" description="همه فروشگاه‌ها، پلن، وضعیت اشتراک و میزان استفاده" />
       <div className="grid gap-3 sm:grid-cols-3">
         {[
           ["کل فروشگاه‌ها", stats.stores],

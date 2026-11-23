@@ -21,6 +21,11 @@ import {
   GraduationCap,
   CreditCard,
   Globe,
+  Gauge,
+  BadgeDollarSign,
+  LayoutTemplate,
+  Newspaper,
+  Inbox,
 } from "lucide-react";
 
 export type NavItem = {
@@ -58,6 +63,7 @@ export const adminNav: NavSection[] = [
     items: [
       { href: "/admin/orders", label: "سفارش‌ها", icon: ShoppingBag },
       { href: "/admin/customers", label: "مشتری‌ها", icon: Users },
+      { href: "/admin/messages", label: "پیام‌ها", icon: Inbox },
       { href: "/admin/coupons", label: "تخفیف‌ها", icon: Percent },
     ],
   },
@@ -74,6 +80,16 @@ export const adminNav: NavSection[] = [
     items: [{ href: "/admin/theme", label: "تم و ظاهر", icon: Palette }],
   },
   {
+    title: "پلتفرم (مالک)",
+    items: [
+      { href: "/admin/platform", label: "داشبورد پلتفرم", icon: Gauge, platformAdmin: true },
+      { href: "/admin/platform/stores", label: "فروشگاه‌ها و اشتراک", icon: Globe, platformAdmin: true },
+      { href: "/admin/platform/plans", label: "پلن‌ها و قیمت", icon: BadgeDollarSign, platformAdmin: true },
+      { href: "/admin/platform/content", label: "محتوای سایت معرفی", icon: LayoutTemplate, platformAdmin: true },
+      { href: "/admin/platform/articles", label: "مقالات", icon: Newspaper, platformAdmin: true },
+    ],
+  },
+  {
     title: "تنظیمات",
     items: [
       { href: "/admin/settings", label: "تنظیمات فروشگاه", icon: Settings },
@@ -83,7 +99,7 @@ export const adminNav: NavSection[] = [
       { href: "/admin/account", label: "حساب و رمز عبور", icon: KeyRound },
       { href: "/admin/audit", label: "گزارش فعالیت", icon: History },
       { href: "/admin/help", label: "آموزش و راهنما", icon: GraduationCap },
-      { href: "/admin/platform", label: "مدیریت پلتفرم", icon: Globe, platformAdmin: true },
+
       { href: "/", label: "مشاهده فروشگاه", icon: Search },
     ],
   },
@@ -104,11 +120,16 @@ export function pageTitleFromPath(pathname: string): string {
   if (pathname.startsWith("/admin/team")) return "اعضای تیم";
   if (pathname.startsWith("/admin/account")) return "حساب کاربری";
   if (pathname.startsWith("/admin/brands")) return "برندها";
+  if (pathname.startsWith("/admin/messages")) return "پیام‌های مشتریان";
   if (pathname.startsWith("/admin/coupons")) return "کدهای تخفیف";
   if (pathname.startsWith("/admin/reviews")) return "نظرات";
   if (pathname.startsWith("/admin/audit")) return "گزارش فعالیت";
   if (pathname.startsWith("/admin/help")) return "آموزش و راهنما";
   if (pathname.startsWith("/admin/billing")) return "اشتراک و پلن";
-  if (pathname.startsWith("/admin/platform")) return "مدیریت پلتفرم";
+  if (pathname.startsWith("/admin/platform/stores")) return "فروشگاه‌ها و اشتراک";
+  if (pathname.startsWith("/admin/platform/plans")) return "پلن‌ها و قیمت";
+  if (pathname.startsWith("/admin/platform/content")) return "محتوای سایت معرفی";
+  if (pathname.startsWith("/admin/platform/articles")) return "مقالات";
+  if (pathname.startsWith("/admin/platform")) return "داشبورد پلتفرم";
   return "پنل مدیریت";
 }

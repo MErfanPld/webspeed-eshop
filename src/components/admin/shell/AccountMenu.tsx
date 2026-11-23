@@ -51,7 +51,7 @@ export default function AccountMenu() {
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="h-8 w-8 rounded-full bg-[#111] text-white text-xs font-bold flex items-center justify-center shrink-0"
+        className="h-8 w-8 rounded-full bg-gradient-to-l from-[#7c3aed] to-[#db2777] text-white shadow-md shadow-[#7c3aed]/20 text-xs font-bold flex items-center justify-center shrink-0"
         aria-haspopup="menu"
         aria-expanded={open}
         title={session.user.email}

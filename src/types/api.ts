@@ -214,3 +214,14 @@ export type PlatformStoreRow = {
   url: string | null;
   adminUrl: string | null;
 };
+
+export type PlatformOverview = {
+  stores: { total: number; new30: number; paid: number; trial: number; expired: number; noPlan: number };
+  mrr: number;
+  orders: { count30: number; gmv30: number; countAll: number };
+  signups: { day: string; n: number }[];
+  byPlan: { slug: string; name: string; n: number }[];
+  expiringSoon: { id: string; name: string; slug: string; endsAt: string | null; status: string }[];
+  topStores: { id: string; name: string; slug: string; gmv: number; orders: number }[];
+  content: { articles: number; drafts: number; testimonials: number };
+};

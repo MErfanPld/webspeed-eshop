@@ -9,7 +9,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
 
   return (
     <div
-      className="min-h-screen flex bg-[#F7F7F7] text-[#111111]"
+      className="min-h-screen flex bg-[#f8f7fc] text-[#1e1b2e]"
       style={{ fontFamily: "Vazirmatn, Tahoma, system-ui, sans-serif" }}
       dir="rtl"
     >
