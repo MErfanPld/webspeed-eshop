@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { api, errorMessage } from "@/lib/api/client";
 import type {
   NewsletterBlock as NewsletterBlockType,
   PageBlock,
@@ -15,12 +16,24 @@ export default function NewsletterBlockView({
   const data = (block as NewsletterBlockType).data;
   const [email, setEmail] = useState("");
   const [done, setDone] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const submit = (e: React.FormEvent) => {
+  // Saved to the store's subscriber list (panel → پیام‌ها → خبرنامه)
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim()) return;
-    setDone(true);
-    setEmail("");
+    if (!email.trim() || busy) return;
+    setBusy(true);
+    setError(null);
+    try {
+      await api("/newsletter", { method: "POST", body: { email: email.trim() }, refresh: false, redirectOnExpire: false });
+      setDone(true);
+      setEmail("");
+    } catch (err) {
+      setError(errorMessage(err, "عضویت ناموفق بود"));
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
@@ -53,9 +66,11 @@ export default function NewsletterBlockView({
             type="submit"
             className="ws-shine h-12 px-8 rounded-xl bg-white text-primary text-sm font-extrabold shadow-lg shrink-0 hover:-translate-y-0.5 transition-transform"
           >
-            {done ? "ثبت شد ✓" : data.buttonLabel || "عضویت"}
+            {busy ? "..." : done ? "ثبت شد ✓" : data.buttonLabel || "عضویت"}
           </button>
         </form>
+        {error && <p role="alert" className="mt-3 text-sm text-white bg-white/15 rounded-xl px-4 py-2">{error}</p>}
+        {done && <p role="status" className="mt-3 text-sm text-white/90">عضویت شما ثبت شد؛ از پیشنهادهای ویژه باخبر می‌شوید.</p>}
       </Container>
     </section>
   );

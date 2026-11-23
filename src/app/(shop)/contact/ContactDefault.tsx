@@ -6,10 +6,12 @@ import Container from "@/components/ui/Container";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import { useStoreInfo } from "@/context/StoreInfoContext";
+import { ApiError, api, errorMessage } from "@/lib/api/client";
 
 export default function ContactPage() {
   const storeInfo = useStoreInfo();
-  const [status, setStatus] = useState<"idle" | "success">("idle");
+  const [status, setStatus] = useState<"idle" | "sending" | "success">("idle");
+  const [sendError, setSendError] = useState<string | null>(null);
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -23,16 +25,26 @@ export default function ContactPage() {
     setErrors((e) => ({ ...e, [key]: "" }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Sent to the store's inbox in the admin panel (/admin/messages)
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const eMap: Record<string, string> = {};
     if (!form.name.trim()) eMap.name = "نام الزامی است";
-    if (!form.email.trim()) eMap.email = "ایمیل الزامی است";
-    if (!form.message.trim()) eMap.message = "پیام الزامی است";
+    if (!form.email.trim() && !form.phone.trim()) eMap.email = "ایمیل یا شماره تماس را وارد کنید";
+    if (form.message.trim().length < 5) eMap.message = "پیام را بنویسید";
     setErrors(eMap);
     if (Object.keys(eMap).length > 0) return;
-    setStatus("success");
-    setForm({ name: "", email: "", phone: "", message: "" });
+    setStatus("sending");
+    setSendError(null);
+    try {
+      await api("/contact", { method: "POST", body: form, refresh: false, redirectOnExpire: false });
+      setStatus("success");
+      setForm({ name: "", email: "", phone: "", message: "" });
+    } catch (err) {
+      setStatus("idle");
+      if (err instanceof ApiError && err.details && typeof err.details === "object") setErrors(err.details as Record<string, string>);
+      setSendError(errorMessage(err, "ارسال پیام ناموفق بود"));
+    }
   };
 
   return (
@@ -78,7 +90,7 @@ export default function ContactPage() {
 
         <div>
           {status === "success" ? (
-            <div className="border border-border rounded-sm p-8 text-center">
+            <div className="rounded-3xl border border-emerald-100 bg-emerald-50/60 p-8 text-center" role="status">
               <p className="text-lg font-medium mb-2">پیام شما ارسال شد</p>
               <p className="text-sm text-muted-foreground mb-6">
                 در اسرع وقت با شما تماس می‌گیریم.
@@ -123,14 +135,15 @@ export default function ContactPage() {
                   rows={5}
                   value={form.message}
                   onChange={(e) => update("message", e.target.value)}
-                  className="w-full rounded-sm border border-border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-foreground"
+                  className="w-full rounded-xl border border-border bg-surface px-4 py-3 text-sm leading-7 focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all"
                 />
                 {errors.message && (
                   <p className="text-xs text-red-600">{errors.message}</p>
                 )}
               </div>
-              <Button type="submit" size="lg">
-                ارسال پیام
+              {sendError && <p role="alert" className="text-sm text-red-700 bg-red-50 rounded-xl px-4 py-3">{sendError}</p>}
+              <Button type="submit" size="lg" disabled={status === "sending"}>
+                {status === "sending" ? "در حال ارسال..." : "ارسال پیام"}
               </Button>
             </form>
           )}
