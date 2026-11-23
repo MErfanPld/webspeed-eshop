@@ -1,4 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="600" viewBox="0 0 1400 600">
-  <rect width="1400" height="600" fill="#1c1519"/>
-  <text x="700" y="300" text-anchor="middle" fill="#faf9f8" font-family="system-ui,sans-serif" font-size="28" opacity="0.35">Free Shipping</text>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 600" width="1400" height="600" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f43f5e"/><stop offset=".55" stop-color="#f97316"/><stop offset="1" stop-color="#facc15"/></linearGradient></defs><rect width="1400" height="600" fill="url(#g)"/><circle cx="260" cy="120" r="260" fill="#fff" opacity=".10"/><circle cx="1240" cy="560" r="300" fill="#fff" opacity=".08"/><circle cx="380" cy="430" r="90" fill="#fff" opacity=".12"/><g transform="translate(140 110) scale(3.2)" fill="#fff" opacity=".92"><path d="M46 8h28l-4 22 26 84H24l26-84z"/></g><g transform="translate(420 200) scale(2.4) rotate(-8 60 60)" fill="#fff" opacity=".55"><path d="M24 46h72l-6 62H30zM40 46c0-30 40-30 40 0h-8c0-20-24-20-24 0z"/></g></svg>

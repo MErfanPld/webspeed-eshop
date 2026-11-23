@@ -1,10 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="600" viewBox="0 0 1400 600">
-  <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#2a2420"/>
-      <stop offset="100%" stop-color="#5c4f45"/>
-    </linearGradient>
-  </defs>
-  <rect width="1400" height="600" fill="url(#g)"/>
-  <text x="700" y="300" text-anchor="middle" fill="#faf9f8" font-family="system-ui,sans-serif" font-size="28" opacity="0.35">WebSpeed Hero</text>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 600" width="1400" height="600" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7c3aed"/><stop offset=".55" stop-color="#db2777"/><stop offset="1" stop-color="#f97316"/></linearGradient></defs><rect width="1400" height="600" fill="url(#g)"/><circle cx="260" cy="120" r="260" fill="#fff" opacity=".10"/><circle cx="1240" cy="560" r="300" fill="#fff" opacity=".08"/><circle cx="380" cy="430" r="90" fill="#fff" opacity=".12"/><g transform="translate(140 110) scale(3.2)" fill="#fff" opacity=".92"><path d="M30 20l20-8h20l20 8 18 22-16 12-8-8v62H36V46l-8 8-16-12z"/></g><g transform="translate(420 200) scale(2.4) rotate(-8 60 60)" fill="#fff" opacity=".55"><path d="M40 16c4-8 36-8 40 0l28 24-12 16-10-8v60H34V48l-10 8-12-16zM46 18c0 14 28 14 28 0"/></g></svg>
