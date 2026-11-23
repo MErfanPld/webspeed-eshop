@@ -271,7 +271,7 @@ export default function ProductDetailClient({ product }: Props) {
               <div className="flex flex-col sm:flex-row gap-3 pt-1">
                 <Button
                   size="lg"
-                  className="flex-1 h-12 rounded-xl bg-primary hover:bg-primary-hover text-white border-0 font-bold text-sm"
+                  className="ws-shine flex-1 h-12 rounded-xl bg-brand-gradient text-white border-0 font-bold text-sm shadow-lg shadow-primary/25 hover:-translate-y-0.5 transition-transform"
                   onClick={handleAdd}
                   disabled={product.stock <= 0}
                 >

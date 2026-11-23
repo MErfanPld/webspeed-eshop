@@ -32,7 +32,7 @@ export default function HeroBlockView({ block }: { block: PageBlock }) {
 
   return (
     <section
-      className="relative w-full overflow-hidden bg-concrete"
+      className="relative w-full overflow-hidden bg-brand-gradient"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       aria-roledescription="carousel"
@@ -52,17 +52,18 @@ export default function HeroBlockView({ block }: { block: PageBlock }) {
               alt={s.title}
               fill
               priority={i === 0}
-              className="object-cover"
+              className={cn("object-cover", i === index && "ws-kenburns")}
               sizes="100vw"
             />
-            <div className="absolute inset-0 bg-gradient-to-l from-black/55 via-black/30 to-black/10" />
+            <div className="absolute inset-0 bg-gradient-to-l from-black/50 via-black/20 to-transparent" />
           </div>
         ))}
 
         <div className="absolute inset-0 z-[2] flex items-center">
           <div
             className={cn(
-              "mx-auto w-full max-w-content px-4 sm:px-6 lg:px-8",
+              // side padding keeps the text clear of the arrow buttons
+              "mx-auto w-full max-w-content px-14 sm:px-20 lg:px-24",
               slide.align === "center" && "text-center",
               slide.align === "left" && "text-left"
             )}
@@ -75,22 +76,23 @@ export default function HeroBlockView({ block }: { block: PageBlock }) {
               )}
             >
               {slide.eyebrow && (
-                <p className="mb-3 text-xs font-medium tracking-[0.2em] uppercase text-white/80">
+                <p key={`e${index}`} className="ws-rise mb-4 inline-flex items-center rounded-full bg-white/20 backdrop-blur px-3 py-1 text-xs font-semibold text-white ring-1 ring-white/30">
                   {slide.eyebrow}
                 </p>
               )}
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-[1.15] tracking-tight">
+              <h1 key={`t${index}`} className="ws-rise ws-rise-2 text-3xl sm:text-4xl lg:text-[3.4rem] font-extrabold leading-[1.2] tracking-tight drop-shadow-sm">
                 {slide.title}
               </h1>
               {slide.subtitle && (
-                <p className="mt-4 text-sm sm:text-base text-white/85 leading-relaxed max-w-md">
+                <p key={`s${index}`} className="ws-rise ws-rise-3 mt-4 text-sm sm:text-lg text-white/90 leading-relaxed max-w-md">
                   {slide.subtitle}
                 </p>
               )}
               {slide.ctaLabel && slide.ctaHref && (
                 <Link
+                  key={`c${index}`}
                   href={slide.ctaHref}
-                  className="mt-6 inline-flex h-12 items-center px-7 rounded-full bg-white text-foreground text-sm font-semibold hover:bg-white/90 transition-colors"
+                  className="ws-rise ws-rise-4 ws-shine mt-7 inline-flex h-12 sm:h-14 items-center gap-2 px-8 rounded-2xl bg-white text-primary text-sm sm:text-base font-extrabold shadow-xl shadow-black/10 hover:-translate-y-0.5 transition-transform"
                 >
                   {slide.ctaLabel}
                 </Link>
@@ -104,7 +106,7 @@ export default function HeroBlockView({ block }: { block: PageBlock }) {
             <button
               type="button"
               onClick={prev}
-              className="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 z-[3] h-10 w-10 rounded-full bg-white/90 text-foreground flex items-center justify-center hover:bg-white shadow-sm"
+              className="absolute right-3 sm:right-5 top-1/2 -translate-y-1/2 z-[3] h-11 w-11 rounded-full bg-white/20 backdrop-blur text-white ring-1 ring-white/40 flex items-center justify-center hover:bg-white hover:text-primary transition-colors"
               aria-label="اسلاید قبلی"
             >
               <ChevronRight className="h-5 w-5" />
@@ -112,7 +114,7 @@ export default function HeroBlockView({ block }: { block: PageBlock }) {
             <button
               type="button"
               onClick={next}
-              className="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 z-[3] h-10 w-10 rounded-full bg-white/90 text-foreground flex items-center justify-center hover:bg-white shadow-sm"
+              className="absolute left-3 sm:left-5 top-1/2 -translate-y-1/2 z-[3] h-11 w-11 rounded-full bg-white/20 backdrop-blur text-white ring-1 ring-white/40 flex items-center justify-center hover:bg-white hover:text-primary transition-colors"
               aria-label="اسلاید بعدی"
             >
               <ChevronLeft className="h-5 w-5" />

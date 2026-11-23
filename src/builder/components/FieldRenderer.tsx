@@ -301,13 +301,13 @@ export default function FieldRenderer(props: Props) {
           <Label field={field} />
           <select
             className={inputClass}
-            value={String(value ?? "")}
+            value={String(value ?? field.defaultValue ?? "")}
             onChange={(e) => {
               const opt = field.options!.find((o) => String(o.value) === e.target.value);
               onChange(opt ? opt.value : e.target.value);
             }}
           >
-            {value === undefined && <option value="">—</option>}
+            {value === undefined && field.defaultValue === undefined && <option value="">—</option>}
             {field.options.map((o) => (
               <option key={String(o.value)} value={String(o.value)}>
                 {o.label}

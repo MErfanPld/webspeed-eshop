@@ -13,7 +13,7 @@ export default function FaqBlockView({ block }: { block: PageBlock }) {
   return (
     <section className="py-12 sm:py-16 bg-muted/30">
       <Container className="max-w-3xl">
-        <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-center mb-8">
+        <h2 className="ws-heading text-xl sm:text-[1.7rem] font-extrabold tracking-tight text-center mb-8">
           {data.title}
         </h2>
         <ul className="space-y-2">

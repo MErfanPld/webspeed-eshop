@@ -100,7 +100,7 @@ export function MainHeaderBlock({ block }: Props) {
           {showCta && (
             <Link
               href={ctaHref}
-              className="hidden sm:inline-flex h-9 px-3.5 rounded-lg bg-[#111] text-white text-xs font-semibold items-center"
+              className="hidden sm:inline-flex h-9 px-3.5 rounded-xl bg-brand-gradient text-white text-xs font-bold items-center shadow-md shadow-primary/25"
             >
               {ctaLabel}
             </Link>

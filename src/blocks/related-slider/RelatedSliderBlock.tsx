@@ -36,7 +36,7 @@ export default function RelatedSliderBlockView({
     <section className="py-10 sm:py-14">
       <Container>
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg sm:text-xl font-bold tracking-tight">
+          <h2 className="ws-heading text-xl sm:text-[1.7rem] font-extrabold tracking-tight">
             {data.title}
           </h2>
           <div className="flex gap-2">

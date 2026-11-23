@@ -30,6 +30,8 @@ export type FieldSchema = {
   description?: string;
   group?: string;
   responsive?: boolean;
+  /** Shown (and meant) when the block has no value yet, e.g. a select's implicit default */
+  defaultValue?: string | number | boolean;
 };
 
 export type BlockSchema = FieldSchema[];

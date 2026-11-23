@@ -16,14 +16,14 @@ export default function TestimonialsBlockView({
   return (
     <section className="py-12 sm:py-16">
       <Container>
-        <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-center mb-8 sm:mb-10">
+        <h2 className="ws-heading text-xl sm:text-[1.7rem] font-extrabold tracking-tight text-center mb-8 sm:mb-10">
           {data.title}
         </h2>
         <ul className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
           {data.items.map((item) => (
             <li
               key={item.id}
-              className="rounded-2xl border border-border bg-surface p-5 sm:p-6 space-y-4"
+              className="relative overflow-hidden rounded-3xl border border-border/70 bg-surface p-6 sm:p-7 space-y-4 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10"
             >
               {typeof item.rating === "number" && (
                 <div className="flex gap-0.5">
@@ -40,18 +40,19 @@ export default function TestimonialsBlockView({
                   ))}
                 </div>
               )}
-              <p className="text-sm leading-relaxed text-foreground/85">
+              <span className="absolute -top-3 left-4 text-7xl font-black text-brand-gradient opacity-20 select-none" aria-hidden>”</span>
+              <p className="text-sm leading-7 text-foreground/85">
                 «{item.text}»
               </p>
               <div className="flex items-center gap-3 pt-1">
-                <div className="relative h-9 w-9 rounded-full overflow-hidden bg-muted">
+                <div className="relative h-11 w-11 rounded-full overflow-hidden bg-brand-gradient ring-2 ring-white shadow">
                   {item.avatar && (
                     <Image
                       src={item.avatar}
                       alt=""
                       fill
                       className="object-cover"
-                      sizes="36px"
+                      sizes="44px"
                     />
                   )}
                 </div>

@@ -5,20 +5,20 @@
 /* WebSpeed × Rhone-inspired Design System */
 
 :root {
-  --background: #fbf9f9;
-  --foreground: #1c1519;
-  --muted: #efecea;
-  --muted-foreground: #6b6560;
-  --border: #e5e1dc;
-  --accent: #867256;
-  --accent-hover: #706049;
-  --accent-foreground: #fbf9f9;
+  --background: #faf8ff;
+  --foreground: #1e1b2e;
+  --muted: #f3f0fa;
+  --muted-foreground: #6b6880;
+  --border: #ece8f5;
+  --accent: #db2777;
+  --accent-hover: #be185d;
+  --accent-foreground: #ffffff;
   --surface: #ffffff;
   --concrete: #f2f2f2;
-  --error: #e22120;
+  --error: #e11d48;
   /* Primary action color (overridable per store via the theme) */
-  --primary: #111111;
-  --primary-hover: #000000;
+  --primary: #7c3aed;
+  --primary-hover: #6d28d9;
   --leading-tight: 1.12;
   --leading-snug: 1.3;
   --leading-normal: 1.6;
@@ -329,4 +329,90 @@
   html {
     scroll-behavior: auto !important;
   }
+}
+
+/* --- Storefront motion & color system ------------------------------------ */
+/* Entrance animations (RevealOnScroll). Only elements armed by the script
+   (and therefore observed) start hidden; everything else is always visible. */
+[data-ws-anim].ws-arm:not(.ws-in) {
+  opacity: 0;
+}
+[data-ws-anim="fade-up"].ws-arm:not(.ws-in) {
+  transform: translateY(28px);
+}
+[data-ws-anim="zoom"].ws-arm:not(.ws-in) {
+  transform: scale(0.94);
+}
+[data-ws-anim="slide"].ws-arm:not(.ws-in) {
+  transform: translateX(-36px);
+}
+[data-ws-anim].ws-arm.ws-in {
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.text-brand-gradient {
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.bg-brand-gradient {
+  background: linear-gradient(120deg, var(--primary), var(--accent));
+}
+
+/* Slow zoom on the active hero slide */
+@keyframes ws-kenburns {
+  from { transform: scale(1); }
+  to { transform: scale(1.08); }
+}
+.ws-kenburns {
+  animation: ws-kenburns 9s ease-out both;
+}
+/* Hero text: staggered entrance per slide */
+@keyframes ws-rise {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: none; }
+}
+.ws-rise { animation: ws-rise 0.8s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.ws-rise-2 { animation-delay: 0.12s; }
+.ws-rise-3 { animation-delay: 0.24s; }
+.ws-rise-4 { animation-delay: 0.36s; }
+
+/* Glossy sweep on primary buttons */
+.ws-shine { position: relative; overflow: hidden; isolation: isolate; }
+.ws-shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  transform: translateX(110%);
+  background: linear-gradient(100deg, transparent 30%, rgb(255 255 255 / 0.35) 50%, transparent 70%);
+  transition: transform 0.7s ease;
+}
+.ws-shine:hover::after { transform: translateX(-110%); }
+
+@keyframes ws-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+.ws-float { animation: ws-float 5s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ws-kenburns, .ws-rise, .ws-float { animation: none !important; }
+  [data-ws-anim].ws-arm:not(.ws-in) { opacity: 1; transform: none; }
+}
+
+/* Section headings: bold title with a short gradient underline */
+.ws-heading::after {
+  content: "";
+  display: block;
+  width: 2.75rem;
+  height: 4px;
+  margin-top: 0.6rem;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, var(--accent), var(--primary));
+}
+.text-center.ws-heading::after,
+.text-center .ws-heading::after {
+  margin-inline: auto;
 }

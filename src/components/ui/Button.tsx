@@ -22,11 +22,11 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       "inline-flex items-center justify-center font-semibold tracking-wide transition-all duration-200 focus-visible:outline-none disabled:opacity-35 disabled:pointer-events-none select-none";
 
     const variants = {
-      primary: "bg-primary text-white hover:bg-primary-hover",
+      primary: "ws-shine bg-brand-gradient text-white rounded-xl shadow-lg shadow-primary/20 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-primary/30 active:translate-y-0",
       accent: "bg-accent text-accent-foreground hover:bg-accent-hover",
       secondary: "bg-muted text-foreground hover:opacity-80",
       outline:
-        "bg-transparent text-foreground shadow-[inset_0_0_0_1px_var(--foreground)] hover:bg-foreground hover:text-background",
+        "bg-transparent text-foreground rounded-xl shadow-[inset_0_0_0_1.5px_var(--border)] hover:shadow-[inset_0_0_0_1.5px_var(--primary)] hover:text-primary",
       ghost: "bg-transparent text-foreground hover:opacity-60",
       link: "bg-transparent text-foreground underline-offset-4 hover:underline p-0 h-auto min-h-0 font-medium",
     };

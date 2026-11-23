@@ -74,13 +74,13 @@ export default function FlashSaleBlockView({ block }: { block: PageBlock }) {
   );
 
   return (
-    <section className="py-12 sm:py-16 bg-muted/40">
+    <section className="py-12 sm:py-16 bg-gradient-to-b from-[#fff1f2] via-[#fdf2f8] to-transparent">
       <Container>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-          <h2 className="text-xl sm:text-2xl font-bold tracking-tight">
+          <h2 className="ws-heading text-xl sm:text-[1.7rem] font-extrabold tracking-tight">
             {data.title}
           </h2>
-          <div className="flex items-center gap-3 rounded-2xl bg-surface border border-border px-4 py-2.5">
+          <div className="flex items-center gap-3 rounded-2xl bg-gradient-to-l from-[#f43f5e] to-[#f97316] text-white px-4 py-2.5 shadow-lg shadow-[#f43f5e]/25 [&_span]:text-white">
             {unit(t.d, "روز")}
             <span className="text-muted-foreground">:</span>
             {unit(t.h, "ساعت")}

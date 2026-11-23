@@ -14,7 +14,7 @@ const iconMap: Record<string, ComponentType<{ className?: string }>> = {
 export default function FeaturesBlockView({ block }: { block: PageBlock }) {
   const data = (block as FeaturesBlockType).data;
   return (
-    <section className="border-y border-border bg-white">
+    <section className="bg-transparent">
       <Container className="py-4 sm:py-5">
         <ul className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {data.items.map((item) => {
@@ -22,10 +22,10 @@ export default function FeaturesBlockView({ block }: { block: PageBlock }) {
             return (
               <li
                 key={item.id}
-                className="flex items-center gap-3 rounded-lg px-2 py-1.5"
+                className="group flex items-center gap-3 rounded-2xl bg-surface border border-border/70 px-3 py-3 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md hover:shadow-primary/10"
               >
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/8 text-primary">
-                  <Icon className="h-4 w-4" />
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-gradient text-white shadow-md shadow-primary/20 transition-transform group-hover:scale-110 group-hover:-rotate-6">
+                  <Icon className="h-5 w-5" />
                 </span>
                 <div className="min-w-0">
                   <p className="text-xs sm:text-sm font-semibold truncate">

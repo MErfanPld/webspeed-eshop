@@ -66,6 +66,7 @@ export function BlockRenderer({
     <div
       id={sanitizeAnchor(data._anchor)}
       data-ws-block={block.type}
+      data-ws-anim={animationOf(block.type, data._animation)}
       className={cn(
         "ws-block min-w-0",
         visibilityClasses(vis),
@@ -80,3 +81,16 @@ export function BlockRenderer({
 }
 
 export default BlockRenderer;
+
+/** Blocks that frame the page never animate; everything else defaults to "fade-up" */
+const NO_AUTO_ANIMATION = new Set([
+  "announcement-bar", "header", "footer", "spacer", "divider", "hero",
+  "section", "container", "columns", "flex", "stack", "grid", "breadcrumbs",
+]);
+
+function animationOf(type: string, value: unknown): string | undefined {
+  const v = typeof value === "string" ? value : "auto";
+  if (v === "none") return undefined;
+  if (v === "auto") return NO_AUTO_ANIMATION.has(type) ? undefined : "fade-up";
+  return ["fade-up", "fade", "zoom", "slide"].includes(v) ? v : undefined;
+}

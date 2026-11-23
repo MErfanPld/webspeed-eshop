@@ -8,7 +8,10 @@ export default function Footer() {
   const live = useStoreInfo();
   const storeInfo = { ...live, description: live.tagline, social: { instagram: live.instagram } };
   return (
-    <footer className="mt-auto bg-foreground text-background">
+    <footer className="relative isolate overflow-hidden mt-auto bg-foreground text-background">
+      <div className="h-1 bg-brand-gradient" aria-hidden />
+      <span className="absolute -top-24 left-1/4 h-72 w-72 rounded-full bg-primary/25 blur-3xl -z-10" aria-hidden />
+      <span className="absolute bottom-0 right-0 h-64 w-64 rounded-full bg-accent/15 blur-3xl -z-10" aria-hidden />
       <div className="border-b border-background/10">
         <div className="mx-auto max-w-content px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-4 text-center sm:text-right">

@@ -926,6 +926,22 @@ export const COMMON_FIELDS: FieldSchema[] = [
   rnum("فاصله پایین", "_style.marginBottom", 0, 240, "پیشرفته"),
   { type: "color", label: "پس‌زمینه بیرونی", path: "_style.background", group: "پیشرفته" },
   { type: "text", label: "شناسه لنگر (anchor)", path: "_anchor", group: "پیشرفته", placeholder: "مثلاً offers" },
+  {
+    type: "select",
+    label: "انیمیشن ورود",
+    path: "_animation",
+    group: "جلوه‌ها",
+    defaultValue: "auto",
+    description: "خودکار: بخش‌ها هنگام اسکرول با حرکت نرم ظاهر می‌شوند (هدر، فوتر و اسلایدر اصلی ثابت می‌مانند).",
+    options: [
+      { label: "خودکار (پیشنهادی)", value: "auto" },
+      { label: "بدون انیمیشن", value: "none" },
+      { label: "بالا آمدن", value: "fade-up" },
+      { label: "ظاهر شدن", value: "fade" },
+      { label: "بزرگ شدن", value: "zoom" },
+      { label: "ورود از کنار", value: "slide" },
+    ],
+  },
 ];
 
 export const blockDefinitions: readonly BlockDefinition[] = definitions;

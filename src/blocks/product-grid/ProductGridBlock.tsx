@@ -28,7 +28,7 @@ export default function ProductGridBlockView({
     <section className="py-12 sm:py-16">
       <Container>
         {data.title && (
-          <h2 className="text-xl sm:text-2xl font-bold tracking-tight mb-6 sm:mb-8">
+          <h2 className="ws-heading text-xl sm:text-[1.7rem] font-extrabold tracking-tight mb-6 sm:mb-8">
             {data.title}
           </h2>
         )}

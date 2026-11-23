@@ -1,5 +1,6 @@
 import { SiteHeader, SiteFooter } from "@/components/layout/SiteChrome";
 import type { PageBlock } from "@/builder/types";
+import RevealOnScroll from "./RevealOnScroll";
 
 /** Storefront chrome: global header, page content, global footer */
 export default function ShopChrome({
@@ -17,6 +18,7 @@ export default function ShopChrome({
       <SiteHeader blocks={header} />
       <main className="flex-1 w-full min-w-0">{children}</main>
       <SiteFooter blocks={footer} />
+      <RevealOnScroll />
     </>
   );
 }

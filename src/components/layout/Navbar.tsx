@@ -94,7 +94,10 @@ export default function Navbar() {
               href="/"
               className="text-base sm:text-lg font-extrabold tracking-tight shrink-0 text-foreground"
             >
-              Web<span className="text-primary">Speed</span>
+              <span className="inline-flex items-center gap-2">
+                <span className="h-8 w-8 rounded-xl bg-brand-gradient grid place-items-center text-white text-sm font-black shadow-md shadow-primary/30">W</span>
+                <span>Web<span className="text-brand-gradient">Speed</span></span>
+              </span>
             </Link>
 
             <form
@@ -233,7 +236,10 @@ export default function Navbar() {
           <div className="flex items-center justify-between h-14 px-4 border-b border-border shrink-0">
             <Link href="/" onClick={() => setDrawerOpen(false)}>
               <span className="text-sm font-extrabold">
-                Web<span className="text-primary">Speed</span>
+                <span className="inline-flex items-center gap-2">
+                <span className="h-8 w-8 rounded-xl bg-brand-gradient grid place-items-center text-white text-sm font-black shadow-md shadow-primary/30">W</span>
+                <span>Web<span className="text-brand-gradient">Speed</span></span>
+              </span>
               </span>
             </Link>
             <button

@@ -28,17 +28,17 @@ export type StoreTheme = {
 /** Defaults = the values in globals.css */
 export const DEFAULT_THEME: Required<{ colors: Required<ThemeColors>; typography: Required<StoreTheme["typography"]> }> = {
   colors: {
-    primary: "#111111",
-    primaryHover: "#000000",
-    accent: "#867256",
-    accentHover: "#706049",
-    background: "#fbf9f9",
+    primary: "#7c3aed",
+    primaryHover: "#6d28d9",
+    accent: "#db2777",
+    accentHover: "#be185d",
+    background: "#faf8ff",
     surface: "#ffffff",
-    foreground: "#1c1519",
-    muted: "#efecea",
-    mutedForeground: "#6b6560",
-    border: "#e5e1dc",
-    error: "#e22120",
+    foreground: "#1e1b2e",
+    muted: "#f3f0fa",
+    mutedForeground: "#6b6880",
+    border: "#ece8f5",
+    error: "#e11d48",
   },
   typography: { baseSize: 16, lineHeight: 1.6 },
 };

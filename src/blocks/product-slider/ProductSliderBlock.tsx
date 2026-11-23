@@ -40,7 +40,7 @@ export default function ProductSliderBlockView({
       <Container>
         <div className="flex items-end justify-between gap-4 mb-6 sm:mb-8">
           <div>
-            <h2 className="text-xl sm:text-2xl font-bold tracking-tight">
+            <h2 className="ws-heading text-xl sm:text-[1.7rem] font-extrabold tracking-tight">
               {data.title}
             </h2>
             {data.subtitle && (
