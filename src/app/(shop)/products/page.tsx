@@ -37,10 +37,13 @@ function ProductsContent() {
     if (brandName) setFilters((f) => ({ ...f, brands: [brandName] }));
     if (cat) setFilters((f) => ({ ...f, category: cat }));
     if (gender) setFilters((f) => ({ ...f, gender }));
-    if (sortParam) setSort(sortParam);
+    // "bestsellers" is used by older menu links
+    if (sortParam) setSort(sortParam === "bestsellers" ? "bestseller" : sortParam);
+    else if (searchParams.get("discount") === "1") setSort("discount");
   }, [searchParams, products]);
 
   const query = searchParams.get("q")?.trim().toLowerCase() || "";
+  const onlyDiscounted = searchParams.get("discount") === "1";
 
   const availableColors = useMemo(() => {
     const map = new Map<string, string>();
@@ -56,6 +59,9 @@ function ProductsContent() {
           p.name.toLowerCase().includes(query) ||
           p.description.toLowerCase().includes(query)
       );
+    }
+    if (onlyDiscounted) {
+      list = list.filter((p) => p.compareAtPrice != null && p.compareAtPrice > p.price);
     }
     if (filters.category && filters.category !== "all") {
       list = list.filter((p) => p.category === filters.category);
@@ -93,6 +99,13 @@ function ProductsContent() {
       case "price-desc":
         list.sort((a, b) => b.price - a.price);
         break;
+      case "discount": {
+        // biggest discount first; full-price products after
+        const pct = (p: (typeof list)[number]) =>
+          p.compareAtPrice && p.compareAtPrice > p.price ? (p.compareAtPrice - p.price) / p.compareAtPrice : 0;
+        list.sort((a, b) => pct(b) - pct(a));
+        break;
+      }
       case "bestseller":
         list.sort(
           (a, b) => (b.reviewCount ?? 0) - (a.reviewCount ?? 0)
@@ -105,7 +118,7 @@ function ProductsContent() {
         ];
     }
     return list;
-  }, [filters, sort, query, products]);
+  }, [filters, sort, query, products, onlyDiscounted]);
 
   return (
     <Container className="py-6 sm:py-10">

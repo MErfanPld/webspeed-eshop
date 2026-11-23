@@ -77,7 +77,7 @@ export default function TrackOrderPage() {
       )}
 
       {order && (
-        <section className="mt-8 border border-border p-6 space-y-5" aria-live="polite">
+        <section className="mt-8 border border-border/70 rounded-3xl bg-surface shadow-[0_1px_2px_rgba(30,27,46,0.04)] p-6 space-y-5" aria-live="polite">
           <div className="flex items-center justify-between gap-3">
             <p className="font-semibold num" dir="ltr">{order.number}</p>
             <span className="text-xs font-semibold px-2.5 py-1 bg-muted">{STATUS_FA[order.status]}</span>

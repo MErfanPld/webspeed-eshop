@@ -186,4 +186,21 @@ test.describe("catalog extras and admin pages", () => {
     expect(robots).toContain("Disallow: /admin");
     expect(robots).toContain("Sitemap:");
   });
+
+  test("contact form reaches the store's inbox; newsletter sign-up is saved", async ({ page, browser }) => {
+    const text = `پیام تست ${Date.now()}`;
+    await page.goto("/contact");
+    await page.fill("#name", "مشتری تماس");
+    await page.fill("#email", "contact@test.local");
+    await page.fill("#message", text);
+    await page.getByRole("button", { name: "ارسال پیام" }).click();
+    await expect(page.getByText("پیام شما ارسال شد")).toBeVisible();
+
+    const ctx = await browser.newContext();
+    const admin = await ctx.newPage();
+    await adminLogin(admin);
+    await admin.goto("/admin/messages");
+    await expect(admin.getByTestId("message-row").filter({ hasText: "مشتری تماس" }).first()).toBeVisible();
+    await ctx.close();
+  });
 });

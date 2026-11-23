@@ -158,7 +158,7 @@ export default function AdminPagesPage() {
         <button
           type="button"
           onClick={openCreate}
-          className="h-10 px-4 rounded-xl bg-[#111] text-white text-sm font-semibold inline-flex items-center gap-2"
+          className="h-10 px-4 rounded-xl bg-gradient-to-l from-[#7c3aed] to-[#db2777] text-white shadow-md shadow-[#7c3aed]/20 text-sm font-semibold inline-flex items-center gap-2"
         >
           <Plus className="h-4 w-4" />
           صفحه جدید
@@ -220,7 +220,7 @@ export default function AdminPagesPage() {
                       <div className="flex items-center justify-end gap-1.5">
                         <Link
                           href={`/admin/builder/${p.id}`}
-                          className="h-8 px-2.5 rounded-lg bg-[#111] text-white text-xs font-semibold inline-flex items-center gap-1.5"
+                          className="h-8 px-2.5 rounded-lg bg-gradient-to-l from-[#7c3aed] to-[#db2777] text-white shadow-md shadow-[#7c3aed]/20 text-xs font-semibold inline-flex items-center gap-1.5"
                         >
                           <Pencil className="h-3.5 w-3.5" />
                           ویرایش
@@ -272,7 +272,7 @@ export default function AdminPagesPage() {
                 <div className="flex gap-1.5 pt-1">
                   <Link
                     href={`/admin/builder/${p.id}`}
-                    className="h-9 px-3 rounded-lg bg-[#111] text-white text-xs font-semibold inline-flex items-center gap-1"
+                    className="h-9 px-3 rounded-lg bg-gradient-to-l from-[#7c3aed] to-[#db2777] text-white shadow-md shadow-[#7c3aed]/20 text-xs font-semibold inline-flex items-center gap-1"
                   >
                     <Pencil className="h-3.5 w-3.5" />
                     ویرایش
@@ -341,7 +341,7 @@ export default function AdminPagesPage() {
                 type="button"
                 disabled={creating || !!slugError || !name.trim()}
                 onClick={handleCreate}
-                className="h-10 px-4 rounded-xl bg-[#111] text-white text-sm font-semibold disabled:opacity-50"
+                className="h-10 px-4 rounded-xl bg-gradient-to-l from-[#7c3aed] to-[#db2777] text-white shadow-md shadow-[#7c3aed]/20 text-sm font-semibold disabled:opacity-50"
               >
                 {creating ? "..." : "ساخت و ورود به صفحه‌ساز"}
               </button>
@@ -354,7 +354,7 @@ export default function AdminPagesPage() {
         <div className="rounded-2xl border border-dashed border-[#E8E8E8] bg-white p-10 text-center">
           <LayoutTemplate className="h-10 w-10 mx-auto text-[#A3A3A3] mb-3" />
           <p className="text-sm font-semibold">هنوز صفحه‌ای ندارید</p>
-          <button type="button" onClick={openCreate} className="mt-4 h-10 px-4 rounded-xl bg-[#111] text-white text-sm font-semibold inline-flex items-center gap-2">
+          <button type="button" onClick={openCreate} className="mt-4 h-10 px-4 rounded-xl bg-gradient-to-l from-[#7c3aed] to-[#db2777] text-white shadow-md shadow-[#7c3aed]/20 text-sm font-semibold inline-flex items-center gap-2">
             <Plus className="h-4 w-4" />
             ساخت صفحه
           </button>

@@ -61,7 +61,7 @@ export default function ReviewsModeration({ reviews, status }: { reviews: AdminR
             aria-current={status === t.key ? "page" : undefined}
             className={cn(
               "px-3 py-1.5 rounded-lg text-sm border",
-              status === t.key ? "bg-[#111] text-white border-[#111]" : "bg-white border-[#E8E8E8] text-[#525252] hover:bg-[#F7F7F7]"
+              status === t.key ? "bg-[#7c3aed] text-white border-[#7c3aed]" : "bg-white border-[#E8E8E8] text-[#525252] hover:bg-[#F7F7F7]"
             )}
           >
             {t.label}

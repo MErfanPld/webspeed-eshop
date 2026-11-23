@@ -4,13 +4,13 @@ import Link from "next/link";
 export default function AuthCard({ title, subtitle, children }: { title: string; subtitle?: string; children: React.ReactNode }) {
   return (
     <div
-      className="min-h-[100dvh] flex flex-col items-center justify-center px-4 bg-[#F7F7F7]"
+      className="min-h-[100dvh] flex flex-col items-center justify-center px-4 bg-[radial-gradient(40rem_25rem_at_80%_0%,#ede9fe,transparent),radial-gradient(30rem_20rem_at_0%_100%,#fce7f3,transparent)] bg-[#f8f7fc]"
       style={{ fontFamily: "Vazirmatn, Tahoma, system-ui, sans-serif" }}
       dir="rtl"
     >
       <div className="w-full max-w-[400px]">
         <div className="text-center mb-8">
-          <div className="mx-auto h-11 w-11 rounded-xl bg-[#111] text-white text-sm font-bold flex items-center justify-center mb-4">
+          <div className="mx-auto h-11 w-11 rounded-xl bg-gradient-to-l from-[#7c3aed] to-[#db2777] text-white shadow-md shadow-[#7c3aed]/20 text-sm font-bold flex items-center justify-center mb-4">
             W
           </div>
           <h1 className="text-xl font-semibold text-[#111] tracking-tight">{title}</h1>

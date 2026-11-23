@@ -9,6 +9,7 @@ const options = [
   { value: "featured", label: "پیشنهاد ما" },
   { value: "bestseller", label: "پرفروش‌ترین" },
   { value: "newest", label: "جدیدترین" },
+  { value: "discount", label: "بیشترین تخفیف" },
   { value: "price-asc", label: "ارزان‌ترین" },
   { value: "price-desc", label: "گران‌ترین" },
 ];

@@ -22,10 +22,25 @@ import SearchOverlay from "@/components/navigation/SearchOverlay";
 import MegaMenu from "@/components/layout/MegaMenu";
 import CartDropdown from "@/components/layout/CartDropdown";
 import { useRouter } from "next/navigation";
+import { useStoreInfo } from "@/context/StoreInfoContext";
+
+/** The store's own name (each store on the platform has its own) */
+function StoreLogo() {
+  const { name } = useStoreInfo();
+  const label = name || "فروشگاه";
+  return (
+    <span className="inline-flex items-center gap-2">
+      <span className="h-8 w-8 rounded-xl bg-brand-gradient grid place-items-center text-white text-sm font-black shadow-md shadow-primary/30">
+        {label.slice(0, 1)}
+      </span>
+      <span className="text-brand-gradient">{label}</span>
+    </span>
+  );
+}
 
 const NAV = [
   { href: "/", label: "خانه" },
-  { href: "/products?sort=bestsellers", label: "پرفروش‌ها" },
+  { href: "/products?sort=bestseller", label: "پرفروش‌ها" },
   { href: "/products?sort=newest", label: "جدیدترین‌ها" },
   { href: "/products?gender=men", label: "مردانه" },
   { href: "/products?gender=women", label: "زنانه" },
@@ -36,7 +51,7 @@ const NAV = [
 const MOBILE = [
   { href: "/", label: "خانه", icon: Home },
   { href: "/products", label: "دسته‌بندی‌ها", icon: Grid3X3 },
-  { href: "/products?sort=bestsellers", label: "پرفروش‌ها", icon: Tag },
+  { href: "/products?sort=bestseller", label: "پرفروش‌ها", icon: Tag },
   { href: "/products?discount=1", label: "تخفیف‌ها", icon: Tag },
   { href: "/about", label: "درباره ما", icon: Info },
   { href: "/contact", label: "تماس با ما", icon: Phone },
@@ -94,10 +109,7 @@ export default function Navbar() {
               href="/"
               className="text-base sm:text-lg font-extrabold tracking-tight shrink-0 text-foreground"
             >
-              <span className="inline-flex items-center gap-2">
-                <span className="h-8 w-8 rounded-xl bg-brand-gradient grid place-items-center text-white text-sm font-black shadow-md shadow-primary/30">W</span>
-                <span>Web<span className="text-brand-gradient">Speed</span></span>
-              </span>
+              <StoreLogo />
             </Link>
 
             <form
@@ -236,10 +248,7 @@ export default function Navbar() {
           <div className="flex items-center justify-between h-14 px-4 border-b border-border shrink-0">
             <Link href="/" onClick={() => setDrawerOpen(false)}>
               <span className="text-sm font-extrabold">
-                <span className="inline-flex items-center gap-2">
-                <span className="h-8 w-8 rounded-xl bg-brand-gradient grid place-items-center text-white text-sm font-black shadow-md shadow-primary/30">W</span>
-                <span>Web<span className="text-brand-gradient">Speed</span></span>
-              </span>
+                <StoreLogo />
               </span>
             </Link>
             <button

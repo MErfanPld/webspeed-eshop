@@ -54,12 +54,12 @@ export default async function ProfilePage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
         <div className="space-y-6">
-          <div className="border border-border rounded-sm p-6">
+          <div className="border border-border/70 rounded-3xl bg-surface shadow-[0_1px_2px_rgba(30,27,46,0.04)] p-6">
             <h2 className="text-sm font-semibold mb-4">اطلاعات حساب</h2>
             <ProfileForm customer={customer} />
           </div>
 
-          <div className="border border-border rounded-sm p-6">
+          <div className="border border-border/70 rounded-3xl bg-surface shadow-[0_1px_2px_rgba(30,27,46,0.04)] p-6">
             <h2 className="text-sm font-semibold mb-4">آدرس‌های من</h2>
             <AddressBook
               initial={addresses}
@@ -71,14 +71,14 @@ export default async function ProfilePage() {
         <div className="lg:col-span-2">
           <h2 className="text-lg font-semibold mb-4">تاریخچه سفارش‌ها</h2>
           {orders.length === 0 ? (
-            <div className="border border-dashed border-border rounded-sm p-8 text-center text-sm text-muted-foreground">
+            <div className="border border-dashed border-border rounded-3xl p-8 text-center text-sm text-muted-foreground">
               هنوز سفارشی ثبت نکرده‌اید.{" "}
               <Link href="/products" className="underline underline-offset-4">
                 مشاهده محصولات
               </Link>
             </div>
           ) : (
-            <div className="border border-border rounded-sm overflow-hidden">
+            <div className="border border-border/70 rounded-3xl bg-surface shadow-[0_1px_2px_rgba(30,27,46,0.04)] overflow-hidden">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-border bg-muted/40 text-right">

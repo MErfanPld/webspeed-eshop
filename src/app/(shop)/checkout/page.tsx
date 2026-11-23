@@ -371,7 +371,7 @@ export default function CheckoutPage() {
               </fieldset>
 
               {method === "online" ? (
-                <div className="surface border border-border p-6 sm:p-8 space-y-3">
+                <div className="border border-border/70 rounded-3xl bg-surface shadow-[0_1px_2px_rgba(30,27,46,0.04)] p-6 sm:p-8 space-y-3">
                   <h2 className="type-title">پرداخت آنلاین</h2>
                   <p className="type-body text-muted-foreground leading-relaxed">
                     با زدن «ثبت سفارش» به درگاه پرداخت منتقل می‌شوید. مبلغ{" "}
@@ -381,7 +381,7 @@ export default function CheckoutPage() {
                 </div>
               ) : (
               <>
-              <div className="surface border border-border p-6 sm:p-8 space-y-6">
+              <div className="border border-border/70 rounded-3xl bg-surface shadow-[0_1px_2px_rgba(30,27,46,0.04)] p-6 sm:p-8 space-y-6">
                 <div className="flex items-center gap-3">
                   <CreditCard className="h-5 w-5" strokeWidth={1.5} />
                   <h2 className="type-title">پرداخت کارت‌به‌کارت</h2>
@@ -460,7 +460,7 @@ export default function CheckoutPage() {
         </div>
 
         <div className="lg:col-span-5">
-          <div className="lg:sticky lg:top-24 space-y-5 border border-border p-6">
+          <div className="lg:sticky lg:top-24 space-y-5 border border-border/70 rounded-3xl bg-surface shadow-[0_1px_2px_rgba(30,27,46,0.04)] p-6">
             <h2 className="type-title">خلاصه سفارش</h2>
             <ul className="space-y-3">
               {items.map((item) => (

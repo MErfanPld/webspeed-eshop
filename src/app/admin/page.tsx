@@ -17,6 +17,8 @@ const STATUS_FA = {
 } as const;
 
 /** Real KPIs for the current store (last 30 days) from /admin/stats */
+const CARD_COLORS = ["from-[#7c3aed] to-[#c084fc]", "from-[#db2777] to-[#f472b6]", "from-[#0ea5e9] to-[#22d3ee]", "from-[#f59e0b] to-[#facc15]"];
+
 export default async function AdminDashboardPage() {
   const [session, stats] = await Promise.all([getAdminSession(), adminApi<DashboardStats>("/admin/stats?days=30")]);
 
@@ -43,9 +45,12 @@ export default async function AdminDashboardPage() {
       />
 
       <div className="grid gap-3 grid-cols-2 lg:grid-cols-4">
-        {cards.map((c) => (
-          <Link key={c.label} href={c.href} className="rounded-2xl border border-[#E8E8E8] bg-white p-4 hover:shadow-sm transition-shadow">
-            <c.icon className="h-5 w-5 text-[#737373]" />
+        {cards.map((c, i) => (
+          <Link key={c.label} href={c.href} className="group relative overflow-hidden rounded-2xl border border-[#ece8f5] bg-white p-4 hover:shadow-lg hover:shadow-[#7c3aed]/10 hover:-translate-y-0.5 transition-all">
+            <span className={`absolute -top-6 -left-6 h-20 w-20 rounded-full bg-gradient-to-br ${CARD_COLORS[i % 4]} opacity-15`} />
+            <span className={`h-10 w-10 rounded-xl bg-gradient-to-br ${CARD_COLORS[i % 4]} text-white grid place-items-center shadow-md`}>
+              <c.icon className="h-5 w-5" />
+            </span>
             <p className="mt-3 text-xs text-[#737373]">{c.label}</p>
             <p className="mt-1 text-lg font-bold text-[#111] tabular-nums">{c.value}</p>
           </Link>
@@ -53,19 +58,19 @@ export default async function AdminDashboardPage() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        <section className="lg:col-span-2 rounded-2xl border border-[#E8E8E8] bg-white p-5">
+        <section className="lg:col-span-2 rounded-2xl border border-[#ece8f5] bg-white p-5">
           <h2 className="text-sm font-bold text-[#111] mb-4">فروش ۱۴ روز اخیر</h2>
           <div className="flex items-end gap-1.5 h-40" role="img" aria-label="نمودار فروش روزانه">
             {days.map((d) => (
               <div key={d.day} className="flex-1 flex flex-col items-center gap-1 h-full justify-end" title={`${d.day}: ${formatPrice(d.revenue)}`}>
-                <div className="w-full rounded-t bg-[#111]/80" style={{ height: `${Math.max(2, (d.revenue / max) * 100)}%` }} />
+                <div className="w-full rounded-t bg-gradient-to-t from-[#7c3aed] to-[#db2777]" style={{ height: `${Math.max(2, (d.revenue / max) * 100)}%` }} />
               </div>
             ))}
           </div>
           {stats.orders === 0 && <p className="mt-3 text-xs text-[#A3A3A3]">هنوز سفارشی در این بازه ثبت نشده است.</p>}
         </section>
 
-        <section className="rounded-2xl border border-[#E8E8E8] bg-white p-5 space-y-3">
+        <section className="rounded-2xl border border-[#ece8f5] bg-white p-5 space-y-3">
           <h2 className="text-sm font-bold text-[#111]">کارهای امروز</h2>
           <Link href="/admin/orders" className="flex items-center gap-2 text-sm hover:underline">
             <Clock className="h-4 w-4 text-amber-600" />
@@ -95,7 +100,7 @@ export default async function AdminDashboardPage() {
         </section>
       </div>
 
-      <section className="rounded-2xl border border-[#E8E8E8] bg-white p-5">
+      <section className="rounded-2xl border border-[#ece8f5] bg-white p-5">
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-sm font-bold text-[#111]">آخرین سفارش‌ها</h2>
           <Link href="/admin/orders" className="text-xs text-[#737373] hover:text-[#111]">همه</Link>

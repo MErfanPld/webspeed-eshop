@@ -132,7 +132,7 @@ export default function LoginPage() {
                     placeholder="09121234567"
                     value={phone}
                     onChange={(e) => setPhone(normalizePhone(e.target.value))}
-                    className="w-full h-12 rounded-xl border border-border bg-transparent pr-11 pl-4 text-sm num focus:outline-none focus:border-foreground/40 focus:ring-2 focus:ring-foreground/5"
+                    className="w-full h-12 rounded-xl border border-border bg-transparent pr-11 pl-4 text-sm num focus:outline-none focus:border-foreground/40 focus:ring-4 focus:ring-primary/10 focus:border-primary/5"
                     autoComplete="tel"
                     autoFocus
                   />
@@ -171,7 +171,7 @@ export default function LoginPage() {
                       value={d}
                       onChange={(e) => handleOtpChange(i, e.target.value)}
                       onKeyDown={(e) => handleOtpKey(i, e)}
-                      className="h-12 w-10 sm:h-14 sm:w-12 text-center text-lg font-semibold rounded-xl border border-border bg-transparent num focus:outline-none focus:border-foreground focus:ring-2 focus:ring-foreground/10"
+                      className="h-12 w-10 sm:h-14 sm:w-12 text-center text-lg font-semibold rounded-xl border border-border bg-transparent num focus:outline-none focus:border-foreground focus:ring-4 focus:ring-primary/10 focus:border-primary/10"
                       autoFocus={i === 0}
                     />
                   ))}

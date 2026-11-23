@@ -174,7 +174,7 @@ export default function OrdersManager({
               onClick={() => setStatus(s)}
               className={cn(
                 "h-9 px-3 rounded-lg text-xs font-semibold border",
-                status === s ? "bg-[#111] text-white border-[#111]" : "bg-white border-[#E8E8E8] text-[#525252]"
+                status === s ? "bg-[#7c3aed] text-white border-[#7c3aed]" : "bg-white border-[#E8E8E8] text-[#525252]"
               )}
             >
               {s === "all" ? "همه" : STATUS_FA[s]}
@@ -246,7 +246,7 @@ export default function OrdersManager({
                     onClick={() => changeStatus(open, s)}
                     className={cn(
                       "h-8 px-3 rounded-lg text-xs font-semibold border disabled:opacity-50",
-                      open.status === s ? "bg-[#111] text-white border-[#111]" : "bg-white border-[#E8E8E8]"
+                      open.status === s ? "bg-[#7c3aed] text-white border-[#7c3aed]" : "bg-white border-[#E8E8E8]"
                     )}
                   >
                     {STATUS_FA[s]}

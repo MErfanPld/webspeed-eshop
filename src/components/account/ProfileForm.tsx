@@ -36,7 +36,7 @@ export default function ProfileForm({ customer }: { customer: Customer }) {
     router.refresh();
   };
 
-  const input = "w-full h-10 rounded-sm border border-border bg-transparent px-3 text-sm focus:outline-none focus:border-foreground/40";
+  const input = "w-full h-11 rounded-xl border border-border bg-surface px-4 text-sm focus:outline-none focus:border-foreground/40";
 
   return (
     <form onSubmit={save} className="space-y-3 text-sm">

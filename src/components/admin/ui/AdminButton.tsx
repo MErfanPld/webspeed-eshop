@@ -14,7 +14,7 @@ type Props = React.ButtonHTMLAttributes<HTMLButtonElement> & {
 
 const variants: Record<Variant, string> = {
   primary:
-    "bg-[#E31B23] text-white hover:bg-[#C4161D] border border-transparent",
+    "bg-gradient-to-l from-[#7c3aed] to-[#db2777] text-white shadow-md shadow-[#7c3aed]/20 hover:shadow-lg hover:shadow-[#7c3aed]/30 hover:-translate-y-px border border-transparent transition-all",
   secondary:
     "bg-white text-[#111] border border-[#E8E8E8] hover:bg-[#F7F7F7]",
   ghost:

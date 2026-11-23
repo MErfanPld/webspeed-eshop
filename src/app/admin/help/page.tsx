@@ -232,7 +232,7 @@ export default function AdminHelpPage() {
         ))}
       </div>
 
-      <section className="bg-[#111] text-white rounded-2xl p-5 flex items-start gap-3">
+      <section className="bg-gradient-to-l from-[#6d28d9] to-[#db2777] text-white rounded-2xl p-5 flex items-start gap-3">
         <GraduationCap className="h-5 w-5 shrink-0 mt-0.5" />
         <div className="text-sm leading-7">
           <p className="font-semibold">به کمک بیشتری نیاز دارید؟</p>
